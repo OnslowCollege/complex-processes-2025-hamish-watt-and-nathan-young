@@ -11,7 +11,7 @@ struct VScreen
     struct VWnd **windows;
 };
 
-struct VScreen createvscreen();
+struct VScreen *createvscreen(unsigned int w, unsigned int h);
 
 VWNDIDX bindvwnd(struct VScreen *vscreen, struct VWnd *vwnd, unsigned int x, unsigned int y);
 void updatevwnd(struct VScreen *vscreen, VWNDIDX vwndidx);
