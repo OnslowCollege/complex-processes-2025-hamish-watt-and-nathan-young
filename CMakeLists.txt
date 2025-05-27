@@ -3,7 +3,7 @@ project(untitled_project)
 
 set(CMAKE_EXPORT_COMPILE_COMMANDS TRUE)
 
-file(COPY ${CMAKE_CURRENT_SOURCE_DIR}/res DESTINATION ${CMAKE_BINARY_DIR})
-
 add_executable(untitled_project src/main.c src/graphics.h src/graphics.c
-		src/vwnd.h src/screen.h src/screen.c)
+		src/vwnd.h src/screen.h src/screen.c resource.rc)
+
+target_include_directories(untitled_project PRIVATE res)

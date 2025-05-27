@@ -1,4 +1,3 @@
-#include "./screen.h"
 #include <stdio.h>
 #include <windows.h>
 #include <wingdi.h>
@@ -6,14 +5,7 @@
 LRESULT __stdcall windowProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam);
 void screenmain(HWND hwnd);
 
-static HBITMAP himage;
-
-struct
-{
-    struct VScreen *screen;
-    BITMAPINFO bitmap_info;
-    HDC hdc;
-} ctx = {0};
+HBITMAP g_hbmtemp;
 
 int __stdcall WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine, int nShowCmd)
 {
@@ -23,18 +15,6 @@ int __stdcall WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdL
     wndClass.lpfnWndProc = windowProc;
     wndClass.hInstance = hInstance;
     wndClass.lpszClassName = CLASS_NAME;
-
-    himage = (HBITMAP)LoadImageA(hInstance, "res/test.bmp", IMAGE_BITMAP, 0, 0, LR_DEFAULTSIZE | LR_LOADFROMFILE);
-    if (himage == 0)
-    {
-        printf("Loading image failed");
-    }
-
-    ctx.bitmap_info.bmiHeader.biSize = sizeof(ctx.bitmap_info.bmiHeader);
-    ctx.bitmap_info.bmiHeader.biPlanes = 1;
-    ctx.bitmap_info.bmiHeader.biBitCount = 0;
-    ctx.bitmap_info.bmiHeader.biCompression = BI_RGB;
-    ctx.hdc = CreateCompatibleDC(0);
 
     RegisterClass(&wndClass);
 
@@ -67,31 +47,35 @@ LRESULT __stdcall windowProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
         PostQuitMessage(0);
         return 0;
 
-    case WM_SIZE: {
-        int width = LOWORD(lParam);
-        int height = HIWORD(lParam);
-
-        createvscreen(width, height);
+    case WM_CREATE: {
+        g_hbmtemp = LoadBitmapA(GetModuleHandle(NULL), "temp");
+        if (!g_hbmtemp)
+        {
+            printf("Could not load bitmap");
+        }
     }
+        return 0;
 
     case WM_PAINT: {
+        BITMAP bm;
         PAINTSTRUCT ps;
+
         HDC hdc = BeginPaint(hwnd, &ps);
 
-        if (himage)
-        {
-            BITMAP bm;
-            GetObject(himage, sizeof(bm), &bm);
-            // Put an image with coords 0, 0, w, h
-            // to a destination x: 10, y: 10, w: 100, h: 100
-            int result = StretchDIBits(hdc, 10, 10, 100, 100, 0, 0, 100, 100, bm.bmBits, &ctx.bitmap_info,
-                                       DIB_RGB_COLORS, SRCCOPY);
+        HDC hdcmem = CreateCompatibleDC(hdc);
+        HBITMAP hbmold = SelectObject(hdcmem, g_hbmtemp);
 
-            if (result == 0)
-            {
-                printf("Drawing failed\n");
-            }
+        GetObject(g_hbmtemp, sizeof(bm), &bm);
+
+        int result = BitBlt(hdc, 0, 0, bm.bmWidth, bm.bmHeight, hdcmem, 0, 0, SRCCOPY);
+
+        if (result == 0)
+        {
+            printf("Drawing failed\n");
         }
+
+        SelectObject(hdcmem, hbmold);
+        DeleteDC(hdcmem);
 
         EndPaint(hwnd, &ps);
     }
