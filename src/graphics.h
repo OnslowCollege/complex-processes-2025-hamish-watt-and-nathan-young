@@ -1,3 +1,4 @@
 #pragma once
+#include <windows.h>
 
-void *loadbmpimg(const char *path);
+void drawstylerect(HDC hdc, int x, int y, int w, int h);

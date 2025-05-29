@@ -1,3 +1,4 @@
+#include "./graphics.h"
 #include <stdio.h>
 #include <windows.h>
 #include <wingdi.h>
@@ -18,7 +19,7 @@ int __stdcall WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdL
 
     RegisterClass(&wndClass);
 
-    HWND hwnd = CreateWindowEx(0, CLASS_NAME, "dwmulate", WS_OVERLAPPEDWINDOW, CW_USEDEFAULT, CW_USEDEFAULT,
+    HWND hwnd = CreateWindowEx(0, CLASS_NAME, "kdemulate", WS_OVERLAPPEDWINDOW, CW_USEDEFAULT, CW_USEDEFAULT,
                                CW_USEDEFAULT, CW_USEDEFAULT, NULL, NULL, hInstance, NULL);
 
     if (hwnd == NULL)
@@ -33,9 +34,6 @@ int __stdcall WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdL
     {
         TranslateMessage(&msg);
         DispatchMessage(&msg);
-
-        InvalidateRect(hwnd, 0, 0);
-        UpdateWindow(hwnd);
     }
 }
 
@@ -43,9 +41,10 @@ LRESULT __stdcall windowProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 {
     switch (uMsg)
     {
-    case WM_DESTROY:
+    case WM_DESTROY: {
         PostQuitMessage(0);
         return 0;
+    }
 
     case WM_CREATE: {
         g_hbmtemp = LoadBitmapA(GetModuleHandle(NULL), "temp");
@@ -53,33 +52,22 @@ LRESULT __stdcall windowProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
         {
             printf("Could not load bitmap");
         }
-    }
+
         return 0;
+    }
 
     case WM_PAINT: {
         BITMAP bm;
         PAINTSTRUCT ps;
 
-        HDC hdc = BeginPaint(hwnd, &ps);
+        BeginPaint(hwnd, &ps);
 
-        HDC hdcmem = CreateCompatibleDC(hdc);
-        HBITMAP hbmold = SelectObject(hdcmem, g_hbmtemp);
-
-        GetObject(g_hbmtemp, sizeof(bm), &bm);
-
-        int result = BitBlt(hdc, 0, 0, bm.bmWidth, bm.bmHeight, hdcmem, 0, 0, SRCCOPY);
-
-        if (result == 0)
-        {
-            printf("Drawing failed\n");
-        }
-
-        SelectObject(hdcmem, hbmold);
-        DeleteDC(hdcmem);
+        drawstylerect(ps.hdc, 10, 10, 100, 150);
 
         EndPaint(hwnd, &ps);
-    }
+
         return 0;
+    }
     }
     return DefWindowProc(hwnd, uMsg, wParam, lParam);
 }
