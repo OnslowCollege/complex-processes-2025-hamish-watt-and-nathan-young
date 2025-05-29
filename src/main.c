@@ -63,6 +63,7 @@ LRESULT __stdcall windowProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
         BeginPaint(hwnd, &ps);
 
         drawstylerect(ps.hdc, 10, 10, 100, 150);
+        drawstylerect(ps.hdc, 150, 50, 100, 70);
 
         EndPaint(hwnd, &ps);
 
