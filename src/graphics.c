@@ -1,7 +1,9 @@
 #include "./graphics.h"
+#include <stdio.h>
 
 #define COLOR_BYTES 3
-#define PADDING_BYTES 2
+#define TOP_COLOR 0xF0F0F0
+#define BOTTOM_COLOR 0x404040
 
 void drawstylerect(HDC hdc, int x, int y, int w, int h)
 {
@@ -30,28 +32,43 @@ void drawstylerect(HDC hdc, int x, int y, int w, int h)
 
     for (int i = 0; i < p_bytes; i += COLOR_BYTES * w)
     {
-        pixels[i] = 0xF0;
-        pixels[i + 1] = 0xF0;
-        pixels[i + 2] = 0xF0;
-        pixels[i + 3] = 0xF0;
-        pixels[i + 4] = 0xF0;
-        pixels[i + 5] = 0xF0;
+        pixels[i] = LOBYTE(HIWORD(TOP_COLOR));
+        pixels[i + 1] = HIBYTE(LOWORD(TOP_COLOR));
+        pixels[i + 2] = LOBYTE(LOWORD(TOP_COLOR));
+        pixels[i + 3] = LOBYTE(HIWORD(TOP_COLOR));
+        pixels[i + 4] = HIBYTE(LOWORD(TOP_COLOR));
+        pixels[i + 5] = LOBYTE(LOWORD(TOP_COLOR));
 
         int end = i + (COLOR_BYTES * w - 3);
 
-        pixels[end] = 0x40;
-        pixels[end + 1] = 0x40;
-        pixels[end + 2] = 0x40;
-        pixels[end - 1] = 0x40;
-        pixels[end - 2] = 0x40;
-        pixels[end - 3] = 0x40;
+        pixels[end] = LOBYTE(HIWORD(BOTTOM_COLOR));
+        pixels[end + 1] = HIBYTE(LOWORD(BOTTOM_COLOR));
+        pixels[end + 2] = LOBYTE(LOWORD(BOTTOM_COLOR));
+        pixels[end - 3] = LOBYTE(HIWORD(BOTTOM_COLOR));
+        pixels[end - 2] = HIBYTE(LOWORD(BOTTOM_COLOR));
+        pixels[end - 1] = LOBYTE(LOWORD(BOTTOM_COLOR));
     }
 
     // fill bottom and top
-    memset(pixels, 0x40, w * COLOR_BYTES);
-    memset(pixels + w * COLOR_BYTES + COLOR_BYTES, 0x40, w * COLOR_BYTES - COLOR_BYTES);
-    memset(pixels + (h - 2) * (w * COLOR_BYTES), 0xF0, w * COLOR_BYTES - COLOR_BYTES);
-    memset(pixels + (h - 1) * (w * COLOR_BYTES), 0xF0, w * COLOR_BYTES);
+    for (int i = 0; i < p_bytes; i += COLOR_BYTES)
+    {
+        if (i < 2 * w * COLOR_BYTES && i != w * COLOR_BYTES)
+        {
+            pixels[i] = LOBYTE(HIWORD(BOTTOM_COLOR));
+            pixels[i + 1] = HIBYTE(LOWORD(BOTTOM_COLOR));
+            pixels[i + 2] = LOBYTE(LOWORD(BOTTOM_COLOR));
+        }
+        else if (i == 2 * w * COLOR_BYTES)
+        {
+            i = (h - 2) * w * COLOR_BYTES;
+        }
+        else if (i >= (h - 2) * w * COLOR_BYTES && i != (h - 1) * w * COLOR_BYTES - COLOR_BYTES)
+        {
+            pixels[i] = LOBYTE(HIWORD(TOP_COLOR));
+            pixels[i + 1] = HIBYTE(LOWORD(TOP_COLOR));
+            pixels[i + 2] = LOBYTE(LOWORD(TOP_COLOR));
+        }
+    }
 
     bi.bmiHeader.biSizeImage = p_bytes;
 
