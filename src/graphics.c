@@ -2,8 +2,11 @@
 #include <stdio.h>
 
 #define COLOR_BYTES 3
-#define TOP_COLOR 0xF0F0F0
-#define BOTTOM_COLOR 0x404040
+#define BASE_COLOR 0xd6b9ce
+#define BOTTOM_COLOR 0x6b6555
+#define TOP_COLOR 0xe3f7e8
+
+extern void fillcolor(void *p_colors, unsigned int color, int size);
 
 void drawstylerect(HDC hdc, int x, int y, int w, int h)
 {
@@ -28,8 +31,10 @@ void drawstylerect(HDC hdc, int x, int y, int w, int h)
     int p_bytes = (COLOR_BYTES * w) * h;
     char *pixels = malloc(p_bytes);
 
-    memset(pixels, 0x80, p_bytes);
+    // fill entire square
+    fillcolor(pixels, BASE_COLOR, p_bytes);
 
+    // fill left and right
     for (int i = 0; i < p_bytes; i += COLOR_BYTES * w)
     {
         pixels[i] = LOBYTE(HIWORD(TOP_COLOR));
@@ -50,29 +55,14 @@ void drawstylerect(HDC hdc, int x, int y, int w, int h)
     }
 
     // fill bottom and top
-    for (int i = 0; i < p_bytes; i += COLOR_BYTES)
-    {
-        if (i < 2 * w * COLOR_BYTES && i != w * COLOR_BYTES)
-        {
-            pixels[i] = LOBYTE(HIWORD(BOTTOM_COLOR));
-            pixels[i + 1] = HIBYTE(LOWORD(BOTTOM_COLOR));
-            pixels[i + 2] = LOBYTE(LOWORD(BOTTOM_COLOR));
-        }
-        else if (i == 2 * w * COLOR_BYTES)
-        {
-            i = (h - 2) * w * COLOR_BYTES;
-        }
-        else if (i >= (h - 2) * w * COLOR_BYTES && i != (h - 1) * w * COLOR_BYTES - COLOR_BYTES)
-        {
-            pixels[i] = LOBYTE(HIWORD(TOP_COLOR));
-            pixels[i + 1] = HIBYTE(LOWORD(TOP_COLOR));
-            pixels[i + 2] = LOBYTE(LOWORD(TOP_COLOR));
-        }
-    }
+    fillcolor(pixels, BOTTOM_COLOR, COLOR_BYTES * w);
+    fillcolor(pixels + (COLOR_BYTES * w + 4), BOTTOM_COLOR, COLOR_BYTES * w - 4);
+    fillcolor(pixels + COLOR_BYTES * w * (h - 1), TOP_COLOR, COLOR_BYTES * w);
+    fillcolor(pixels + COLOR_BYTES * w * (h - 2), TOP_COLOR, COLOR_BYTES * w - 4);
 
     bi.bmiHeader.biSizeImage = p_bytes;
 
-    StretchDIBits(hdc, x * 3, y * 3, w * 3, h * 3, 0, 0, w, h, pixels, &bi, DIB_RGB_COLORS, SRCCOPY);
+    StretchDIBits(hdc, x * 2, y * 2, w * 2, h * 2, 0, 0, w, h, pixels, &bi, DIB_RGB_COLORS, SRCCOPY);
 
     free(pixels);
 }
