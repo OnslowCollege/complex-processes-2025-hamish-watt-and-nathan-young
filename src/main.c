@@ -1,4 +1,5 @@
-#include "./graphics.h"
+#include "./screen.h"
+#include "./vwnd.h"
 #include <stdio.h>
 #include <windows.h>
 #include <wingdi.h>
@@ -62,8 +63,9 @@ LRESULT __stdcall windowProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 
         BeginPaint(hwnd, &ps);
 
-        drawstylerect(ps.hdc, 10, 10, 100, 150);
-        drawstylerect(ps.hdc, 150, 50, 100, 70);
+        struct VScreen *vscreen = createvscreen(800, 600);
+        struct VWnd *test_vwnd = createvwnd(300, 200, 400, 350, DEFAULT);
+        VWNDIDX vwndidx = bindvwnd(vscreen, test_vwnd, ps.hdc);
 
         EndPaint(hwnd, &ps);
 

@@ -1,6 +1,7 @@
 #pragma once
 
 #include "./vwnd.h"
+#include <windows.h>
 
 #define VWNDIDX unsigned int
 
@@ -13,7 +14,7 @@ struct VScreen
 
 struct VScreen *createvscreen(unsigned int w, unsigned int h);
 
-VWNDIDX bindvwnd(struct VScreen *vscreen, struct VWnd *vwnd, unsigned int x, unsigned int y);
-void updatevwnd(struct VScreen *vscreen, VWNDIDX vwndidx);
+VWNDIDX bindvwnd(struct VScreen *vscreen, struct VWnd *vwnd, HDC hdc);
+void updatevwnd(struct VScreen *vscreen, VWNDIDX vwndidx, HDC hdc);
 
 struct VWnd *editvwnd(struct VScreen *vscreen, VWNDIDX vwndidx);

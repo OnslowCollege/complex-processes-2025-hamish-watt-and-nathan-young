@@ -5,8 +5,7 @@ project(untitled_project C ASM_NASM)
 set(CMAKE_EXPORT_COMPILE_COMMANDS TRUE)
 
 set(ASM_SOURCES src/fillcolor.asm)
-set(C_SOURCES src/main.c src/graphics.c src/screen.c resource.rc)
-
+set(C_SOURCES src/main.c src/graphics.c src/screen.c src/vwnd.c resource.rc)
 
 add_executable(untitled_project ${C_SOURCES} ${ASM_SOURCES})
 

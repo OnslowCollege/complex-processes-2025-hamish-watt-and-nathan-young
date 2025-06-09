@@ -1,13 +1,9 @@
 #include "./graphics.h"
-#include <stdio.h>
 
 #define COLOR_BYTES 3
 #define BASE_COLOR 0xd6b9ce
 #define BOTTOM_COLOR 0x6b6555
 #define TOP_COLOR 0xe3f7e8
-
-extern void fillcolor(void *p_colors, unsigned int color, int size);
-extern void fillcolorvertical(void *p_colors, unsigned int color, int size, int rect_width);
 
 void drawstylerect(HDC hdc, int x, int y, int w, int h)
 {
@@ -34,7 +30,6 @@ void drawstylerect(HDC hdc, int x, int y, int w, int h)
 
     // fill entire square
     fillcolor(pixels, BASE_COLOR, p_bytes);
-    printf("%x %x %x\n", *(int *)pixels, *(int *)(pixels + 4), *(int *)(pixels + 8));
 
     // fill sides
     fillcolorvertical(pixels, TOP_COLOR, COLOR_BYTES * h, COLOR_BYTES * w);
@@ -50,7 +45,7 @@ void drawstylerect(HDC hdc, int x, int y, int w, int h)
 
     bi.bmiHeader.biSizeImage = p_bytes;
 
-    StretchDIBits(hdc, x * 2, y * 2, w * 2, h * 2, 0, 0, w, h, pixels, &bi, DIB_RGB_COLORS, SRCCOPY);
+    StretchDIBits(hdc, x, y, w, h, 0, 0, w, h, pixels, &bi, DIB_RGB_COLORS, SRCCOPY);
 
     free(pixels);
 }

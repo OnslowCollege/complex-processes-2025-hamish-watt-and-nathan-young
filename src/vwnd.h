@@ -24,4 +24,6 @@ enum VWndState
     MINIMIZED,
 };
 
-struct VWnd createvwnd(unsigned int x, unsigned int y, unsigned int w, unsigned int h, enum VWndStyle vwndstyle);
+struct VWnd *createvwnd(unsigned int x, unsigned int y, unsigned int w, unsigned int h, enum VWndStyle vwndstyle);
+
+void clrvwnd(struct VWnd *vwnd);
