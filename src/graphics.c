@@ -1,5 +1,4 @@
 #include "./graphics.h"
-#include <stdio.h>
 
 #define COLOR_BYTES 3
 #define BASE_COLOR 0xd6b9ce
@@ -7,6 +6,7 @@
 #define TOP_COLOR 0xe3f7e8
 
 extern void fillcolor(void *p_colors, unsigned int color, int size);
+extern void fillcolorvertical(void *p_colors, unsigned int color, int size, int rect_width);
 
 void drawstylerect(HDC hdc, int x, int y, int w, int h)
 {
@@ -34,25 +34,11 @@ void drawstylerect(HDC hdc, int x, int y, int w, int h)
     // fill entire square
     fillcolor(pixels, BASE_COLOR, p_bytes);
 
-    // fill left and right
-    for (int i = 0; i < p_bytes; i += COLOR_BYTES * w)
-    {
-        pixels[i] = LOBYTE(HIWORD(TOP_COLOR));
-        pixels[i + 1] = HIBYTE(LOWORD(TOP_COLOR));
-        pixels[i + 2] = LOBYTE(LOWORD(TOP_COLOR));
-        pixels[i + 3] = LOBYTE(HIWORD(TOP_COLOR));
-        pixels[i + 4] = HIBYTE(LOWORD(TOP_COLOR));
-        pixels[i + 5] = LOBYTE(LOWORD(TOP_COLOR));
-
-        int end = i + (COLOR_BYTES * w - 3);
-
-        pixels[end] = LOBYTE(HIWORD(BOTTOM_COLOR));
-        pixels[end + 1] = HIBYTE(LOWORD(BOTTOM_COLOR));
-        pixels[end + 2] = LOBYTE(LOWORD(BOTTOM_COLOR));
-        pixels[end - 3] = LOBYTE(HIWORD(BOTTOM_COLOR));
-        pixels[end - 2] = HIBYTE(LOWORD(BOTTOM_COLOR));
-        pixels[end - 1] = LOBYTE(LOWORD(BOTTOM_COLOR));
-    }
+    // fill sides
+    fillcolorvertical(pixels, TOP_COLOR, COLOR_BYTES * h, COLOR_BYTES * w);
+    fillcolorvertical(pixels + COLOR_BYTES, TOP_COLOR, COLOR_BYTES * h, COLOR_BYTES * w);
+    fillcolorvertical(pixels + COLOR_BYTES * (w - 1), BOTTOM_COLOR, COLOR_BYTES * h, COLOR_BYTES * w);
+    fillcolorvertical(pixels + COLOR_BYTES * (w - 2), BOTTOM_COLOR, COLOR_BYTES * h, COLOR_BYTES * w);
 
     // fill bottom and top
     fillcolor(pixels, BOTTOM_COLOR, COLOR_BYTES * w);
