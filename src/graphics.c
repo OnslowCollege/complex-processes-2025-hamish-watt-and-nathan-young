@@ -1,4 +1,5 @@
 #include "./graphics.h"
+#include <stdio.h>
 
 #define COLOR_BYTES 3
 #define BASE_COLOR 0xd6b9ce
@@ -33,6 +34,7 @@ void drawstylerect(HDC hdc, int x, int y, int w, int h)
 
     // fill entire square
     fillcolor(pixels, BASE_COLOR, p_bytes);
+    printf("%x %x %x\n", *(int *)pixels, *(int *)(pixels + 4), *(int *)(pixels + 8));
 
     // fill sides
     fillcolorvertical(pixels, TOP_COLOR, COLOR_BYTES * h, COLOR_BYTES * w);

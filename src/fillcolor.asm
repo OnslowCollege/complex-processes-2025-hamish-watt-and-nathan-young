@@ -25,8 +25,9 @@ _fillcolor:
 
     mov ebx, [ebp+0x8] ; location in memory of the beginning of the colour array
     mov eax, [ebp+0xc] ; colour
-    mov ecx, [ebp+0x10] ; size of colour array
-fillcolor_loop:
+
+    mov ecx, 3
+precompute_chunks:
     shl eax, 0x8
     mov edx, eax
     shr edx, 0x18
@@ -34,9 +35,25 @@ fillcolor_loop:
     mov edx, eax
     bswap edx
 
+    push edx
+
+    dec ecx
+    test ecx, ecx
+    jnz precompute_chunks
+
+    mov eax, 2
+    mov ecx, [ebp+0x10] ; size of colour array
+fillcolor_loop:
+    mov edx, [esp+eax*4]
     mov [ebx], edx
-    add ebx, 0x4
-    sub ecx, 0x4
+
+    dec eax
+    cmp eax, 0
+    jge fillcolor_loop_tail
+    mov eax, 2
+fillcolor_loop_tail:
+    add ebx, 4
+    sub ecx, 4
     cmp ecx, 3
     jg fillcolor_loop
     jne fillcolor_done
@@ -46,10 +63,10 @@ fillcolor_loop:
     call fillpixel
 fillcolor_done:
     pop ebx
+    mov esp, ebp
     pop ebp
 
     ret
-
 
 _fillcolorvertical:
     push ebp
