@@ -14,9 +14,9 @@ VEC createvec(int capacity)
 
 void pushvec(VEC *v, void *element)
 {
-    if (++v->idx > v->capacity)
+    if ((v->idx / sizeof(void *)) > v->capacity)
     {
-        void *new_mem = malloc(v->capacity * 2 * sizeof(int));
+        void *new_mem = malloc(v->capacity * 2 * sizeof(void *));
         memcpy(v->elems, new_mem, v->capacity);
         free(v->elems);
 
@@ -24,11 +24,12 @@ void pushvec(VEC *v, void *element)
     }
 
     v->elems[v->idx] = element;
+    v->idx += sizeof(void *);
 }
 
 void *vecget(VEC *v, int idx)
 {
-    return *(v->elems + idx * sizeof(void *));
+    return v->elems[idx * sizeof(void *)];
 }
 
 void clrvec(VEC *v)

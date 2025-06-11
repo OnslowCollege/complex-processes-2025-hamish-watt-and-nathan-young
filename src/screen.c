@@ -14,11 +14,16 @@ struct VScreen *createvscreen(unsigned int w, unsigned int h)
     return screen;
 }
 
-VWNDIDX bindvwnd(struct VScreen *vscreen, struct VWnd *vwnd, HDC hdc)
+VWNDIDX bindvwnd(struct VScreen *vscreen, struct VWnd *vwnd)
 {
     static int next_vwndidx = 0;
     pushvec(&vscreen->windows, vwnd);
-    drawstylerect(hdc, vwnd->x, vwnd->y, vwnd->w, vwnd->h);
 
     return next_vwndidx++;
+}
+
+void updatevwnd(struct VScreen *vscreen, VWNDIDX vwndidx, HDC hdc)
+{
+    struct VWnd *vwnd = vecget(&vscreen->windows, vwndidx);
+    drawstylerect(hdc, vwnd->x, vwnd->y, vwnd->w, vwnd->h);
 }

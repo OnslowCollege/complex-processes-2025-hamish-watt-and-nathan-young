@@ -40,34 +40,44 @@ int __stdcall WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdL
 
 LRESULT __stdcall windowProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 {
+    static struct VScreen *vscreen;
+    static VWNDIDX vwndidx;
     switch (uMsg)
     {
     case WM_DESTROY: {
         PostQuitMessage(0);
         return 0;
     }
-
     case WM_CREATE: {
         g_hbmtemp = LoadBitmapA(GetModuleHandle(NULL), "temp");
+        vscreen = createvscreen(800, 600);
+
+        struct VWnd *test_vwnd = createvwnd(200, 100, 200, 100, DEFAULT);
+        vwndidx = bindvwnd(vscreen, test_vwnd);
+
         if (!g_hbmtemp)
         {
-            printf("Could not load bitmap");
+            printf("Could not load test bitmap\n");
         }
 
         return 0;
     }
-
+    case WM_SIZE: {
+        InvalidateRect(hwnd, NULL, FALSE);
+        return 0;
+    }
     case WM_PAINT: {
         BITMAP bm;
         PAINTSTRUCT ps;
+        HBRUSH hbrush = CreateSolidBrush(0);
 
         BeginPaint(hwnd, &ps);
 
-        struct VScreen *vscreen = createvscreen(800, 600);
-        struct VWnd *test_vwnd = createvwnd(300, 200, 400, 350, DEFAULT);
-        VWNDIDX vwndidx = bindvwnd(vscreen, test_vwnd, ps.hdc);
+        FillRect(ps.hdc, &ps.rcPaint, hbrush);
+        updatevwnd(vscreen, vwndidx, ps.hdc);
 
         EndPaint(hwnd, &ps);
+        DeleteObject(hbrush);
 
         return 0;
     }
