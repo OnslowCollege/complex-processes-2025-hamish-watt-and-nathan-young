@@ -12,4 +12,4 @@ add_executable(kdemulate ${C_SOURCES} ${ASM_SOURCES})
 set_target_properties(kdemulate PROPERTIES ASM_NASM_OBJECT_FORMAT win32)
 set(CMAKE_ASM_NASM_FLAGS "-f win32")
 
-target_include_directories(untitled_project PRIVATE res)
+target_include_directories(kdemulate PRIVATE res)
