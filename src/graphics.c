@@ -1,6 +1,6 @@
 #include "./graphics.h"
 
-#define COLOR_BYTES 3
+#define COLOR_BYTES 4
 #define BASE_COLOR 0xd6b9ce
 #define BOTTOM_COLOR 0x6b6555
 #define TOP_COLOR 0xe3f7e8
@@ -17,7 +17,7 @@ void drawstylerect(HDC hdc, int x, int y, int w, int h)
         bih.biWidth = w;
         bih.biHeight = h;
         bih.biPlanes = 1;
-        bih.biBitCount = 24;
+        bih.biBitCount = 32;
         bih.biCompression = BI_RGB;
 
         bi.bmiHeader = bih;
