@@ -1,7 +1,9 @@
 #include "./screen.h"
+#include "./utils.h"
 #include "./vwnd.h"
 #include <stdio.h>
 #include <windows.h>
+#include <windowsx.h>
 #include <wingdi.h>
 
 LRESULT __stdcall windowProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam);
@@ -42,6 +44,9 @@ LRESULT __stdcall windowProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 {
     static struct VScreen *vscreen;
     static VWNDIDX vwndidx;
+    static VWNDIDX scalingvwnd = MAXINT;
+    static POINT prevmouse = {0, 0};
+
     switch (uMsg)
     {
     case WM_DESTROY: {
@@ -60,6 +65,36 @@ LRESULT __stdcall windowProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
             printf("Could not load test bitmap\n");
         }
 
+        return 0;
+    }
+    case WM_LBUTTONDOWN: {
+        POINT pt = {GET_X_LPARAM(lParam), GET_Y_LPARAM(lParam)};
+        if (DragDetect(hwnd, pt))
+        {
+            for (int i = 0; i < veclength(&vscreen->windows); i++)
+            {
+                struct VWnd *vwnd = vecget(&vscreen->windows, i);
+                if (insclrgn(vwnd, pt.x, pt.y))
+                {
+                    scalingvwnd = i;
+                }
+            }
+        }
+        return 0;
+    }
+    case WM_MOUSEMOVE: {
+        POINT pt = {GET_X_LPARAM(lParam), GET_Y_LPARAM(lParam)};
+        int dx = pt.x - prevmouse.x;
+        int dy = pt.y - prevmouse.y;
+        prevmouse = pt;
+
+        if (scalingvwnd != MAXINT)
+        {
+            scalevwnd(vscreen, scalingvwnd, dx, dy);
+        }
+    }
+    case WM_LBUTTONUP: {
+        scalingvwnd = MAXINT;
         return 0;
     }
     case WM_SIZE: {

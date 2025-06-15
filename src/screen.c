@@ -27,3 +27,10 @@ void updatevwnd(struct VScreen *vscreen, VWNDIDX vwndidx, HDC hdc)
     struct VWnd *vwnd = vecget(&vscreen->windows, vwndidx);
     drawstylerect(hdc, vwnd->x, vwnd->y, vwnd->w, vwnd->h);
 }
+
+void scalevwnd(struct VScreen *vscreen, VWNDIDX vwndidx, int sclx, int scly)
+{
+    struct VWnd *vwnd = vecget(&vscreen->windows, vwndidx);
+    vwnd->w += sclx;
+    vwnd->h += scly;
+}

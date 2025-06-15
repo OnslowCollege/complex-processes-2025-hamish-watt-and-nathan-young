@@ -36,3 +36,8 @@ void clrvec(VEC *v)
 {
     free(v->elems);
 }
+
+unsigned int veclength(VEC *v)
+{
+    return (v->idx / sizeof(void *)) - 1;
+}
