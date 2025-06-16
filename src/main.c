@@ -60,6 +60,9 @@ LRESULT __stdcall windowProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
         struct VWnd *test_vwnd = createvwnd(5, 5, 200, 100, DEFAULT);
         vwndidx = bindvwnd(vscreen, test_vwnd);
 
+        struct VWnd *vscreen_visual = createvwnd(0, 0, 800, 600, DEFAULT);
+        vwndidx = bindvwnd(vscreen, vscreen_visual);
+
         if (!g_hbmtemp)
         {
             printf("Could not load test bitmap\n");

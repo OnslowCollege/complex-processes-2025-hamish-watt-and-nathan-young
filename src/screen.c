@@ -2,7 +2,6 @@
 #include "./graphics.h"
 #include "./utils.h"
 #include "./vwnd.h"
-#include <stdio.h>
 #include <windows.h>
 
 struct VScreen *createvscreen(unsigned int w, unsigned int h)
@@ -31,7 +30,7 @@ void updatevwnd(struct VScreen *vscreen, VWNDIDX vwndidx, HDC hdc, LPRECT wnddim
     int rlw = vwnd->w;
     int rlh = vwnd->h;
     vcoordcvt(vscreen, &rlx, &rly, wnddim);
-    vcoordcvt(vscreen, &rlw, &rlh, wnddim);
+    vscalecvt(vscreen, &rlw, &rlh, wnddim);
     drawstylerect(hdc, rlx, rly, rlw, rlh);
 }
 
@@ -57,8 +56,21 @@ void vcoordcvt(struct VScreen *vscreen, int *x, int *y, LPRECT wnddim)
     float wndsclx = (float)wndw / (float)vscreen->w;
     float wndscly = (float)wndh / (float)vscreen->h;
     float aspctscl = wndsclx < wndscly ? wndsclx : wndscly;
-    *x = (float)(*x) * aspctscl;
-    *y = (float)(*y) * aspctscl;
+    float xoffset = (wndw - (vscreen->w * aspctscl)) / 2;
+    float yoffset = (wndh - (vscreen->h * aspctscl)) / 2;
+    *x = ((float)(*x) * aspctscl) + xoffset;
+    *y = ((float)(*y) * aspctscl) + yoffset;
+}
+
+void vscalecvt(struct VScreen *vscreen, int *w, int *h, LPRECT wnddim)
+{
+    LONG wndw = wnddim->right - wnddim->left;
+    LONG wndh = wnddim->bottom - wnddim->top;
+    float wndsclx = (float)wndw / (float)vscreen->w;
+    float wndscly = (float)wndh / (float)vscreen->h;
+    float aspctscl = wndsclx < wndscly ? wndsclx : wndscly;
+    *w = (float)(*w) * aspctscl;
+    *h = (float)(*h) * aspctscl;
 }
 
 void scalevwnd(struct VScreen *vscreen, VWNDIDX vwndidx, int sclx, int scly)
