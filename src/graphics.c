@@ -1,4 +1,5 @@
 #include "./graphics.h"
+#include <stdio.h>
 
 #define COLOR_BYTES 4
 #define BASE_COLOR 0xd6b9ce
@@ -7,23 +8,17 @@
 
 void drawstylerect(HDC hdc, int x, int y, int w, int h)
 {
-    static BITMAPINFOHEADER bih;
-    static BITMAPINFO bi;
-    static int f_bitmapinit = 0;
+    BITMAPINFOHEADER bih;
+    BITMAPINFO bi;
 
-    if (!f_bitmapinit)
-    {
-        bih.biSize = sizeof(BITMAPINFOHEADER);
-        bih.biWidth = w;
-        bih.biHeight = h;
-        bih.biPlanes = 1;
-        bih.biBitCount = 32;
-        bih.biCompression = BI_RGB;
+    bih.biSize = sizeof(BITMAPINFOHEADER);
+    bih.biWidth = (long)w;
+    bih.biHeight = (long)h;
+    bih.biPlanes = 1;
+    bih.biBitCount = 32;
+    bih.biCompression = BI_RGB;
 
-        bi.bmiHeader = bih;
-
-        f_bitmapinit = 1;
-    }
+    bi.bmiHeader = bih;
 
     int p_bytes = (COLOR_BYTES * w) * h;
     char *pixels = malloc(p_bytes);

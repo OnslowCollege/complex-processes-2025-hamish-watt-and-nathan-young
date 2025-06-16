@@ -57,7 +57,7 @@ LRESULT __stdcall windowProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
         g_hbmtemp = LoadBitmapA(GetModuleHandle(NULL), "temp");
         vscreen = createvscreen(800, 600);
 
-        struct VWnd *test_vwnd = createvwnd(200, 100, 200, 100, DEFAULT);
+        struct VWnd *test_vwnd = createvwnd(5, 5, 200, 100, DEFAULT);
         vwndidx = bindvwnd(vscreen, test_vwnd);
 
         if (!g_hbmtemp)
@@ -109,7 +109,9 @@ LRESULT __stdcall windowProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
         BeginPaint(hwnd, &ps);
 
         FillRect(ps.hdc, &ps.rcPaint, hbrush);
-        updatevwnd(vscreen, vwndidx, ps.hdc);
+        RECT rect;
+        GetWindowRect(hwnd, &rect);
+        updatevwnd(vscreen, vwndidx, ps.hdc, &rect);
 
         EndPaint(hwnd, &ps);
         DeleteObject(hbrush);
