@@ -37,15 +37,11 @@ void updatevwnd(struct VScreen *vscreen, VWNDIDX vwndidx, HDC hdc, LPRECT wnddim
 
 void vcoordcvt(struct VScreen *vscreen, int *x, int *y, LPRECT wnddim)
 {
-    static LPRECT prevwnddim;
-    static float aspctscl;
-    if (prevwnddim != wnddim) {
-        LONG wndw = wnddim->right - wnddim->left;
-        LONG wndh = wnddim->bottom - wnddim->right;
-        float wndsclx = (float) wndw / (float) vscreen->w;
-        float wndscly = (float) wndh / (float) vscreen->h;
-        aspctscl = wndsclx < wndscly ? wndsclx : wndscly;
-    }
+    LONG wndw = wnddim->right - wnddim->left;
+    LONG wndh = wnddim->bottom - wnddim->right;
+    float wndsclx = (float) wndw / (float) vscreen->w;
+    float wndscly = (float) wndh / (float) vscreen->h;
+    float aspctscl = wndsclx < wndscly ? wndsclx : wndscly;
     *x = (float)*x * aspctscl;
     *y = (float)*x * aspctscl;
 }
