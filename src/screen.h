@@ -15,5 +15,6 @@ struct VScreen
 
 struct VScreen *createvscreen(unsigned int w, unsigned int h);
 VWNDIDX bindvwnd(struct VScreen *vscreen, struct VWnd *vwnd);
+void vcoordcvt(struct VScreen * vscreen, int *x, int *y, LPRECT wnddim);
 void scalevwnd(struct VScreen *vscreen, VWNDIDX vwndidx, int sclx, int scly);
 void updatevwnd(struct VScreen *vscreen, VWNDIDX vwndidx, HDC hdc, LPRECT wnddim);
