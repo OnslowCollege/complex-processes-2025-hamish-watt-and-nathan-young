@@ -1,5 +1,4 @@
 #include "./vwnd.h"
-#include <math.h>
 #include <stdlib.h>
 
 #define BORDER_SIZE 32
@@ -16,19 +15,6 @@ struct VWnd *createvwnd(unsigned int x, unsigned int y, unsigned int w, unsigned
     vwnd->vwndstyle = &vwndstyle;
 
     return vwnd;
-}
-
-int insclrgn(struct VWnd *vwnd, int ptx, int pty)
-{
-    int cornerx = vwnd->x + vwnd->h;
-    int cornery = vwnd->y + vwnd->h;
-
-    if (abs(cornerx - ptx) < 10 && abs(cornery - pty) < 10)
-    {
-        return 1;
-    }
-
-    return 0;
 }
 
 void clrvwnd(struct VWnd *vwnd)

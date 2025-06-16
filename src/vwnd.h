@@ -1,5 +1,7 @@
 #pragma once
 
+#include <windows.h>
+
 struct Toolbar;
 
 struct VWnd
@@ -26,5 +28,4 @@ enum VWndState
 
 struct VWnd *createvwnd(unsigned int x, unsigned int y, unsigned int w, unsigned int h, enum VWndStyle vwndstyle);
 
-int insclrgn(struct VWnd *vwnd, int ptx, int pty);
 void clrvwnd(struct VWnd *vwnd);

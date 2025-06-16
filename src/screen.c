@@ -2,8 +2,8 @@
 #include "./graphics.h"
 #include "./utils.h"
 #include "./vwnd.h"
+#include <stdio.h>
 #include <windows.h>
-#include <math.h>
 
 struct VScreen *createvscreen(unsigned int w, unsigned int h)
 {
@@ -35,12 +35,27 @@ void updatevwnd(struct VScreen *vscreen, VWNDIDX vwndidx, HDC hdc, LPRECT wnddim
     drawstylerect(hdc, rlx, rly, rlw, rlh);
 }
 
+int insclrgn(struct VScreen *vscreen, struct VWnd *vwnd, int ptx, int pty, LPRECT wnddim)
+{
+    int cornerx = vwnd->x + vwnd->w;
+    int cornery = vwnd->y + vwnd->h;
+
+    vcoordcvt(vscreen, &cornerx, &cornery, wnddim);
+
+    if (abs(cornerx - ptx) < 10 && abs(cornery - pty) < 10)
+    {
+        return 1;
+    }
+
+    return 0;
+}
+
 void vcoordcvt(struct VScreen *vscreen, int *x, int *y, LPRECT wnddim)
 {
     LONG wndw = wnddim->right - wnddim->left;
     LONG wndh = wnddim->bottom - wnddim->top;
-    float wndsclx = (float) wndw / (float) vscreen->w;
-    float wndscly = (float) wndh / (float) vscreen->h;
+    float wndsclx = (float)wndw / (float)vscreen->w;
+    float wndscly = (float)wndh / (float)vscreen->h;
     float aspctscl = wndsclx < wndscly ? wndsclx : wndscly;
     *x = (float)(*x) * aspctscl;
     *y = (float)(*y) * aspctscl;

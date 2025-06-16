@@ -39,5 +39,5 @@ void clrvec(VEC *v)
 
 unsigned int veclength(VEC *v)
 {
-    return (v->idx / sizeof(void *)) - 1;
+    return (v->idx / sizeof(void *));
 }
