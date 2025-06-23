@@ -12,6 +12,15 @@ struct VWnd
     struct Toolbar *toolbar;
     enum VWndStyle *vwndstyle;
     enum VWndState *vwndstate;
+    enum VWndMsg *msg;
+    long msgparam;
+};
+
+/* These values cannot overlap in binary so that they can be combined with a  bitwise OR */
+enum VWndMsg
+{
+    SCALED = 0b00000001,
+    MOUSEMOVED = 0b00000010,
 };
 
 enum VWndStyle

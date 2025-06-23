@@ -42,10 +42,14 @@ int __stdcall WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdL
 
 LRESULT __stdcall windowProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 {
-    static struct VScreen *vscreen;
+    static struct VScreen *vscreen = NULL;
     static VWNDIDX vwndidx;
-    static VWNDIDX scalingvwnd = MAXINT;
     static POINT prevmouse = {0, 0};
+
+    if (vscreen != NULL)
+    {
+        handlevwndmessages(vscreen);
+    }
 
     switch (uMsg)
     {
@@ -79,9 +83,10 @@ LRESULT __stdcall windowProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
                 struct VWnd *vwnd = vecget(&vscreen->windows, i);
                 RECT wndrect;
                 GetWindowRect(hwnd, &wndrect);
-                if (insclrgn(vscreen, vwnd, pt.x, pt.y, &wndrect))
+                SCLRGN sclrgn = insclrgn(vscreen, vwnd, pt.x, pt.y, &wndrect);
+                if (sclrgn)
                 {
-                    scalingvwnd = i;
+                    sendvwndevent(vscreen, i, SCALED, 0);
                 }
             }
         }
@@ -89,20 +94,18 @@ LRESULT __stdcall windowProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
     }
     case WM_MOUSEMOVE: {
         POINT pt = {GET_X_LPARAM(lParam), GET_Y_LPARAM(lParam)};
-        int dx = pt.x - prevmouse.x;
-        int dy = pt.y - prevmouse.y;
+        short dx = (short)(pt.x - prevmouse.x);
+        short dy = (short)(pt.y - prevmouse.y);
         prevmouse = pt;
 
-        if (scalingvwnd != MAXINT)
-        {
-            scalevwnd(vscreen, scalingvwnd, dx, dy);
-            InvalidateRect(hwnd, NULL, FALSE);
-        }
+        long param = ((long)dx << 8) & dy;
+
+        sendglobalevent(vscreen, MOUSEMOVED, param);
 
         return 0;
     }
     case WM_LBUTTONUP: {
-        scalingvwnd = MAXINT;
+        removeevent(vscreen, SCALED);
         return 0;
     }
     case WM_SIZE: {
@@ -119,7 +122,7 @@ LRESULT __stdcall windowProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
         FillRect(ps.hdc, &ps.rcPaint, hbrush);
         RECT rect;
         GetWindowRect(hwnd, &rect);
-        updatevwnd(vscreen, vwndidx, ps.hdc, &rect);
+        drawvwnd(vscreen, vwndidx, ps.hdc, &rect);
 
         EndPaint(hwnd, &ps);
         DeleteObject(hbrush);
