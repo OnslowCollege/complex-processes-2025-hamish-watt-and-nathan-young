@@ -3,17 +3,19 @@
 
 #define BORDER_SIZE 32
 
-struct VWnd *createvwnd(unsigned int x, unsigned int y, unsigned int w, unsigned int h, enum VWndStyle vwndstyle)
+struct VWnd *createvwnd(unsigned int top, unsigned int bottom, unsigned int left, unsigned int right,
+                        enum VWndStyle vwndstyle)
 {
     struct VWnd *vwnd = malloc(sizeof(struct VWnd));
-    vwnd->x = x;
-    vwnd->y = y;
-    vwnd->w = w;
-    vwnd->h = h;
-    vwnd->pxarr = malloc(3 * (w - BORDER_SIZE) * (h - BORDER_SIZE));
+    vwnd->top = top;
+    vwnd->bottom = bottom;
+    vwnd->left = left;
+    vwnd->right = right;
+    vwnd->pxarr = malloc(3 * (right - left - BORDER_SIZE) * (bottom - top - BORDER_SIZE));
     vwnd->toolbar = malloc(0);
     vwnd->vwndstyle = &vwndstyle;
     vwnd->msg = malloc(sizeof(enum VWndMsg));
+    vwnd->msgflags = malloc(sizeof(struct MsgFlags));
 
     return vwnd;
 }

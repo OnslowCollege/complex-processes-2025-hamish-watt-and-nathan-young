@@ -48,7 +48,10 @@ LRESULT __stdcall windowProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 
     if (vscreen != NULL)
     {
-        handlevwndmessages(vscreen);
+        if (handlevwndmessages(vscreen) == REDRAW)
+        {
+            InvalidateRect(hwnd, NULL, FALSE);
+        };
     }
 
     switch (uMsg)
@@ -61,11 +64,8 @@ LRESULT __stdcall windowProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
         g_hbmtemp = LoadBitmapA(GetModuleHandle(NULL), "temp");
         vscreen = createvscreen(800, 600);
 
-        struct VWnd *test_vwnd = createvwnd(5, 5, 200, 100, DEFAULT);
+        struct VWnd *test_vwnd = createvwnd(5, 50, 50, 100, DEFAULT);
         vwndidx = bindvwnd(vscreen, test_vwnd);
-
-        struct VWnd *vscreen_visual = createvwnd(0, 0, 800, 600, DEFAULT);
-        vwndidx = bindvwnd(vscreen, vscreen_visual);
 
         if (!g_hbmtemp)
         {
@@ -86,7 +86,7 @@ LRESULT __stdcall windowProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
                 SCLRGN sclrgn = insclrgn(vscreen, vwnd, pt.x, pt.y, &wndrect);
                 if (sclrgn)
                 {
-                    sendvwndevent(vscreen, i, SCALED, 0);
+                    sendvwndevent(vscreen, i, SCALED, sclrgn);
                 }
             }
         }
@@ -94,8 +94,8 @@ LRESULT __stdcall windowProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
     }
     case WM_MOUSEMOVE: {
         POINT pt = {GET_X_LPARAM(lParam), GET_Y_LPARAM(lParam)};
-        short dx = (short)(pt.x - prevmouse.x);
-        short dy = (short)(pt.y - prevmouse.y);
+        short dx = (short)pt.x - (short)prevmouse.x;
+        short dy = (short)pt.y - (short)prevmouse.y;
         prevmouse = pt;
 
         long param = ((long)dx << 8) & dy;

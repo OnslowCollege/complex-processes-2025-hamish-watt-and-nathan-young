@@ -7,13 +7,20 @@ struct Toolbar;
 struct VWnd
 {
     int vwndidx;
-    unsigned int x, y, w, h;
+    unsigned int top, bottom, left, right;
     unsigned int *pxarr;
     struct Toolbar *toolbar;
     enum VWndStyle *vwndstyle;
     enum VWndState *vwndstate;
     enum VWndMsg *msg;
-    long msgparam;
+
+    struct MsgFlags *msgflags;
+};
+
+struct MsgFlags
+{
+    long mousemoved;
+    long scaled;
 };
 
 /* These values cannot overlap in binary so that they can be combined with a  bitwise OR */
