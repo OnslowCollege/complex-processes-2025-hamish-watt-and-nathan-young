@@ -98,7 +98,7 @@ LRESULT __stdcall windowProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
         short dy = (short)pt.y - (short)prevmouse.y;
         prevmouse = pt;
 
-        long param = ((long)dx << 16) | dy;
+        long param = ((long)dx << 16) | (dy & 0xffff);
 
         sendglobalevent(vscreen, MOUSEMOVED, param);
 
