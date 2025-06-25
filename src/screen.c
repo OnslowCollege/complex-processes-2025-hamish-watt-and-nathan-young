@@ -62,13 +62,15 @@ int handlevwndmessages(struct VScreen *vscreen)
 void drawvwnd(struct VScreen *vscreen, VWNDIDX vwndidx, HDC hdc, LPRECT wnddim)
 {
     struct VWnd *vwnd = vecget(&vscreen->windows, vwndidx);
-    int rlx = vwnd->left;
-    int rly = vwnd->top;
-    int rlw = vwnd->right - vwnd->left;
-    int rlh = vwnd->bottom - vwnd->top;
-    vcoordcvt(vscreen, &rlx, &rly, wnddim);
-    vscalecvt(vscreen, &rlw, &rlh, wnddim);
-    drawstylerect(hdc, rlx, rly, rlw, rlh);
+    int left = vwnd->left;
+    int top = vwnd->top;
+    int right = vwnd->right;
+    int bottom = vwnd->bottom;
+
+    vcoordcvt(vscreen, &left, &top, wnddim);
+    vcoordcvt(vscreen, &right, &bottom, wnddim);
+
+    drawstylerect(hdc, left, top, right - left, bottom - top);
 }
 
 SCLRGN insclrgn(struct VScreen *vscreen, struct VWnd *vwnd, int ptx, int pty, LPRECT wnddim)
@@ -159,17 +161,6 @@ void vcoordcvt(struct VScreen *vscreen, int *x, int *y, LPRECT wnddim)
     float yoffset = (wndh - (vscreen->h * aspctscl)) / 2;
     *x = ((float)(*x) * aspctscl) + xoffset;
     *y = ((float)(*y) * aspctscl) + yoffset;
-}
-
-void vscalecvt(struct VScreen *vscreen, int *w, int *h, LPRECT wnddim)
-{
-    LONG wndw = wnddim->right - wnddim->left;
-    LONG wndh = wnddim->bottom - wnddim->top;
-    float wndsclx = (float)wndw / (float)vscreen->w;
-    float wndscly = (float)wndh / (float)vscreen->h;
-    float aspctscl = wndsclx < wndscly ? wndsclx : wndscly;
-    *w = (float)(*w) * aspctscl;
-    *h = (float)(*h) * aspctscl;
 }
 
 void sendvwndevent(struct VScreen *vscreen, VWNDIDX vwndidx, enum VWndMsg msg, long param)
