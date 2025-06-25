@@ -121,6 +121,15 @@ SCLRGN insclrgn(struct VScreen *vscreen, struct VWnd *vwnd, int ptx, int pty, LP
         }
     }
 
+    if (abs(top - pty) < SCALEREGIONSIZE)
+    {
+        return TOP;
+    }
+    if (abs(bottom - pty) < SCALEREGIONSIZE)
+    {
+        return BOTTOM;
+    }
+
     return 0;
 }
 
