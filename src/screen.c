@@ -2,10 +2,12 @@
 #include "./graphics.h"
 #include "./utils.h"
 #include "./vwnd.h"
-#include <windows.h>
 #include <stdio.h>
+#include <windows.h>
 
 #define SCALEREGIONSIZE 20
+#define MIN_WINDOW_WIDTH 50
+#define MIN_WINDOW_HEIGHT 40
 
 struct VScreen *createvscreen(unsigned int w, unsigned int h)
 {
@@ -63,6 +65,7 @@ int handlevwndmessages(struct VScreen *vscreen)
 void drawvwnd(struct VScreen *vscreen, VWNDIDX vwndidx, HDC hdc, LPRECT wnddim)
 {
     struct VWnd *vwnd = vecget(&vscreen->windows, vwndidx);
+
     int left = vwnd->left;
     int top = vwnd->top;
     int right = vwnd->right;
@@ -101,6 +104,7 @@ SCLRGN insclrgn(struct VScreen *vscreen, struct VWnd *vwnd, int ptx, int pty, LP
             return RIGHT;
         }
     }
+
     if (abs(left - ptx) < SCALEREGIONSIZE)
     {
         if (abs(bottom - pty) < SCALEREGIONSIZE)
@@ -123,34 +127,58 @@ SCLRGN insclrgn(struct VScreen *vscreen, struct VWnd *vwnd, int ptx, int pty, LP
 void scalevwnd(struct VScreen *vscreen, VWNDIDX vwndidx, SCLRGN sclrgn, short sclx, short scly)
 {
     struct VWnd *vwnd = vecget(&vscreen->windows, vwndidx);
-    printf("sclx: %d, scly: %d\n", sclx, scly);
+    unsigned int *px = NULL;
+    unsigned int *py = NULL;
+
     switch (sclrgn)
     {
     case TOPLEFT:
-        vwnd->left += sclx;
-        vwnd->top += scly;
+        px = &vwnd->left;
+        py = &vwnd->top;
         break;
     case TOPRIGHT:
-        vwnd->right += sclx;
-        vwnd->top += scly;
+        px = &vwnd->right;
+        py = &vwnd->top;
         break;
     case BOTTOMLEFT:
-        vwnd->left += sclx;
-        vwnd->bottom += scly;
+        px = &vwnd->left;
+        py = &vwnd->bottom;
         break;
     case BOTTOMRIGHT:
-        vwnd->right += sclx;
-        vwnd->bottom += scly;
+        px = &vwnd->right;
+        py = &vwnd->bottom;
         break;
     case TOP:
-        vwnd->top += scly;
+        py = &vwnd->top;
         break;
     case BOTTOM:
-        vwnd->bottom += scly;
+        py = &vwnd->bottom;
+        break;
     case LEFT:
-        vwnd->left += sclx;
+        px = &vwnd->left;
+        break;
     case RIGHT:
-        vwnd->right += sclx;
+        px = &vwnd->right;
+        break;
+    }
+
+    if (px != NULL)
+    {
+        int prevpx = *px;
+        *px += sclx;
+        if (vwnd->right - vwnd->left < MIN_WINDOW_WIDTH)
+        {
+            *px = prevpx;
+        }
+    }
+    if (py != NULL)
+    {
+        int prevpy = *py;
+        *py += scly;
+        if (vwnd->bottom - vwnd->top < MIN_WINDOW_HEIGHT)
+        {
+            *py = prevpy;
+        }
     }
 }
 

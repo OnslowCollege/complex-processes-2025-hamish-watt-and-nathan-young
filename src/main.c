@@ -64,7 +64,7 @@ LRESULT __stdcall windowProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
         g_hbmtemp = LoadBitmapA(GetModuleHandle(NULL), "temp");
         vscreen = createvscreen(800, 600);
 
-        struct VWnd *test_vwnd = createvwnd(5, 50, 50, 100, DEFAULT);
+        struct VWnd *test_vwnd = createvwnd(10, 50, 100, 200, DEFAULT);
         vwndidx = bindvwnd(vscreen, test_vwnd);
 
         if (!g_hbmtemp)
@@ -98,7 +98,7 @@ LRESULT __stdcall windowProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
         short dy = (short)pt.y - (short)prevmouse.y;
         prevmouse = pt;
 
-        long param = (((long)dx) << 8) | dy;
+        long param = ((long)dx << 16) | dy;
 
         sendglobalevent(vscreen, MOUSEMOVED, param);
 
