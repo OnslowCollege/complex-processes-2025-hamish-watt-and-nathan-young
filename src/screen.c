@@ -3,6 +3,7 @@
 #include "./utils.h"
 #include "./vwnd.h"
 #include <windows.h>
+#include <stdio.h>
 
 #define SCALEREGIONSIZE 20
 
@@ -67,6 +68,8 @@ void drawvwnd(struct VScreen *vscreen, VWNDIDX vwndidx, HDC hdc, LPRECT wnddim)
     int right = vwnd->right;
     int bottom = vwnd->bottom;
 
+    printf("Left: %d, Top: %d, Right: %d, Bottom: %d\n", left, top, right, bottom);
+
     vcoordcvt(vscreen, &left, &top, wnddim);
     vcoordcvt(vscreen, &right, &bottom, wnddim);
 
@@ -120,6 +123,7 @@ SCLRGN insclrgn(struct VScreen *vscreen, struct VWnd *vwnd, int ptx, int pty, LP
 void scalevwnd(struct VScreen *vscreen, VWNDIDX vwndidx, SCLRGN sclrgn, short sclx, short scly)
 {
     struct VWnd *vwnd = vecget(&vscreen->windows, vwndidx);
+    printf("sclx: %d, scly: %d\n", sclx, scly);
     switch (sclrgn)
     {
     case TOPLEFT:
