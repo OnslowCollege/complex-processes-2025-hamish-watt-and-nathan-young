@@ -175,7 +175,7 @@ void scalevwnd(struct VScreen *vscreen, VWNDIDX vwndidx, SCLRGN sclrgn, short sc
     {
         int prevpx = *px;
         *px += sclx;
-        if (vwnd->right - vwnd->left < MIN_WINDOW_WIDTH)
+        if ((int)(vwnd->right - vwnd->left) < MIN_WINDOW_WIDTH)
         {
             *px = prevpx;
         }
@@ -184,7 +184,7 @@ void scalevwnd(struct VScreen *vscreen, VWNDIDX vwndidx, SCLRGN sclrgn, short sc
     {
         int prevpy = *py;
         *py += scly;
-        if (vwnd->bottom - vwnd->top < MIN_WINDOW_HEIGHT)
+        if ((int)(vwnd->bottom - vwnd->top) < MIN_WINDOW_HEIGHT)
         {
             *py = prevpy;
         }
