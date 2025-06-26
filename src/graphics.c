@@ -10,6 +10,8 @@ void drawstylerect(HDC hdc, int x, int y, int w, int h)
     BITMAPINFOHEADER bih;
     BITMAPINFO bi;
 
+    HDC memdc = CreateCompatibleDC(hdc);
+
     bih.biSize = sizeof(BITMAPINFOHEADER);
     bih.biWidth = (long)w;
     bih.biHeight = (long)h;
@@ -20,7 +22,13 @@ void drawstylerect(HDC hdc, int x, int y, int w, int h)
     bi.bmiHeader = bih;
 
     int p_bytes = (COLOR_BYTES * w) * h;
-    char *pixels = malloc(p_bytes);
+
+    bi.bmiHeader.biSizeImage = p_bytes;
+
+    void *pixels = NULL;
+    HBITMAP dib = CreateDIBSection(memdc, &bi, DIB_RGB_COLORS, &pixels, NULL, 0);
+
+    HBITMAP olddib = SelectObject(memdc, dib);
 
     // fill entire square
     fillcolor(pixels, BASE_COLOR, p_bytes);
@@ -37,9 +45,9 @@ void drawstylerect(HDC hdc, int x, int y, int w, int h)
     fillcolor(pixels + COLOR_BYTES * w * (h - 1), TOP_COLOR, COLOR_BYTES * w);
     fillcolor(pixels + COLOR_BYTES * w * (h - 2), TOP_COLOR, COLOR_BYTES * w - 4);
 
-    bi.bmiHeader.biSizeImage = p_bytes;
+    BitBlt(hdc, x, y, w, h, memdc, 0, 0, SRCCOPY);
 
-    StretchDIBits(hdc, x, y, w, h, 0, 0, w, h, pixels, &bi, DIB_RGB_COLORS, SRCCOPY);
-
-    free(pixels);
+    SelectObject(memdc, olddib);
+    DeleteObject(dib);
+    DeleteDC(memdc);
 }
