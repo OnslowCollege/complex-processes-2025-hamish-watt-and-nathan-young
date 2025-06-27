@@ -71,8 +71,6 @@ void drawvwnd(struct VScreen *vscreen, VWNDIDX vwndidx, HDC hdc, LPRECT wnddim)
     int right = vwnd->right;
     int bottom = vwnd->bottom;
 
-    printf("Left: %d, Top: %d, Right: %d, Bottom: %d\n", left, top, right, bottom);
-
     vcoordcvt(vscreen, &left, &top, wnddim);
     vcoordcvt(vscreen, &right, &bottom, wnddim);
 
@@ -193,13 +191,18 @@ void scalevwnd(struct VScreen *vscreen, VWNDIDX vwndidx, SCLRGN sclrgn, short sc
 
 void vcoordcvt(struct VScreen *vscreen, int *x, int *y, LPRECT wnddim)
 {
+    // Get the width and height of the real window.
     LONG wndw = wnddim->right - wnddim->left;
     LONG wndh = wnddim->bottom - wnddim->top;
+    // Get ratio between real and virtual screen.
     float wndsclx = (float)wndw / (float)vscreen->w;
     float wndscly = (float)wndh / (float)vscreen->h;
+    // Use smaller ratio to keep aspect ratio constant.
     float aspctscl = wndsclx < wndscly ? wndsclx : wndscly;
+    // Calculate offset to virtual window is centered.
     float xoffset = (wndw - (vscreen->w * aspctscl)) / 2;
     float yoffset = (wndh - (vscreen->h * aspctscl)) / 2;
+    // Apply aspect scale and offset to values.
     *x = ((float)(*x) * aspctscl) + xoffset;
     *y = ((float)(*y) * aspctscl) + yoffset;
 }
