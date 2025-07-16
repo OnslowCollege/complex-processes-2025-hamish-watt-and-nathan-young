@@ -1,3 +1,4 @@
+#include "./msg.h"
 #include "./screen.h"
 #include "./utils.h"
 #include "./vwnd.h"
@@ -93,6 +94,11 @@ LRESULT __stdcall windowProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
                 {
                     sendvwndevent(vscreen, i, SCALED, sclrgn);
                 }
+
+                if (inmvrgn(vscreen, vwnd, pt.x, pt.y, &wndrect))
+                {
+                    sendvwndevent(vscreen, i, MOVED, 0);
+                }
             }
         }
         return 0;
@@ -111,6 +117,7 @@ LRESULT __stdcall windowProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
     }
     case WM_LBUTTONUP: {
         removeevent(vscreen, SCALED);
+        removeevent(vscreen, MOVED);
         return 0;
     }
     case WM_SIZE: {

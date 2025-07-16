@@ -2,6 +2,7 @@
 
 #include <windows.h>
 
+#define TOOLBAR_HEIGHT 20
 struct Toolbar;
 
 struct VWnd
@@ -28,6 +29,7 @@ enum VWndMsg
 {
     SCALED = 0b00000001,
     MOUSEMOVED = 0b00000010,
+    MOVED = 0b00000100
 };
 
 enum VWndStyle

@@ -5,7 +5,8 @@
 #include <stdio.h>
 #include <windows.h>
 
-#define SCALEREGIONSIZE 20
+#define SCALEREGIONSIZE 10
+#define MOVEREGIONSIZE 10
 #define MIN_WINDOW_WIDTH 50
 #define MIN_WINDOW_HEIGHT 40
 
@@ -27,41 +28,6 @@ VWNDIDX bindvwnd(struct VScreen *vscreen, struct VWnd *vwnd)
     return next_vwndidx++;
 }
 
-int processmsg(struct VScreen *vscreen, VWNDIDX vwndidx, enum VWndMsg msg, struct MsgFlags *msgflags)
-{
-    if (msg & SCALED && msg & MOUSEMOVED)
-    {
-        short dx = HIWORD(msgflags->mousemoved);
-        short dy = LOWORD(msgflags->mousemoved);
-
-        SCLRGN sclrgn = msgflags->scaled;
-
-        scalevwnd(vscreen, vwndidx, sclrgn, dx, dy);
-        return REDRAW;
-    }
-    return NO_REDRAW;
-}
-
-int handlevwndmessages(struct VScreen *vscreen)
-{
-    int redraw = NO_REDRAW;
-    for (int i = 0; i < veclength(&vscreen->windows); i++)
-    {
-        struct VWnd *vwnd = vecget(&vscreen->windows, i);
-
-        if (vwnd->msg)
-        {
-            enum VWndMsg msg = *vwnd->msg;
-            if (processmsg(vscreen, i, msg, vwnd->msgflags))
-            {
-                redraw = REDRAW;
-            }
-        }
-    }
-
-    return redraw;
-}
-
 void drawvwnd(struct VScreen *vscreen, VWNDIDX vwndidx, HDC hdc, LPRECT wnddim)
 {
     struct VWnd *vwnd = vecget(&vscreen->windows, vwndidx);
@@ -75,6 +41,35 @@ void drawvwnd(struct VScreen *vscreen, VWNDIDX vwndidx, HDC hdc, LPRECT wnddim)
     vcoordcvt(vscreen, &right, &bottom, wnddim);
 
     drawstylerect(hdc, left, top, right - left, bottom - top);
+    drawstylerect(hdc, left, top, right - left, TOOLBAR_HEIGHT);
+}
+
+int inmvrgn(struct VScreen *vscreen, struct VWnd *vwnd, int ptx, int pty, LPRECT wnddim)
+{
+
+    int left = vwnd->left;
+    int top = vwnd->top;
+    int right = vwnd->right;
+    int bottom = vwnd->bottom;
+
+    vcoordcvt(vscreen, &left, &top, wnddim);
+    vcoordcvt(vscreen, &right, &bottom, wnddim);
+
+    RECT sclrect = {left - SCALEREGIONSIZE, top - SCALEREGIONSIZE, right + SCALEREGIONSIZE, bottom + SCALEREGIONSIZE};
+    POINT pt = {ptx, pty};
+
+    if (!PtInRect(&sclrect, pt))
+    {
+        return 0;
+    }
+
+    int rgny = top + SCALEREGIONSIZE + MOVEREGIONSIZE;
+    if (abs(rgny - pty) < MOVEREGIONSIZE)
+    {
+        return 1;
+    }
+
+    return 0;
 }
 
 SCLRGN insclrgn(struct VScreen *vscreen, struct VWnd *vwnd, int ptx, int pty, LPRECT wnddim)
@@ -86,6 +81,14 @@ SCLRGN insclrgn(struct VScreen *vscreen, struct VWnd *vwnd, int ptx, int pty, LP
 
     vcoordcvt(vscreen, &left, &top, wnddim);
     vcoordcvt(vscreen, &right, &bottom, wnddim);
+
+    RECT sclrect = {left - SCALEREGIONSIZE, top - SCALEREGIONSIZE, right + SCALEREGIONSIZE, bottom + SCALEREGIONSIZE};
+    POINT pt = {ptx, pty};
+
+    if (!PtInRect(&sclrect, pt))
+    {
+        return 0;
+    }
 
     if (abs(right - ptx) < SCALEREGIONSIZE)
     {
@@ -129,6 +132,16 @@ SCLRGN insclrgn(struct VScreen *vscreen, struct VWnd *vwnd, int ptx, int pty, LP
     }
 
     return 0;
+}
+
+void movevwnd(struct VScreen *vscreen, VWNDIDX vwndidx, short dx, short dy)
+{
+    struct VWnd *vwnd = vecget(&vscreen->windows, vwndidx);
+
+    vwnd->left += dx;
+    vwnd->right += dx;
+    vwnd->top += dy;
+    vwnd->bottom += dy;
 }
 
 void scalevwnd(struct VScreen *vscreen, VWNDIDX vwndidx, SCLRGN sclrgn, short sclx, short scly)
@@ -205,42 +218,4 @@ void vcoordcvt(struct VScreen *vscreen, int *x, int *y, LPRECT wnddim)
     // Apply aspect scale and offset to values.
     *x = ((float)(*x) * aspctscl) + xoffset;
     *y = ((float)(*y) * aspctscl) + yoffset;
-}
-
-void sendvwndevent(struct VScreen *vscreen, VWNDIDX vwndidx, enum VWndMsg msg, long param)
-{
-    struct VWnd *vwnd = vecget(&vscreen->windows, vwndidx);
-    *vwnd->msg = *vwnd->msg | msg;
-    if (param)
-    {
-        switch (msg)
-        {
-        case SCALED:
-            vwnd->msgflags->scaled = param;
-            break;
-        case MOUSEMOVED:
-            vwnd->msgflags->mousemoved = param;
-            break;
-        }
-    }
-}
-
-void sendglobalevent(struct VScreen *vscreen, enum VWndMsg msg, long param)
-{
-    for (int i = 0; i < veclength(&vscreen->windows); i++)
-    {
-        sendvwndevent(vscreen, i, msg, param);
-    }
-}
-
-void removeevent(struct VScreen *vscreen, enum VWndMsg msg)
-{
-    for (int i = 0; i < veclength(&vscreen->windows); i++)
-    {
-        struct VWnd *vwnd = vecget(&vscreen->windows, i);
-        if (*vwnd->msg & msg)
-        {
-            *vwnd->msg = *vwnd->msg ^ msg;
-        }
-    }
 }
