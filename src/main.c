@@ -141,7 +141,7 @@ LRESULT __stdcall windowProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
         vcoordcvt(vscreen, &screen_left, &screen_top, &wnddim);
         vcoordcvt(vscreen, &screen_right, &screen_bottom, &wnddim);
         RECT vscreenrect = {screen_left, screen_top, screen_right, screen_bottom};
-        FillRect(ps.hdc, &vscreenrect, CreateSolidBrush(RGB(255, 255, 255))); 
+        FillRect(ps.hdc, &vscreenrect, CreateSolidBrush(RGB(81, 167, 224))); 
         drawvwnd(vscreen, vwndidx, ps.hdc, &wnddim);
 
         EndPaint(hwnd, &ps);

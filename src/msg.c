@@ -53,7 +53,7 @@ int processmsg(struct VScreen *vscreen, VWNDIDX vwndidx, enum VWndMsg msg, struc
         return REDRAW;
     }
 
-    if (msg & MOVED && msg & MOUSEMOVED)
+    else if (msg & MOVED && msg & MOUSEMOVED)
     {
         short dx = HIWORD(msgflags->mousemoved);
         short dy = LOWORD(msgflags->mousemoved);
