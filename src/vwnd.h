@@ -22,6 +22,7 @@ struct MsgFlags
 {
     long mousemoved;
     long scaled;
+    long windowmoved;
 };
 
 /* These values cannot overlap in binary so that they can be combined with a  bitwise OR */

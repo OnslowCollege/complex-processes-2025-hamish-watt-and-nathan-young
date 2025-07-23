@@ -1,4 +1,5 @@
 #include "./msg.h"
+#include <stdio.h>
 
 void sendvwndevent(struct VScreen *vscreen, VWNDIDX vwndidx, enum VWndMsg msg, long param)
 {
@@ -13,6 +14,9 @@ void sendvwndevent(struct VScreen *vscreen, VWNDIDX vwndidx, enum VWndMsg msg, l
             break;
         case MOUSEMOVED:
             vwnd->msgflags->mousemoved = param;
+            break;
+        case MOVED:
+            vwnd->msgflags->windowmoved = param;
             break;
         default:
             break;
@@ -44,24 +48,29 @@ int processmsg(struct VScreen *vscreen, VWNDIDX vwndidx, enum VWndMsg msg, struc
 {
     if (msg & SCALED && msg & MOUSEMOVED)
     {
-        short dx = HIWORD(msgflags->mousemoved);
-        short dy = LOWORD(msgflags->mousemoved);
+        short x = HIWORD(msgflags->mousemoved);
+        short y = LOWORD(msgflags->mousemoved);
 
         SCLRGN sclrgn = msgflags->scaled;
 
-        scalevwnd(vscreen, vwndidx, sclrgn, dx, dy);
+        scalevwnd(vscreen, vwndidx, sclrgn, x, y);
         return REDRAW;
     }
 
     else if (msg & MOVED && msg & MOUSEMOVED)
     {
-        short dx = HIWORD(msgflags->mousemoved);
-        short dy = LOWORD(msgflags->mousemoved);
+        short xi = HIWORD(msgflags->windowmoved);
+        short yi = LOWORD(msgflags->windowmoved);
+        short xf = HIWORD(msgflags->mousemoved);
+        short yf = LOWORD(msgflags->mousemoved);
 
-        movevwnd(vscreen, vwndidx, dx, dy);
+        printf("Xi: %d, Xf: %d, Yi: %d, Yf: %d\n", xi, xf, yi, yf);
+
+
+        movevwnd(vscreen, vwndidx, xf - xi, yf - yi);
         return REDRAW;
     }
-
+    removeevent(vscreen, MOVED);
     return NO_REDRAW;
 }
 

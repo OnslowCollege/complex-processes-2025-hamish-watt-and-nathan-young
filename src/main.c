@@ -50,7 +50,6 @@ LRESULT __stdcall windowProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 {
     static struct VScreen *vscreen = NULL;
     static VWNDIDX vwndidx;
-    static POINT prevmouse = {0, 0};
 
     if (vscreen != NULL)
     {
@@ -68,7 +67,7 @@ LRESULT __stdcall windowProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
     }
     case WM_CREATE: {
         g_hbmtemp = LoadBitmapA(GetModuleHandle(NULL), "temp");
-        vscreen = createvscreen(VSCREEN_RIGHT - VSCREEN_LEFT, VSCREEN_BOTTOM - VSCREEN_TOP);
+        vscreen = createvscreen(VSCREEN_RIGHT, VSCREEN_BOTTOM);
 
         struct VWnd *test_vwnd = createvwnd(10, 50, 100, 200, DEFAULT);
         vwndidx = bindvwnd(vscreen, test_vwnd);
@@ -88,16 +87,20 @@ LRESULT __stdcall windowProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
             {
                 struct VWnd *vwnd = vecget(&vscreen->windows, i);
                 RECT wndrect;
-                GetWindowRect(hwnd, &wndrect);
+                GetClientRect(hwnd, &wndrect);
                 SCLRGN sclrgn = insclrgn(vscreen, vwnd, pt.x, pt.y, &wndrect);
                 if (sclrgn)
                 {
                     sendvwndevent(vscreen, i, SCALED, sclrgn);
                 }
 
-                if (inmvrgn(vscreen, vwnd, pt.x, pt.y, &wndrect))
+                else if (inmvrgn(vscreen, vwnd, pt.x, pt.y, &wndrect))
                 {
-                    sendvwndevent(vscreen, i, MOVED, 0);
+                    COORD x = pt.x;
+                    COORD y = pt.y;
+                    rcoordcvt(vscreen, &x, &y, &wndrect);
+                    long param = ((long)x << 16) | (y & 0xffff);
+                    sendvwndevent(vscreen, i, MOVED, param);
                 }
             }
         }
@@ -105,11 +108,13 @@ LRESULT __stdcall windowProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
     }
     case WM_MOUSEMOVE: {
         POINT pt = {GET_X_LPARAM(lParam), GET_Y_LPARAM(lParam)};
-        short dx = (short)pt.x - (short)prevmouse.x;
-        short dy = (short)pt.y - (short)prevmouse.y;
-        prevmouse = pt;
+        COORD x = (short)pt.x;
+        COORD y = (short)pt.y;
 
-        long param = ((long)dx << 16) | (dy & 0xffff);
+        RECT wnddim;
+        GetClientRect(hwnd, &wnddim);
+        rcoordcvt(vscreen, &x, &y, &wnddim);
+        long param = ((long)x << 16) | (y & 0xffff);
 
         sendglobalevent(vscreen, MOUSEMOVED, param);
 
@@ -117,7 +122,6 @@ LRESULT __stdcall windowProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
     }
     case WM_LBUTTONUP: {
         removeevent(vscreen, SCALED);
-        removeevent(vscreen, MOVED);
         return 0;
     }
     case WM_SIZE: {
@@ -133,15 +137,15 @@ LRESULT __stdcall windowProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 
         FillRect(ps.hdc, &ps.rcPaint, hbrush);
         RECT wnddim;
-        GetWindowRect(hwnd, &wnddim);
-        int screen_top = VSCREEN_TOP;
-        int screen_left = VSCREEN_LEFT;
-        int screen_bottom = VSCREEN_BOTTOM;
-        int screen_right = VSCREEN_RIGHT;
+        GetClientRect(hwnd, &wnddim);
+        COORD screen_top = VSCREEN_TOP;
+        COORD screen_left = VSCREEN_LEFT;
+        COORD screen_bottom = VSCREEN_BOTTOM;
+        COORD screen_right = VSCREEN_RIGHT;
         vcoordcvt(vscreen, &screen_left, &screen_top, &wnddim);
         vcoordcvt(vscreen, &screen_right, &screen_bottom, &wnddim);
         RECT vscreenrect = {screen_left, screen_top, screen_right, screen_bottom};
-        FillRect(ps.hdc, &vscreenrect, CreateSolidBrush(GetNearestColor(ps.hdc, RGB(81, 167, 224)))); 
+        FillRect(ps.hdc, &vscreenrect, CreateSolidBrush(GetNearestColor(ps.hdc, RGB(81, 167, 224))));
         drawvwnd(vscreen, vwndidx, ps.hdc, &wnddim);
 
         EndPaint(hwnd, &ps);

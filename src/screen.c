@@ -32,10 +32,10 @@ void drawvwnd(struct VScreen *vscreen, VWNDIDX vwndidx, HDC hdc, LPRECT wnddim)
 {
     struct VWnd *vwnd = vecget(&vscreen->windows, vwndidx);
 
-    int left = vwnd->left;
-    int top = vwnd->top;
-    int right = vwnd->right;
-    int bottom = vwnd->bottom;
+    COORD left = vwnd->left;
+    COORD top = vwnd->top;
+    COORD right = vwnd->right;
+    COORD bottom = vwnd->bottom;
 
     vcoordcvt(vscreen, &left, &top, wnddim);
     vcoordcvt(vscreen, &right, &bottom, wnddim);
@@ -47,10 +47,10 @@ void drawvwnd(struct VScreen *vscreen, VWNDIDX vwndidx, HDC hdc, LPRECT wnddim)
 int inmvrgn(struct VScreen *vscreen, struct VWnd *vwnd, int ptx, int pty, LPRECT wnddim)
 {
 
-    int left = vwnd->left;
-    int top = vwnd->top;
-    int right = vwnd->right;
-    int bottom = vwnd->bottom;
+    COORD left = vwnd->left;
+    COORD top = vwnd->top;
+    COORD right = vwnd->right;
+    COORD bottom = vwnd->bottom;
 
     vcoordcvt(vscreen, &left, &top, wnddim);
     vcoordcvt(vscreen, &right, &bottom, wnddim);
@@ -74,10 +74,10 @@ int inmvrgn(struct VScreen *vscreen, struct VWnd *vwnd, int ptx, int pty, LPRECT
 
 SCLRGN insclrgn(struct VScreen *vscreen, struct VWnd *vwnd, int ptx, int pty, LPRECT wnddim)
 {
-    int left = vwnd->left;
-    int top = vwnd->top;
-    int right = vwnd->right;
-    int bottom = vwnd->bottom;
+    COORD left = vwnd->left;
+    COORD top = vwnd->top;
+    COORD right = vwnd->right;
+    COORD bottom = vwnd->bottom;
 
     vcoordcvt(vscreen, &left, &top, wnddim);
     vcoordcvt(vscreen, &right, &bottom, wnddim);
@@ -142,67 +142,70 @@ void movevwnd(struct VScreen *vscreen, VWNDIDX vwndidx, short dx, short dy)
     vwnd->right += dx;
     vwnd->top += dy;
     vwnd->bottom += dy;
+
+    printf("Left: %d, Right: %d, Top: %d, Bottom: %d\n", vwnd->left, vwnd->right, vwnd->top, vwnd->bottom);
 }
 
-void scalevwnd(struct VScreen *vscreen, VWNDIDX vwndidx, SCLRGN sclrgn, short sclx, short scly)
+void scalevwnd(struct VScreen *vscreen, VWNDIDX vwndidx, SCLRGN sclrgn, short x, short y)
 {
     struct VWnd *vwnd = vecget(&vscreen->windows, vwndidx);
-    unsigned int *px = NULL;
-    unsigned int *py = NULL;
 
     switch (sclrgn)
     {
     case TOPLEFT:
-        px = &vwnd->left;
-        py = &vwnd->top;
+        vwnd->left = x;
+        vwnd->top = y;
         break;
     case TOPRIGHT:
-        px = &vwnd->right;
-        py = &vwnd->top;
+        vwnd->right = x;
+        vwnd->top = y;
         break;
     case BOTTOMLEFT:
-        px = &vwnd->left;
-        py = &vwnd->bottom;
+        vwnd->left = x;
+        vwnd->bottom = y;
         break;
     case BOTTOMRIGHT:
-        px = &vwnd->right;
-        py = &vwnd->bottom;
+        vwnd->right = x;
+        vwnd->bottom = y;
         break;
     case TOP:
-        py = &vwnd->top;
+        vwnd->top = y;
         break;
     case BOTTOM:
-        py = &vwnd->bottom;
+        vwnd->bottom = y;
         break;
     case LEFT:
-        px = &vwnd->left;
+        vwnd->left = x;
         break;
     case RIGHT:
-        px = &vwnd->right;
+        vwnd->right = x;
         break;
-    }
-
-    if (px != NULL)
-    {
-        int prevpx = *px;
-        *px += sclx;
-        if ((int)(vwnd->right - vwnd->left) < MIN_WINDOW_WIDTH)
-        {
-            *px = prevpx;
-        }
-    }
-    if (py != NULL)
-    {
-        int prevpy = *py;
-        *py += scly;
-        if ((int)(vwnd->bottom - vwnd->top) < MIN_WINDOW_HEIGHT)
-        {
-            *py = prevpy;
-        }
     }
 }
 
-void vcoordcvt(struct VScreen *vscreen, int *x, int *y, LPRECT wnddim)
+void vcoordcvt(struct VScreen *vscreen, COORD *x, COORD *y, LPRECT wnddim)
+{
+    float aspctscl = getaspctscl(vscreen, wnddim);
+    // Calculate offset to virtual window is centered.
+    float xoffset = ((wnddim->right - wnddim->left) - (vscreen->w * aspctscl)) / 2;
+    float yoffset = ((wnddim->bottom - wnddim->top) - (vscreen->h * aspctscl)) / 2;
+    // Apply aspect scale and offset to values.
+    *x = ((float)(*x) * aspctscl) + xoffset;
+    *y = ((float)(*y) * aspctscl) + yoffset;
+}
+
+void rcoordcvt(struct VScreen *vscreen, COORD *x, COORD *y, LPRECT wnddim)
+{
+    float aspctscl = getaspctscl(vscreen, wnddim);
+    // Calculate offset to virtual window is centered.
+    float xoffset = ((wnddim->right - wnddim->left) - (vscreen->w * aspctscl)) / 2;
+    float yoffset = ((wnddim->bottom - wnddim->top) - (vscreen->h * aspctscl)) / 2;
+    // Apply aspect scale and offset to values.
+    *x = ((float)(*x - xoffset) / aspctscl);
+    *y = ((float)(*y - yoffset) / aspctscl);
+}
+
+float getaspctscl(struct VScreen *vscreen, LPRECT wnddim)
 {
     // Get the width and height of the real window.
     LONG wndw = wnddim->right - wnddim->left;
@@ -211,11 +214,5 @@ void vcoordcvt(struct VScreen *vscreen, int *x, int *y, LPRECT wnddim)
     float wndsclx = (float)wndw / (float)vscreen->w;
     float wndscly = (float)wndh / (float)vscreen->h;
     // Use smaller ratio to keep aspect ratio constant.
-    float aspctscl = wndsclx < wndscly ? wndsclx : wndscly;
-    // Calculate offset to virtual window is centered.
-    float xoffset = (wndw - (vscreen->w * aspctscl)) / 2;
-    float yoffset = (wndh - (vscreen->h * aspctscl)) / 2;
-    // Apply aspect scale and offset to values.
-    *x = ((float)(*x) * aspctscl) + xoffset;
-    *y = ((float)(*y) * aspctscl) + yoffset;
+    return wndsclx < wndscly ? wndsclx : wndscly;
 }
