@@ -134,16 +134,21 @@ SCLRGN insclrgn(struct VScreen *vscreen, struct VWnd *vwnd, int ptx, int pty, LP
     return 0;
 }
 
-void movevwnd(struct VScreen *vscreen, VWNDIDX vwndidx, short dx, short dy)
+void movevwnd(struct VScreen *vscreen, VWNDIDX vwndidx, short dx, short dy, COORD moveinitx, COORD moveinity)
 {
     struct VWnd *vwnd = vecget(&vscreen->windows, vwndidx);
 
-    vwnd->left += dx;
-    vwnd->right += dx;
-    vwnd->top += dy;
-    vwnd->bottom += dy;
+    short x = moveinitx + dx;
+    short y = moveinity + dy;
 
-    printf("Left: %d, Right: %d, Top: %d, Bottom: %d\n", vwnd->left, vwnd->right, vwnd->top, vwnd->bottom);
+    short w = vwnd->right - vwnd->left;
+    short h = vwnd->bottom - vwnd->top;
+
+    vwnd->left = x;
+    vwnd->right = x + w;
+    vwnd->top = y;
+    vwnd->bottom = y + h;
+
 }
 
 void scalevwnd(struct VScreen *vscreen, VWNDIDX vwndidx, SCLRGN sclrgn, short x, short y)

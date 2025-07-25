@@ -122,6 +122,7 @@ LRESULT __stdcall windowProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
     }
     case WM_LBUTTONUP: {
         removeevent(vscreen, SCALED);
+        removeevent(vscreen, MOVED);
         return 0;
     }
     case WM_SIZE: {

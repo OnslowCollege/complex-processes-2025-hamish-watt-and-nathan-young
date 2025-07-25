@@ -1,6 +1,9 @@
 #include "./msg.h"
 #include <stdio.h>
 
+static COORD moveinitx;
+static COORD moveinity;
+
 void sendvwndevent(struct VScreen *vscreen, VWNDIDX vwndidx, enum VWndMsg msg, long param)
 {
     struct VWnd *vwnd = vecget(&vscreen->windows, vwndidx);
@@ -17,6 +20,8 @@ void sendvwndevent(struct VScreen *vscreen, VWNDIDX vwndidx, enum VWndMsg msg, l
             break;
         case MOVED:
             vwnd->msgflags->windowmoved = param;
+            moveinitx = vwnd->left;
+            moveinity = vwnd->top;
             break;
         default:
             break;
@@ -67,10 +72,9 @@ int processmsg(struct VScreen *vscreen, VWNDIDX vwndidx, enum VWndMsg msg, struc
         printf("Xi: %d, Xf: %d, Yi: %d, Yf: %d\n", xi, xf, yi, yf);
 
 
-        movevwnd(vscreen, vwndidx, xf - xi, yf - yi);
+        movevwnd(vscreen, vwndidx, xf - xi, yf - yi, moveinitx, moveinity);
         return REDRAW;
     }
-    removeevent(vscreen, MOVED);
     return NO_REDRAW;
 }
 
