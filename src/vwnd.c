@@ -1,6 +1,5 @@
 #include "./vwnd.h"
 #include "./elements/elements.h"
-#include <stdio.h>
 #include <stdlib.h>
 
 #define BORDER_SIZE 32
@@ -20,7 +19,6 @@ struct VWnd *createvwnd(unsigned int top, unsigned int bottom, unsigned int left
     vwnd->msgflags = malloc(sizeof(struct MsgFlags));
 
     HELEMENT hclosebutton = newelement(0, TOOLBAR_HEIGHT, -TOOLBAR_HEIGHT, 0, &vwnd->right, &vwnd->top);
-    printf("close button handle: %d\n", hclosebutton);
     addattribute(hclosebutton, CLICKABLE, clrvwnd);
 
     pushvec(&vwnd->elements, &hclosebutton);

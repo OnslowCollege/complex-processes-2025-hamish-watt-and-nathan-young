@@ -29,11 +29,15 @@ void drawvwnd(struct VScreen *vscreen, VWNDIDX vwndidx, HDC hdc, LPRECT wnddim)
     COORD right = vwnd->right;
     COORD bottom = vwnd->bottom;
 
+    COORD toolbarright = vwnd->right;
+    COORD toolbarbottom = vwnd->top + TOOLBAR_HEIGHT;
+
     vcoordcvt(vscreen, &left, &top, wnddim);
     vcoordcvt(vscreen, &right, &bottom, wnddim);
+    vcoordcvt(vscreen, &toolbarright, &toolbarbottom, wnddim);
 
     drawstylerect(hdc, left, top, right - left, bottom - top);
-    drawstylerect(hdc, left, top, right - left, TOOLBAR_HEIGHT);
+    drawstylerect(hdc, left, top, toolbarright - left, toolbarbottom - top);
 
     for (int i = 0; i < veclength(&vwnd->elements); i++)
     {
