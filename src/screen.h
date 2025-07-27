@@ -1,10 +1,10 @@
 #pragma once
 
+#define VWNDIDX unsigned int
+
 #include "./utils.h"
-#include "./vwnd.h"
 #include <windows.h>
 
-#define VWNDIDX unsigned int
 #define SCLRGN enum SclRgn
 
 #define REDRAW 1
@@ -32,12 +32,11 @@ enum SclRgn
 };
 
 struct VScreen *createvscreen(unsigned int w, unsigned int h);
-VWNDIDX bindvwnd(struct VScreen *vscreen, struct VWnd *vwnd);
 void vcoordcvt(struct VScreen *vscreen, COORD *x, COORD *y, LPRECT wnddim);
 void rcoordcvt(struct VScreen *vscreen, COORD *x, COORD *y, LPRECT wnddim);
 void scalevwnd(struct VScreen *vscreen, VWNDIDX vwndidx, SCLRGN sclrgn, short sclx, short scly);
 void movevwnd(struct VScreen *vscreen, VWNDIDX vwndidx, short dx, short dy, COORD moveinitx, COORD moveinity);
-SCLRGN insclrgn(struct VScreen *vscreen, struct VWnd *vwnd, int ptx, int pty, LPRECT wnddim);
-int inmvrgn(struct VScreen *vscreen, struct VWnd *vwnd, int ptx, int pty, LPRECT wnddim);
+SCLRGN insclrgn(struct VScreen *vscreen, VWNDIDX vwndidx, int ptx, int pty, LPRECT wnddim);
+int inmvrgn(struct VScreen *vscreen, VWNDIDX vwndidx, int ptx, int pty, LPRECT wnddim);
 void drawvwnd(struct VScreen *vscreen, VWNDIDX vwndidx, HDC hdc, LPRECT wnddim);
 float getaspctscl(struct VScreen *vscreen, LPRECT wnddim);

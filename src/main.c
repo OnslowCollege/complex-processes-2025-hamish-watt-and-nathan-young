@@ -85,16 +85,15 @@ LRESULT __stdcall windowProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
         {
             for (int i = 0; i < veclength(&vscreen->windows); i++)
             {
-                struct VWnd *vwnd = vecget(&vscreen->windows, i);
                 RECT wndrect;
                 GetClientRect(hwnd, &wndrect);
-                SCLRGN sclrgn = insclrgn(vscreen, vwnd, pt.x, pt.y, &wndrect);
+                SCLRGN sclrgn = insclrgn(vscreen, i, pt.x, pt.y, &wndrect);
                 if (sclrgn)
                 {
                     sendvwndevent(vscreen, i, SCALED, sclrgn);
                 }
 
-                else if (inmvrgn(vscreen, vwnd, pt.x, pt.y, &wndrect))
+                else if (inmvrgn(vscreen, i, pt.x, pt.y, &wndrect))
                 {
                     COORD x = pt.x;
                     COORD y = pt.y;

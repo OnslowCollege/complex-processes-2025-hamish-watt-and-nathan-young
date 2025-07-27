@@ -1,8 +1,8 @@
 #include "./screen.h"
+#include "./elements/elements.h"
 #include "./graphics.h"
 #include "./utils.h"
 #include "./vwnd.h"
-#include <stdio.h>
 #include <windows.h>
 
 #define SCALEREGIONSIZE 10
@@ -20,14 +20,6 @@ struct VScreen *createvscreen(unsigned int w, unsigned int h)
     return screen;
 }
 
-VWNDIDX bindvwnd(struct VScreen *vscreen, struct VWnd *vwnd)
-{
-    static int next_vwndidx = 0;
-    pushvec(&vscreen->windows, vwnd);
-
-    return next_vwndidx++;
-}
-
 void drawvwnd(struct VScreen *vscreen, VWNDIDX vwndidx, HDC hdc, LPRECT wnddim)
 {
     struct VWnd *vwnd = vecget(&vscreen->windows, vwndidx);
@@ -42,10 +34,19 @@ void drawvwnd(struct VScreen *vscreen, VWNDIDX vwndidx, HDC hdc, LPRECT wnddim)
 
     drawstylerect(hdc, left, top, right - left, bottom - top);
     drawstylerect(hdc, left, top, right - left, TOOLBAR_HEIGHT);
+
+    for (int i = 0; i < veclength(&vwnd->elements); i++)
+    {
+        HELEMENT helem = *(HELEMENT *)vecget(&vwnd->elements, i);
+        RECT vwnddim = {vwnd->top, vwnd->bottom, vwnd->left, vwnd->right};
+        drawelement(hdc, vscreen, helem, vwnddim);
+    }
 }
 
-int inmvrgn(struct VScreen *vscreen, struct VWnd *vwnd, int ptx, int pty, LPRECT wnddim)
+int inmvrgn(struct VScreen *vscreen, VWNDIDX vwndidx, int ptx, int pty, LPRECT wnddim)
 {
+
+    struct VWnd *vwnd = vecget(&vscreen->windows, vwndidx);
 
     COORD left = vwnd->left;
     COORD top = vwnd->top;
@@ -72,8 +73,10 @@ int inmvrgn(struct VScreen *vscreen, struct VWnd *vwnd, int ptx, int pty, LPRECT
     return 0;
 }
 
-SCLRGN insclrgn(struct VScreen *vscreen, struct VWnd *vwnd, int ptx, int pty, LPRECT wnddim)
+SCLRGN insclrgn(struct VScreen *vscreen, VWNDIDX vwndidx, int ptx, int pty, LPRECT wnddim)
 {
+    struct VWnd *vwnd = vecget(&vscreen->windows, vwndidx);
+
     COORD left = vwnd->left;
     COORD top = vwnd->top;
     COORD right = vwnd->right;
@@ -148,7 +151,6 @@ void movevwnd(struct VScreen *vscreen, VWNDIDX vwndidx, short dx, short dy, COOR
     vwnd->right = x + w;
     vwnd->top = y;
     vwnd->bottom = y + h;
-
 }
 
 void scalevwnd(struct VScreen *vscreen, VWNDIDX vwndidx, SCLRGN sclrgn, short x, short y)
@@ -212,12 +214,11 @@ void rcoordcvt(struct VScreen *vscreen, COORD *x, COORD *y, LPRECT wnddim)
 
 float getaspctscl(struct VScreen *vscreen, LPRECT wnddim)
 {
-    // Get the width and height of the real window.
     LONG wndw = wnddim->right - wnddim->left;
     LONG wndh = wnddim->bottom - wnddim->top;
-    // Get ratio between real and virtual screen.
     float wndsclx = (float)wndw / (float)vscreen->w;
     float wndscly = (float)wndh / (float)vscreen->h;
+
     // Use smaller ratio to keep aspect ratio constant.
     return wndsclx < wndscly ? wndsclx : wndscly;
 }

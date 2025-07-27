@@ -1,4 +1,6 @@
 #include "./msg.h"
+#include "./screen.h"
+#include "./vwnd.h"
 #include <stdio.h>
 
 static COORD moveinitx;
@@ -71,7 +73,6 @@ int processmsg(struct VScreen *vscreen, VWNDIDX vwndidx, enum VWndMsg msg, struc
 
         printf("Xi: %d, Xf: %d, Yi: %d, Yf: %d\n", xi, xf, yi, yf);
 
-
         movevwnd(vscreen, vwndidx, xf - xi, yf - yi, moveinitx, moveinity);
         return REDRAW;
     }
@@ -94,6 +95,8 @@ int handlevwndmessages(struct VScreen *vscreen)
             }
         }
     }
+
+    removeevent(vscreen, MOUSEMOVED);
 
     return redraw;
 }

@@ -1,4 +1,5 @@
 #include "./vwnd.h"
+#include "./elements/elements.h"
 #include <stdlib.h>
 
 #define BORDER_SIZE 32
@@ -12,17 +13,29 @@ struct VWnd *createvwnd(unsigned int top, unsigned int bottom, unsigned int left
     vwnd->left = left;
     vwnd->right = right;
     vwnd->pxarr = malloc(3 * (right - left - BORDER_SIZE) * (bottom - top - BORDER_SIZE));
-    vwnd->toolbar = malloc(0);
+    vwnd->elements = createvec(15);
     vwnd->vwndstyle = &vwndstyle;
     vwnd->msg = malloc(sizeof(enum VWndMsg));
     vwnd->msgflags = malloc(sizeof(struct MsgFlags));
 
+    HELEMENT hclosebutton =
+        newelement(0, TOOLBAR_HEIGHT, vwnd->right - vwnd->left - TOOLBAR_HEIGHT, vwnd->right - vwnd->left);
+    addattribute(hclosebutton, CLICKABLE, clrvwnd);
+
     return vwnd;
+}
+
+VWNDIDX bindvwnd(struct VScreen *vscreen, struct VWnd *vwnd)
+{
+    static int next_vwndidx = 0;
+    pushvec(&vscreen->windows, vwnd);
+
+    return next_vwndidx++;
 }
 
 void clrvwnd(struct VWnd *vwnd)
 {
     free(vwnd->pxarr);
-    free(vwnd->toolbar);
+    clrvec(&vwnd->elements);
     free(vwnd->msg);
 }
