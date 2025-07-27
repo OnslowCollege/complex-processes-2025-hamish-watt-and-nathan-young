@@ -1,7 +1,6 @@
 #include "./msg.h"
 #include "./screen.h"
 #include "./vwnd.h"
-#include <stdio.h>
 
 static COORD moveinitx;
 static COORD moveinity;
@@ -70,8 +69,6 @@ int processmsg(struct VScreen *vscreen, VWNDIDX vwndidx, enum VWndMsg msg, struc
         short yi = LOWORD(msgflags->windowmoved);
         short xf = HIWORD(msgflags->mousemoved);
         short yf = LOWORD(msgflags->mousemoved);
-
-        printf("Xi: %d, Xf: %d, Yi: %d, Yf: %d\n", xi, xf, yi, yf);
 
         movevwnd(vscreen, vwndidx, xf - xi, yf - yi, moveinitx, moveinity);
         return REDRAW;

@@ -38,8 +38,8 @@ void drawvwnd(struct VScreen *vscreen, VWNDIDX vwndidx, HDC hdc, LPRECT wnddim)
     for (int i = 0; i < veclength(&vwnd->elements); i++)
     {
         HELEMENT helem = *(HELEMENT *)vecget(&vwnd->elements, i);
-        RECT vwnddim = {vwnd->top, vwnd->bottom, vwnd->left, vwnd->right};
-        drawelement(hdc, vscreen, helem, vwnddim);
+        RECT vwnddim = {vwnd->left, vwnd->top, vwnd->right, vwnd->bottom};
+        drawelement(hdc, vscreen, helem, wnddim);
     }
 }
 

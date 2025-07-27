@@ -1,11 +1,17 @@
 #include "./elements.h"
 #include "../graphics.h"
 #include "../utils.h"
+#include <stdio.h>
 #include <windows.h>
 
 static VEC gea;
 
-HELEMENT newelement(int top, int bottom, int left, int right)
+void initgea()
+{
+    gea = createvec(50);
+}
+
+HELEMENT newelement(int top, int bottom, int left, int right, unsigned int *anchorx, unsigned int *anchory)
 {
     struct Element *elem = malloc(sizeof(struct Element));
 
@@ -13,6 +19,8 @@ HELEMENT newelement(int top, int bottom, int left, int right)
     elem->right = right;
     elem->bottom = bottom;
     elem->top = top;
+    elem->anchorx = anchorx;
+    elem->anchory = anchory;
 
     pushvec(&gea, elem);
     return veclength(&gea) - 1;
@@ -24,13 +32,18 @@ void rmelement(HELEMENT helem)
     free(element);
 }
 
-void drawelement(HDC hdc, struct VScreen *vscreen, HELEMENT helem, RECT vwnddim)
+void drawelement(HDC hdc, struct VScreen *vscreen, HELEMENT helem, LPRECT wnddim)
 {
     struct Element *element = vecget(&gea, helem);
-    short top = element->top + vwnddim.top;
-    short bottom = element->bottom + vwnddim.bottom;
-    short left = element->left + vwnddim.left;
-    short right = element->right + vwnddim.right;
+    short top = element->top + *element->anchory;
+    short bottom = element->bottom + *element->anchory;
+    short left = element->left + *element->anchorx;
+    short right = element->right + *element->anchorx;
+
+    vcoordcvt(vscreen, &left, &top, wnddim);
+    vcoordcvt(vscreen, &right, &bottom, wnddim);
+
+    printf("top: %d, bottom: %d, left: %d, right %d\n", top, bottom, left, right);
 
     drawstylerect(hdc, left, top, right - left, bottom - top);
 }

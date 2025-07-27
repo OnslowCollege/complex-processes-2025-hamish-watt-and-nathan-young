@@ -18,8 +18,10 @@ struct Element
     void (*behavior)(void);
     HBITMAP bmp;
     int left, right, bottom, top;
+
+    unsigned int *anchorx, *anchory;
 };
 
-HELEMENT newelement(int left, int right, int bottom, int top);
-void drawelement(HDC hdc, struct VScreen *vscreen, HELEMENT helem, RECT vwnddim);
+HELEMENT newelement(int top, int bottom, int left, int right, unsigned int *anchorx, unsigned int *anchory);
+void drawelement(HDC hdc, struct VScreen *vscreen, HELEMENT helem, LPRECT wnddim);
 void addattribute(HELEMENT elem, enum ElemAttribute, void *param);

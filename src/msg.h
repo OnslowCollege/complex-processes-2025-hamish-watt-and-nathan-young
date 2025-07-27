@@ -1,5 +1,4 @@
 #pragma once
-#define a
 #include "./screen.h"
 
 struct MsgFlags
@@ -23,3 +22,4 @@ int handlevwndmessages(struct VScreen *vscreen);
 void sendvwndevent(struct VScreen *vscreen, VWNDIDX vwndidx, enum VWndMsg msg, long param);
 void sendglobalevent(struct VScreen *vscreen, enum VWndMsg msg, long param);
 void removeevent(struct VScreen *vscreen, enum VWndMsg msg);
+void initgea();

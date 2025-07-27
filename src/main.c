@@ -66,6 +66,8 @@ LRESULT __stdcall windowProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
         return 0;
     }
     case WM_CREATE: {
+        initgea();
+
         g_hbmtemp = LoadBitmapA(GetModuleHandle(NULL), "temp");
         vscreen = createvscreen(VSCREEN_RIGHT, VSCREEN_BOTTOM);
 
