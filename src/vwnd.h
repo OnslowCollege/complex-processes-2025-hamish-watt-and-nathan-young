@@ -32,6 +32,7 @@ enum VWndState
 
 struct VWnd *createvwnd(unsigned int top, unsigned int bottom, unsigned int left, unsigned int right,
                         enum VWndStyle vwndstyle);
+
 VWNDIDX bindvwnd(struct VScreen *vscreen, struct VWnd *vwnd);
 
-void clrvwnd(struct VWnd *vwnd);
+void clrvwnd(struct VScreen *vscreen, VWNDIDX vwndid);

@@ -49,7 +49,6 @@ int __stdcall WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdL
 LRESULT __stdcall windowProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 {
     static struct VScreen *vscreen = NULL;
-    static VWNDIDX vwndidx;
 
     if (vscreen != NULL)
     {
@@ -72,7 +71,7 @@ LRESULT __stdcall windowProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
         vscreen = createvscreen(VSCREEN_RIGHT, VSCREEN_BOTTOM);
 
         struct VWnd *test_vwnd = createvwnd(10, 50, 100, 200, DEFAULT);
-        vwndidx = bindvwnd(vscreen, test_vwnd);
+        bindvwnd(vscreen, test_vwnd);
 
         if (!g_hbmtemp)
         {
@@ -83,12 +82,22 @@ LRESULT __stdcall windowProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
     }
     case WM_LBUTTONDOWN: {
         POINT pt = {GET_X_LPARAM(lParam), GET_Y_LPARAM(lParam)};
+
+        RECT wndrect;
+        GetClientRect(hwnd, &wndrect);
+
+        COORD x = pt.x;
+        COORD y = pt.y;
+        rcoordcvt(vscreen, &x, &y, &wndrect);
+
+        long param = ((long)x << 16) | (y & 0xffff);
+
+        sendglobalevent(vscreen, MOUSECLICKED, param);
+
         if (DragDetect(hwnd, pt))
         {
             for (int i = 0; i < veclength(&vscreen->windows); i++)
             {
-                RECT wndrect;
-                GetClientRect(hwnd, &wndrect);
                 SCLRGN sclrgn = insclrgn(vscreen, i, pt.x, pt.y, &wndrect);
                 if (sclrgn)
                 {
@@ -97,10 +106,6 @@ LRESULT __stdcall windowProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 
                 else if (inmvrgn(vscreen, i, pt.x, pt.y, &wndrect))
                 {
-                    COORD x = pt.x;
-                    COORD y = pt.y;
-                    rcoordcvt(vscreen, &x, &y, &wndrect);
-                    long param = ((long)x << 16) | (y & 0xffff);
                     sendvwndevent(vscreen, i, MOVED, param);
                 }
             }
@@ -148,7 +153,11 @@ LRESULT __stdcall windowProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
         vcoordcvt(vscreen, &screen_right, &screen_bottom, &wnddim);
         RECT vscreenrect = {screen_left, screen_top, screen_right, screen_bottom};
         FillRect(ps.hdc, &vscreenrect, CreateSolidBrush(GetNearestColor(ps.hdc, RGB(81, 167, 224))));
-        drawvwnd(vscreen, vwndidx, ps.hdc, &wnddim);
+
+        for (int i = 0; i < veclength(&vscreen->windows); i++)
+        {
+            drawvwnd(vscreen, i, ps.hdc, &wnddim);
+        }
 
         EndPaint(hwnd, &ps);
         DeleteObject(hbrush);

@@ -1,5 +1,6 @@
 #include "./vwnd.h"
 #include "./elements/elements.h"
+#include <stdio.h>
 #include <stdlib.h>
 
 #define BORDER_SIZE 32
@@ -34,8 +35,13 @@ VWNDIDX bindvwnd(struct VScreen *vscreen, struct VWnd *vwnd)
     return next_vwndidx++;
 }
 
-void clrvwnd(struct VWnd *vwnd)
+void clrvwnd(struct VScreen *vscreen, VWNDIDX vwndidx)
 {
+    printf("removing window\n");
+    struct VWnd *vwnd = vecget(&vscreen->windows, vwndidx);
+
+    rmvec(&vscreen->windows, vwndidx);
+
     free(vwnd->pxarr);
     clrvec(&vwnd->elements);
     free(vwnd->msg);

@@ -1,7 +1,6 @@
 #include "./elements.h"
 #include "../graphics.h"
 #include "../utils.h"
-#include <stdio.h>
 #include <windows.h>
 
 static VEC gea;
@@ -32,6 +31,35 @@ void rmelement(HELEMENT helem)
     free(element);
 }
 
+void executeelem(HELEMENT helem, struct VScreen *vscreen, VWNDIDX vwndidx)
+{
+    struct Element *element = vecget(&gea, helem);
+
+    if (element->behavior == NULL)
+    {
+        return;
+    }
+
+    element->behavior(vscreen, vwndidx);
+}
+
+int ptinelem(HELEMENT helem, short x, short y)
+{
+    struct Element *element = vecget(&gea, helem);
+
+    RECT elemrect = {0};
+    elemrect.top = element->top + *element->anchory;
+    elemrect.bottom = element->bottom + *element->anchory;
+    elemrect.left = element->left + *element->anchorx;
+    elemrect.right = element->right + *element->anchorx;
+
+    POINT pt = {0};
+    pt.x = x;
+    pt.y = y;
+
+    return PtInRect(&elemrect, pt);
+}
+
 void drawelement(HDC hdc, struct VScreen *vscreen, HELEMENT helem, LPRECT wnddim)
 {
     struct Element *element = vecget(&gea, helem);
@@ -43,19 +71,17 @@ void drawelement(HDC hdc, struct VScreen *vscreen, HELEMENT helem, LPRECT wnddim
     vcoordcvt(vscreen, &left, &top, wnddim);
     vcoordcvt(vscreen, &right, &bottom, wnddim);
 
-    printf("top: %d, bottom: %d, left: %d, right %d\n", top, bottom, left, right);
-
     drawstylerect(hdc, left, top, right - left, bottom - top);
 }
 
-void addclickable(HELEMENT helem, void (*behavior)(void))
+void addclickable(HELEMENT helem, void (*behavior)(struct VScreen *vscreen, VWNDIDX vwndidx))
 {
     struct Element *element = vecget(&gea, helem);
     element->attributes = element->attributes | CLICKABLE;
     element->behavior = behavior;
 }
 
-void addhoverable(HELEMENT helem, void (*behavior)(void))
+void addhoverable(HELEMENT helem, void (*behavior)(struct VScreen *vscreen, VWNDIDX vwndidx))
 {
     struct Element *element = vecget(&gea, helem);
     element->attributes = element->attributes | HOVERABLE;
@@ -83,4 +109,10 @@ void addattribute(HELEMENT helem, enum ElemAttribute attribute, void *param)
         addhasimage(helem, param);
         break;
     }
+}
+
+int hasattribute(HELEMENT helem, enum ElemAttribute attribute)
+{
+    struct Element *element = vecget(&gea, helem);
+    return (element->attributes & attribute) != 0;
 }

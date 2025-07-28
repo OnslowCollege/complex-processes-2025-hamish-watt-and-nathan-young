@@ -7,15 +7,17 @@ struct MsgFlags
     long scaled;
     long moved;
     long windowmoved;
+    long mouseclicked;
 };
 
-/* These values cannot overlap in binary so that they can be combined with a  bitwise OR */
+/* These values cannot overlap in binary so that they can be combined with a bitwise OR */
 enum VWndMsg
 {
     SCALED = 0b00000001,
     MOUSEMOVED = 0b00000010,
     MOVED = 0b00000100,
     WINDOWMOVED = 0b00001000,
+    MOUSECLICKED = 0b00010000,
 };
 
 int handlevwndmessages(struct VScreen *vscreen);

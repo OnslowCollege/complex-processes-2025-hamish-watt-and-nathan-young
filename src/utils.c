@@ -32,6 +32,12 @@ void *vecget(VEC *v, int idx)
     return v->elems[idx * sizeof(void *)];
 }
 
+void rmvec(VEC *v, int idx)
+{
+    memmove(v->elems + idx, v->elems + idx + sizeof(void *), veclength(v) - idx * sizeof(void *));
+    v->idx -= sizeof(void *);
+}
+
 void clrvec(VEC *v)
 {
     free(v->elems);

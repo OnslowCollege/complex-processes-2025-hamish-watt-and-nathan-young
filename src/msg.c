@@ -1,6 +1,8 @@
-#include "./msg.h"
-#include "./screen.h"
-#include "./vwnd.h"
+#include "msg.h"
+#include "elements/elements.h"
+#include "screen.h"
+#include "vwnd.h"
+#include <windows.h>
 
 static COORD moveinitx;
 static COORD moveinity;
@@ -23,6 +25,9 @@ void sendvwndevent(struct VScreen *vscreen, VWNDIDX vwndidx, enum VWndMsg msg, l
             vwnd->msgflags->windowmoved = param;
             moveinitx = vwnd->left;
             moveinity = vwnd->top;
+            break;
+        case MOUSECLICKED:
+            vwnd->msgflags->mouseclicked = param;
             break;
         default:
             break;
@@ -52,6 +57,7 @@ void removeevent(struct VScreen *vscreen, enum VWndMsg msg)
 
 int processmsg(struct VScreen *vscreen, VWNDIDX vwndidx, enum VWndMsg msg, struct MsgFlags *msgflags)
 {
+    struct VWnd *vwnd = vecget(&vscreen->windows, vwndidx);
     if (msg & SCALED && msg & MOUSEMOVED)
     {
         short x = HIWORD(msgflags->mousemoved);
@@ -62,7 +68,6 @@ int processmsg(struct VScreen *vscreen, VWNDIDX vwndidx, enum VWndMsg msg, struc
         scalevwnd(vscreen, vwndidx, sclrgn, x, y);
         return REDRAW;
     }
-
     else if (msg & MOVED && msg & MOUSEMOVED)
     {
         short xi = HIWORD(msgflags->windowmoved);
@@ -72,6 +77,25 @@ int processmsg(struct VScreen *vscreen, VWNDIDX vwndidx, enum VWndMsg msg, struc
 
         movevwnd(vscreen, vwndidx, xf - xi, yf - yi, moveinitx, moveinity);
         return REDRAW;
+    }
+
+    if (msg & MOUSECLICKED)
+    {
+        for (int i = 0; i < veclength(&vwnd->elements); i++)
+        {
+            HELEMENT helem = *(HELEMENT *)vecget(&vwnd->elements, i);
+            if (hasattribute(helem, CLICKABLE))
+            {
+                COORD x = HIWORD(msgflags->mouseclicked);
+                COORD y = LOWORD(msgflags->mouseclicked);
+
+                if (ptinelem(helem, x, y))
+                {
+                    executeelem(helem, vscreen, vwndidx);
+                    return REDRAW;
+                }
+            }
+        }
     }
     return NO_REDRAW;
 }
