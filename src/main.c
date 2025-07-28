@@ -25,6 +25,7 @@ int __stdcall WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdL
     wndClass.lpfnWndProc = windowProc;
     wndClass.hInstance = hInstance;
     wndClass.lpszClassName = CLASS_NAME;
+    wndClass.hCursor = LoadCursor(NULL, IDC_ARROW);
 
     RegisterClass(&wndClass);
 
@@ -81,6 +82,7 @@ LRESULT __stdcall windowProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
         return 0;
     }
     case WM_LBUTTONDOWN: {
+        SetCapture(hwnd);
         POINT pt = {GET_X_LPARAM(lParam), GET_Y_LPARAM(lParam)};
 
         RECT wndrect;
@@ -92,24 +94,20 @@ LRESULT __stdcall windowProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 
         long param = ((long)x << 16) | (y & 0xffff);
 
-        sendglobalevent(vscreen, MOUSECLICKED, param);
-
-        if (DragDetect(hwnd, pt))
+        for (int i = 0; i < veclength(&vscreen->windows); i++)
         {
-            for (int i = 0; i < veclength(&vscreen->windows); i++)
+            SCLRGN sclrgn = insclrgn(vscreen, i, pt.x, pt.y, &wndrect);
+            if (sclrgn)
             {
-                SCLRGN sclrgn = insclrgn(vscreen, i, pt.x, pt.y, &wndrect);
-                if (sclrgn)
-                {
-                    sendvwndevent(vscreen, i, SCALED, sclrgn);
-                }
+                sendvwndevent(vscreen, i, SCALED, sclrgn);
+            }
 
-                else if (inmvrgn(vscreen, i, pt.x, pt.y, &wndrect))
-                {
-                    sendvwndevent(vscreen, i, MOVED, param);
-                }
+            else if (inmvrgn(vscreen, i, pt.x, pt.y, &wndrect))
+            {
+                sendvwndevent(vscreen, i, MOVED, param);
             }
         }
+
         return 0;
     }
     case WM_MOUSEMOVE: {
@@ -127,6 +125,21 @@ LRESULT __stdcall windowProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
         return 0;
     }
     case WM_LBUTTONUP: {
+        ReleaseCapture();
+        POINT pt = {GET_X_LPARAM(lParam), GET_Y_LPARAM(lParam)};
+
+        RECT wndrect;
+        GetClientRect(hwnd, &wndrect);
+
+        COORD x = pt.x;
+        COORD y = pt.y;
+        rcoordcvt(vscreen, &x, &y, &wndrect);
+
+        long param = ((long)x << 16) | (y & 0xffff);
+
+        printf("mouse clicked\n");
+        sendglobalevent(vscreen, MOUSECLICKED, param);
+
         removeevent(vscreen, SCALED);
         removeevent(vscreen, MOVED);
         return 0;
