@@ -43,17 +43,16 @@ void drawvwnd(struct VScreen *vscreen, VWNDIDX vwndidx, HDC hdc, LPRECT wnddim)
         drawstylerect(hdc, left, top, right - left, bottom - top);
         drawstylerect(hdc, left, top, toolbarright - left, toolbarbottom - top);
 
-        printf("length: %d \n", veclength(&vwnd->elements));
         for (int i = 0; i < veclength(&vwnd->elements); i++)
         {
             HELEMENT helem = *(HELEMENT *)vecget(&vwnd->elements, i);
-            printf("helium: %d \n", helem);
             drawelement(hdc, vscreen, helem, wnddim);
         }
         break;
     }
     case DESKTOP: {
-        break;
+        RECT desktoprect = { left, top, right, bottom };
+        FillRect(hdc, &desktoprect, CreateSolidBrush(GetNearestColor(hdc, RGB(81, 167, 224))));
     }
     case TASKBAR: {
         break;

@@ -71,6 +71,9 @@ LRESULT __stdcall windowProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
         g_hbmtemp = LoadBitmapA(GetModuleHandle(NULL), "temp");
         vscreen = createvscreen(VSCREEN_RIGHT, VSCREEN_BOTTOM);
 
+        struct VWnd *desktop = createvwnd(VSCREEN_TOP, VSCREEN_BOTTOM, VSCREEN_LEFT, VSCREEN_RIGHT, DESKTOP);
+        bindvwnd(vscreen, desktop);
+
         struct VWnd *test_vwnd = createvwnd(10, 50, 100, 200, DEFAULT);
         bindvwnd(vscreen, test_vwnd);
 
@@ -158,14 +161,6 @@ LRESULT __stdcall windowProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
         FillRect(ps.hdc, &ps.rcPaint, hbrush);
         RECT wnddim;
         GetClientRect(hwnd, &wnddim);
-        COORD screen_top = VSCREEN_TOP;
-        COORD screen_left = VSCREEN_LEFT;
-        COORD screen_bottom = VSCREEN_BOTTOM;
-        COORD screen_right = VSCREEN_RIGHT;
-        vcoordcvt(vscreen, &screen_left, &screen_top, &wnddim);
-        vcoordcvt(vscreen, &screen_right, &screen_bottom, &wnddim);
-        RECT vscreenrect = {screen_left, screen_top, screen_right, screen_bottom};
-        FillRect(ps.hdc, &vscreenrect, CreateSolidBrush(GetNearestColor(ps.hdc, RGB(81, 167, 224))));
 
         for (int i = 0; i < veclength(&vscreen->windows); i++)
         {
