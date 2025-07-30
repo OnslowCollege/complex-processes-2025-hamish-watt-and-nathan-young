@@ -20,7 +20,9 @@ struct VWnd
 
 enum VWndStyle
 {
-    DEFAULT,
+    DEFAULT = 1,
+    TASKBAR,
+    DESKTOP,
 };
 
 enum VWndState

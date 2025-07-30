@@ -15,14 +15,28 @@ struct VWnd *createvwnd(unsigned int top, unsigned int bottom, unsigned int left
     vwnd->right = right;
     vwnd->pxarr = malloc(3 * (right - left - BORDER_SIZE) * (bottom - top - BORDER_SIZE));
     vwnd->elements = createvec(15);
-    vwnd->vwndstyle = &vwndstyle;
+    vwnd->vwndstyle = malloc(sizeof(enum VWndStyle));
+    *vwnd->vwndstyle = vwndstyle;
     vwnd->msg = malloc(sizeof(enum VWndMsg));
     vwnd->msgflags = malloc(sizeof(struct MsgFlags));
 
-    HELEMENT hclosebutton = newelement(0, TOOLBAR_HEIGHT, -TOOLBAR_HEIGHT, 0, &vwnd->right, &vwnd->top);
-    addattribute(hclosebutton, CLICKABLE, clrvwnd);
+    switch (*vwnd->vwndstyle)
+    {
+    case DEFAULT: {
+        printf("things are happenign but different");
+        HELEMENT hclosebutton = newelement(0, TOOLBAR_HEIGHT, -TOOLBAR_HEIGHT, 0, &vwnd->right, &vwnd->top);
+        addattribute(hclosebutton, CLICKABLE, clrvwnd);
 
-    pushvec(&vwnd->elements, &hclosebutton);
+        pushvec(&vwnd->elements, &hclosebutton);
+        break;
+    }
+    case TASKBAR: {
+        break;
+    }
+    case DESKTOP: {
+        break;
+    }
+    }
 
     return vwnd;
 }

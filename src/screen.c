@@ -3,6 +3,7 @@
 #include "./graphics.h"
 #include "./utils.h"
 #include "./vwnd.h"
+#include <stdio.h>
 #include <windows.h>
 
 #define SCALEREGIONSIZE 10
@@ -29,28 +30,48 @@ void drawvwnd(struct VScreen *vscreen, VWNDIDX vwndidx, HDC hdc, LPRECT wnddim)
     COORD right = vwnd->right;
     COORD bottom = vwnd->bottom;
 
-    COORD toolbarright = vwnd->right;
-    COORD toolbarbottom = vwnd->top + TOOLBAR_HEIGHT;
+    vcoordcvt(vscreen, &left, &top, wnddim);
+    vcoordcvt(vscreen, &right, &bottom, wnddim);
+
+    switch (*vwnd->vwndstyle)
+    {
+    case DEFAULT: {
+        COORD toolbarright = vwnd->right;
+        COORD toolbarbottom = vwnd->top + TOOLBAR_HEIGHT;
+        vcoordcvt(vscreen, &toolbarright, &toolbarbottom, wnddim);
+
+        drawstylerect(hdc, left, top, right - left, bottom - top);
+        drawstylerect(hdc, left, top, toolbarright - left, toolbarbottom - top);
+
+        for (int i = 0; i < veclength(&vwnd->elements); i++)
+        {
+            HELEMENT helem = *(HELEMENT *)vecget(&vwnd->elements, i);
+            RECT vwnddim = {vwnd->left, vwnd->top, vwnd->right, vwnd->bottom};
+            drawelement(hdc, vscreen, helem, wnddim);
+        }
+        break;
+    }
+    case DESKTOP: {
+        break;
+    }
+    case TASKBAR: {
+        break;
+    }
+    }
 
     vcoordcvt(vscreen, &left, &top, wnddim);
     vcoordcvt(vscreen, &right, &bottom, wnddim);
-    vcoordcvt(vscreen, &toolbarright, &toolbarbottom, wnddim);
-
-    drawstylerect(hdc, left, top, right - left, bottom - top);
-    drawstylerect(hdc, left, top, toolbarright - left, toolbarbottom - top);
-
-    for (int i = 0; i < veclength(&vwnd->elements); i++)
-    {
-        HELEMENT helem = *(HELEMENT *)vecget(&vwnd->elements, i);
-        RECT vwnddim = {vwnd->left, vwnd->top, vwnd->right, vwnd->bottom};
-        drawelement(hdc, vscreen, helem, wnddim);
-    }
 }
 
 int inmvrgn(struct VScreen *vscreen, VWNDIDX vwndidx, int ptx, int pty, LPRECT wnddim)
 {
 
     struct VWnd *vwnd = vecget(&vscreen->windows, vwndidx);
+
+    if (*vwnd->vwndstyle != DEFAULT)
+    {
+        return 0;
+    }
 
     COORD left = vwnd->left;
     COORD top = vwnd->top;
@@ -80,6 +101,11 @@ int inmvrgn(struct VScreen *vscreen, VWNDIDX vwndidx, int ptx, int pty, LPRECT w
 SCLRGN insclrgn(struct VScreen *vscreen, VWNDIDX vwndidx, int ptx, int pty, LPRECT wnddim)
 {
     struct VWnd *vwnd = vecget(&vscreen->windows, vwndidx);
+
+    if (*vwnd->vwndstyle != DEFAULT)
+    {
+        return 0;
+    }
 
     COORD left = vwnd->left;
     COORD top = vwnd->top;
