@@ -23,10 +23,11 @@ struct VWnd *createvwnd(unsigned int top, unsigned int bottom, unsigned int left
     switch (*vwnd->vwndstyle)
     {
     case DEFAULT: {
-        HELEMENT hclosebutton = newelement(0, TOOLBAR_HEIGHT, -TOOLBAR_HEIGHT, 0, &vwnd->right, &vwnd->top);
-        addattribute(hclosebutton, CLICKABLE, clrvwnd);
+        HELEMENT *hclosebutton = malloc(sizeof(HELEMENT));
+        *hclosebutton = newelement(0, TOOLBAR_HEIGHT, -TOOLBAR_HEIGHT, 0, &vwnd->right, &vwnd->top);
+        addattribute(*hclosebutton, CLICKABLE, clrvwnd);
 
-        pushvec(&vwnd->elements, &hclosebutton);
+        pushvec(&vwnd->elements, hclosebutton);
         break;
     }
     case TASKBAR: {
