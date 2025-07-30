@@ -81,6 +81,7 @@ int processmsg(struct VScreen *vscreen, VWNDIDX vwndidx, enum VWndMsg msg, struc
 
     if (msg & MOUSECLICKED)
     {
+        removeevent(vscreen, MOUSECLICKED);
         for (int i = 0; i < veclength(&vwnd->elements); i++)
         {
             HELEMENT helem = *(HELEMENT *)vecget(&vwnd->elements, i);
