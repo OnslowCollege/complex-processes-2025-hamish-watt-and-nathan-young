@@ -12,6 +12,8 @@
 #define VSCREEN_BOTTOM 600
 #define VSCREEN_RIGHT 800
 
+#define TASKBAR_HEIGHT 30
+
 LRESULT __stdcall windowProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam);
 void screenmain(HWND hwnd);
 
@@ -73,6 +75,9 @@ LRESULT __stdcall windowProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 
         struct VWnd *desktop = createvwnd(VSCREEN_TOP, VSCREEN_BOTTOM, VSCREEN_LEFT, VSCREEN_RIGHT, DESKTOP);
         bindvwnd(vscreen, desktop);
+
+        struct VWnd *taskbar = createvwnd(VSCREEN_BOTTOM - TASKBAR_HEIGHT, VSCREEN_BOTTOM, VSCREEN_LEFT, VSCREEN_RIGHT, TASKBAR);
+        bindvwnd(vscreen, taskbar);
 
         struct VWnd *test_vwnd = createvwnd(10, 50, 100, 200, DEFAULT);
         bindvwnd(vscreen, test_vwnd);

@@ -57,6 +57,11 @@ void clrvwnd(struct VScreen *vscreen, VWNDIDX vwndidx)
     rmvec(&vscreen->windows, vwndidx);
 
     free(vwnd->pxarr);
+    for (int i = 0; i<veclength(&vwnd->elements); i++) {
+        free(vecget(&vwnd->elements, i));
+    }
     clrvec(&vwnd->elements);
     free(vwnd->msg);
+    free(vwnd->vwndstyle);
+    free(vwnd->msgflags);
 }

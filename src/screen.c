@@ -3,7 +3,6 @@
 #include "./graphics.h"
 #include "./utils.h"
 #include "./vwnd.h"
-#include <stdio.h>
 #include <windows.h>
 
 #define SCALEREGIONSIZE 10
@@ -42,25 +41,24 @@ void drawvwnd(struct VScreen *vscreen, VWNDIDX vwndidx, HDC hdc, LPRECT wnddim)
 
         drawstylerect(hdc, left, top, right - left, bottom - top);
         drawstylerect(hdc, left, top, toolbarright - left, toolbarbottom - top);
-
-        for (int i = 0; i < veclength(&vwnd->elements); i++)
-        {
-            HELEMENT helem = *(HELEMENT *)vecget(&vwnd->elements, i);
-            drawelement(hdc, vscreen, helem, wnddim);
-        }
         break;
     }
     case DESKTOP: {
-        RECT desktoprect = { left, top, right, bottom };
+        RECT desktoprect = {left, top, right, bottom};
         FillRect(hdc, &desktoprect, CreateSolidBrush(GetNearestColor(hdc, RGB(81, 167, 224))));
+        break;
     }
     case TASKBAR: {
+        drawstylerect(hdc, left, top, right - left, bottom - top);
         break;
     }
     }
 
-    vcoordcvt(vscreen, &left, &top, wnddim);
-    vcoordcvt(vscreen, &right, &bottom, wnddim);
+    for (int i = 0; i < veclength(&vwnd->elements); i++)
+    {
+        HELEMENT helem = *(HELEMENT *)vecget(&vwnd->elements, i);
+        drawelement(hdc, vscreen, helem, wnddim);
+    }
 }
 
 int inmvrgn(struct VScreen *vscreen, VWNDIDX vwndidx, int ptx, int pty, LPRECT wnddim)

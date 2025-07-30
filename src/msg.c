@@ -2,6 +2,7 @@
 #include "elements/elements.h"
 #include "screen.h"
 #include "vwnd.h"
+#include <stdio.h>
 #include <windows.h>
 
 static COORD moveinitx;
