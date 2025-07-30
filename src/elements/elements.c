@@ -63,10 +63,10 @@ int ptinelem(HELEMENT helem, short x, short y)
 void drawelement(HDC hdc, struct VScreen *vscreen, HELEMENT helem, LPRECT wnddim)
 {
     struct Element *element = vecget(&gea, helem);
-    short top = element->top + *element->anchory;
-    short bottom = element->bottom + *element->anchory;
-    short left = element->left + *element->anchorx;
-    short right = element->right + *element->anchorx;
+    COORD top = element->top + *element->anchory;
+    COORD bottom = element->bottom + *element->anchory;
+    COORD left = element->left + *element->anchorx;
+    COORD right = element->right + *element->anchorx;
 
     vcoordcvt(vscreen, &left, &top, wnddim);
     vcoordcvt(vscreen, &right, &bottom, wnddim);

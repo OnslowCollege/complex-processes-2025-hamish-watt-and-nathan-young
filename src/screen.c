@@ -43,10 +43,10 @@ void drawvwnd(struct VScreen *vscreen, VWNDIDX vwndidx, HDC hdc, LPRECT wnddim)
         drawstylerect(hdc, left, top, right - left, bottom - top);
         drawstylerect(hdc, left, top, toolbarright - left, toolbarbottom - top);
 
+        printf("length: %d \n", veclength(&vwnd->elements));
         for (int i = 0; i < veclength(&vwnd->elements); i++)
         {
             HELEMENT helem = *(HELEMENT *)vecget(&vwnd->elements, i);
-            RECT vwnddim = {vwnd->left, vwnd->top, vwnd->right, vwnd->bottom};
             drawelement(hdc, vscreen, helem, wnddim);
         }
         break;
