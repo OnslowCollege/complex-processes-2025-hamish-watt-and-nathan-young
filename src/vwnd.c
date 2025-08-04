@@ -51,7 +51,7 @@ VWNDIDX bindvwnd(struct VScreen *vscreen, struct VWnd *vwnd)
 
 void clrvwnd(struct VScreen *vscreen, VWNDIDX vwndidx)
 {
-    printf("removing window\n");
+    printf("removing window: %d\n", vwndidx);
     struct VWnd *vwnd = vecget(&vscreen->windows, vwndidx);
 
     rmvec(&vscreen->windows, vwndidx);
