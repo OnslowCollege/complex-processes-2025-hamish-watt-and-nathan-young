@@ -17,6 +17,7 @@ void pushvec(VEC *v, void *element)
     if ((v->idx / sizeof(void *)) > v->capacity)
     {
         void *new_mem = malloc(v->capacity * 2 * sizeof(void *));
+        v->capacity *= 2;
         memcpy(v->elems, new_mem, v->capacity);
         free(v->elems);
 
@@ -34,7 +35,8 @@ void *vecget(VEC *v, int idx)
 
 void rmvec(VEC *v, int idx)
 {
-    memmove(v->elems + idx, v->elems + idx + sizeof(void *), veclength(v) - idx * sizeof(void *));
+    memmove(v->elems + idx, v->elems + idx + sizeof(void *),
+            veclength(v) * sizeof(void *) - idx * sizeof(void *) - sizeof(void *));
     v->idx -= sizeof(void *);
 }
 
