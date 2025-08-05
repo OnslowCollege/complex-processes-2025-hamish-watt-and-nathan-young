@@ -32,11 +32,14 @@ struct VWnd *createvwnd(unsigned int top, unsigned int bottom, unsigned int left
         break;
     }
     case TASKBAR: {
-        HELEMENT *testicon = malloc(sizeof(HELEMENT));
-        *testicon = newelement(0, (vwnd->bottom - vwnd->top), 0, 40, &vwnd->left, &vwnd->top);
-        addattribute(*testicon, CLICKABLE, applications[0]->launcher);
+        for (int i = 0; i < sizeof(applications) / sizeof(applications[0]); i++)
+        {
+            HELEMENT *testicon = malloc(sizeof(HELEMENT));
+            *testicon = newelement(0, (vwnd->bottom - vwnd->top), i * 40, i * 40 + 40, &vwnd->left, &vwnd->top);
+            addattribute(*testicon, CLICKABLE, applications[i]->launcher);
 
-        pushvec(&vwnd->elements, testicon);
+            pushvec(&vwnd->elements, testicon);
+        }
         break;
     }
     case DESKTOP: {

@@ -3,7 +3,7 @@
 
 static void launcher(struct VScreen *vscreen, VWNDIDX vwndidx)
 {
-    struct VWnd *test_app_1 = createvwnd(100, 300, 100, 300, DEFAULT);
+    struct VWnd *test_app_1 = createvwnd(100, 300, 400, 500, DEFAULT);
     bindvwnd(vscreen, test_app_1);
 }
 
