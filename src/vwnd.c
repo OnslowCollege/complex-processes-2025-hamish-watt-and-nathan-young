@@ -1,5 +1,6 @@
 #include "./vwnd.h"
 #include "./elements/elements.h"
+#include "./applications/application.h"
 #include <stdio.h>
 #include <stdlib.h>
 
@@ -31,6 +32,11 @@ struct VWnd *createvwnd(unsigned int top, unsigned int bottom, unsigned int left
         break;
     }
     case TASKBAR: {
+        HELEMENT *testicon = malloc(sizeof(HELEMENT));
+        *testicon = newelement(0, (vwnd->bottom - vwnd->top), 0, 40, &vwnd->left, &vwnd->top);
+        addattribute(*testicon, CLICKABLE, launchapp);
+
+        pushvec(&vwnd->elements, testicon);
         break;
     }
     case DESKTOP: {
