@@ -55,12 +55,44 @@ VWNDIDX bindvwnd(struct VScreen *vscreen, struct VWnd *vwnd)
     static int next_vwndidx = 0;
     pushvec(&vscreen->windows, vwnd);
 
+    printf("vwndidx: %d\n", next_vwndidx);
+
+    focusvwnd(vscreen, next_vwndidx);
+
     return next_vwndidx++;
+}
+
+int isfocused(struct VScreen *vscreen, VWNDIDX vwndidx)
+{
+    struct VWnd *vwnd = vecget(&vscreen->windows, vwndidx);
+    return vwnd->focused;
+}
+
+void focusvwnd(struct VScreen *vscreen, VWNDIDX vwndidx)
+{
+    struct VWnd *vwnd = vecget(&vscreen->windows, vwndidx);
+
+    for (int i = 0; i < veclength(&vscreen->windows); i++)
+    {
+        struct VWnd *other_wnd = vecget(&vscreen->windows, i);
+        other_wnd->focused = 0;
+    }
+
+    vwnd->focused = 1;
+
+    if (veclength(&vscreen->windows) - 1 == vwndidx)
+    {
+        return;
+    }
+
+    rmvec(&vscreen->windows, vwndidx);
+    pushvec(&vscreen->windows, vwnd);
+
+    refreshvwndidx(vscreen);
 }
 
 void clrvwnd(struct VScreen *vscreen, VWNDIDX vwndidx)
 {
-    printf("removing window: %d\n", vwndidx);
     struct VWnd *vwnd = vecget(&vscreen->windows, vwndidx);
 
     rmvec(&vscreen->windows, vwndidx);

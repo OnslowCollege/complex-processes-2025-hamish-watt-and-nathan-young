@@ -8,6 +8,7 @@
 struct VWnd
 {
     int vwndidx;
+    int focused;
     unsigned int top, bottom, left, right;
     unsigned int *pxarr;
     VEC elements;
@@ -35,6 +36,7 @@ enum VWndState
 struct VWnd *createvwnd(unsigned int top, unsigned int bottom, unsigned int left, unsigned int right,
                         enum VWndStyle vwndstyle);
 
+int isfocused(struct VScreen *vscreen, VWNDIDX vwndidx);
+void focusvwnd(struct VScreen *vscreen, VWNDIDX vwndidx);
 VWNDIDX bindvwnd(struct VScreen *vscreen, struct VWnd *vwnd);
-
-void clrvwnd(struct VScreen *vscreen, VWNDIDX vwndid);
+void clrvwnd(struct VScreen *vscreen, VWNDIDX vwndidx);

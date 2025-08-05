@@ -83,6 +83,9 @@ LRESULT __stdcall windowProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
         struct VWnd *test_vwnd = createvwnd(10, 50, 100, 200, DEFAULT);
         bindvwnd(vscreen, test_vwnd);
 
+        struct VWnd *test_vwnd2 = createvwnd(10, 50, 130, 230, DEFAULT);
+        bindvwnd(vscreen, test_vwnd2);
+
         if (!g_hbmtemp)
         {
             printf("Could not load test bitmap\n");
@@ -103,17 +106,26 @@ LRESULT __stdcall windowProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 
         long param = ((long)x << 16) | (y & 0xffff);
 
-        for (int i = 0; i < veclength(&vscreen->windows); i++)
+        for (int i = veclength(&vscreen->windows) - 1; i >= 0; i--)
         {
-            SCLRGN sclrgn = insclrgn(vscreen, i, pt.x, pt.y, &wndrect);
-            if (sclrgn)
+            WNDRGN wndrgn = inwndrgn(vscreen, i, pt.x, pt.y, &wndrect);
+            if (wndrgn)
             {
-                sendvwndevent(vscreen, i, SCALED, sclrgn);
-            }
+                if (!isfocused(vscreen, i))
+                {
+                    printf("focusing\n");
+                    focusvwnd(vscreen, i);
+                    break;
+                }
 
-            else if (inmvrgn(vscreen, i, pt.x, pt.y, &wndrect))
-            {
-                sendvwndevent(vscreen, i, MOVED, param);
+                if (wndrgn == MOVEREGION)
+                {
+                    sendvwndevent(vscreen, i, MOVED, param);
+                    break;
+                }
+
+                sendvwndevent(vscreen, i, SCALED, wndrgn);
+                break;
             }
         }
 

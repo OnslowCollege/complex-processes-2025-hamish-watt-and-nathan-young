@@ -37,7 +37,7 @@ void sendvwndevent(struct VScreen *vscreen, VWNDIDX vwndidx, enum VWndMsg msg, l
 
 void sendglobalevent(struct VScreen *vscreen, enum VWndMsg msg, long param)
 {
-    for (int i = 0; i < veclength(&vscreen->windows); i++)
+    for (int i = veclength(&vscreen->windows) - 1; i >= 0; i--)
     {
         sendvwndevent(vscreen, i, msg, param);
     }
@@ -63,9 +63,9 @@ int processmsg(struct VScreen *vscreen, VWNDIDX vwndidx, enum VWndMsg msg, struc
         short x = HIWORD(msgflags->mousemoved);
         short y = LOWORD(msgflags->mousemoved);
 
-        SCLRGN sclrgn = msgflags->scaled;
+        WNDRGN wndrgn = msgflags->scaled;
 
-        scalevwnd(vscreen, vwndidx, sclrgn, x, y);
+        scalevwnd(vscreen, vwndidx, wndrgn, x, y);
         return REDRAW;
     }
     else if (msg & MOVED && msg & MOUSEMOVED)
@@ -108,7 +108,7 @@ int handlevwndmessages(struct VScreen *vscreen)
     {
         struct VWnd *vwnd = vecget(&vscreen->windows, i);
 
-        if (vwnd->msg)
+        if (vwnd->msg && vwnd->focused)
         {
             enum VWndMsg msg = *vwnd->msg;
             if (processmsg(vscreen, i, msg, vwnd->msgflags))

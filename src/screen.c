@@ -61,42 +61,7 @@ void drawvwnd(struct VScreen *vscreen, VWNDIDX vwndidx, HDC hdc, LPRECT wnddim)
     }
 }
 
-int inmvrgn(struct VScreen *vscreen, VWNDIDX vwndidx, int ptx, int pty, LPRECT wnddim)
-{
-
-    struct VWnd *vwnd = vecget(&vscreen->windows, vwndidx);
-
-    if (*vwnd->vwndstyle != DEFAULT)
-    {
-        return 0;
-    }
-
-    COORD left = vwnd->left;
-    COORD top = vwnd->top;
-    COORD right = vwnd->right;
-    COORD bottom = vwnd->bottom;
-
-    vcoordcvt(vscreen, &left, &top, wnddim);
-    vcoordcvt(vscreen, &right, &bottom, wnddim);
-
-    RECT sclrect = {left - SCALEREGIONSIZE, top - SCALEREGIONSIZE, right + SCALEREGIONSIZE, bottom + SCALEREGIONSIZE};
-    POINT pt = {ptx, pty};
-
-    if (!PtInRect(&sclrect, pt))
-    {
-        return 0;
-    }
-
-    int rgny = top + SCALEREGIONSIZE + MOVEREGIONSIZE;
-    if (abs(rgny - pty) < MOVEREGIONSIZE)
-    {
-        return 1;
-    }
-
-    return 0;
-}
-
-SCLRGN insclrgn(struct VScreen *vscreen, VWNDIDX vwndidx, int ptx, int pty, LPRECT wnddim)
+WNDRGN inwndrgn(struct VScreen *vscreen, VWNDIDX vwndidx, int ptx, int pty, LPRECT wnddim)
 {
     struct VWnd *vwnd = vecget(&vscreen->windows, vwndidx);
 
@@ -162,7 +127,13 @@ SCLRGN insclrgn(struct VScreen *vscreen, VWNDIDX vwndidx, int ptx, int pty, LPRE
         return BOTTOM;
     }
 
-    return 0;
+    int rgny = top + SCALEREGIONSIZE + MOVEREGIONSIZE;
+    if (abs(rgny - pty) < MOVEREGIONSIZE)
+    {
+        return MOVEREGION;
+    }
+
+    return INWINDOW;
 }
 
 void movevwnd(struct VScreen *vscreen, VWNDIDX vwndidx, short dx, short dy, COORD moveinitx, COORD moveinity)
@@ -181,11 +152,11 @@ void movevwnd(struct VScreen *vscreen, VWNDIDX vwndidx, short dx, short dy, COOR
     vwnd->bottom = y + h;
 }
 
-void scalevwnd(struct VScreen *vscreen, VWNDIDX vwndidx, SCLRGN sclrgn, short x, short y)
+void scalevwnd(struct VScreen *vscreen, VWNDIDX vwndidx, WNDRGN wndrgn, short x, short y)
 {
     struct VWnd *vwnd = vecget(&vscreen->windows, vwndidx);
 
-    switch (sclrgn)
+    switch (wndrgn)
     {
     case TOPLEFT:
         vwnd->left = x;
@@ -214,6 +185,8 @@ void scalevwnd(struct VScreen *vscreen, VWNDIDX vwndidx, SCLRGN sclrgn, short x,
         break;
     case RIGHT:
         vwnd->right = x;
+        break;
+    default:
         break;
     }
 }
@@ -249,4 +222,13 @@ float getaspctscl(struct VScreen *vscreen, LPRECT wnddim)
 
     // Use smaller ratio to keep aspect ratio constant.
     return wndsclx < wndscly ? wndsclx : wndscly;
+}
+
+void refreshvwndidx(struct VScreen *vscreen)
+{
+    for (int i = 0; i < veclength(&vscreen->windows); i++)
+    {
+        struct VWnd *vwnd = vecget(&vscreen->windows, i);
+        vwnd->vwndidx = i;
+    }
 }
