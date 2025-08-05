@@ -1,6 +1,6 @@
 #include "./vwnd.h"
+#include "./applications/applications.h"
 #include "./elements/elements.h"
-#include "./applications/application.h"
 #include <stdio.h>
 #include <stdlib.h>
 
@@ -34,7 +34,7 @@ struct VWnd *createvwnd(unsigned int top, unsigned int bottom, unsigned int left
     case TASKBAR: {
         HELEMENT *testicon = malloc(sizeof(HELEMENT));
         *testicon = newelement(0, (vwnd->bottom - vwnd->top), 0, 40, &vwnd->left, &vwnd->top);
-        addattribute(*testicon, CLICKABLE, launchapp);
+        addattribute(*testicon, CLICKABLE, applications[0]->launcher);
 
         pushvec(&vwnd->elements, testicon);
         break;
@@ -63,7 +63,8 @@ void clrvwnd(struct VScreen *vscreen, VWNDIDX vwndidx)
     rmvec(&vscreen->windows, vwndidx);
 
     free(vwnd->pxarr);
-    for (int i = 0; i<veclength(&vwnd->elements); i++) {
+    for (int i = 0; i < veclength(&vwnd->elements); i++)
+    {
         free(vecget(&vwnd->elements, i));
     }
     clrvec(&vwnd->elements);
