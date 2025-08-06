@@ -7,9 +7,9 @@
 static COORD moveinitx;
 static COORD moveinity;
 
-void sendvwndevent(struct VScreen *vscreen, VWNDIDX vwndidx, enum VWndMsg msg, long param)
+void sendvwndevent(VScreen *vscreen, VWNDIDX vwndidx, VWNDMSG msg, long param)
 {
-    struct VWnd *vwnd = vecget(&vscreen->windows, vwndidx);
+    VWnd *vwnd = vecget(&vscreen->windows, vwndidx);
     *vwnd->msg = *vwnd->msg | msg;
     if (param)
     {
@@ -35,7 +35,7 @@ void sendvwndevent(struct VScreen *vscreen, VWNDIDX vwndidx, enum VWndMsg msg, l
     }
 }
 
-void sendglobalevent(struct VScreen *vscreen, enum VWndMsg msg, long param)
+void sendglobalevent(VScreen *vscreen, VWNDMSG msg, long param)
 {
     for (int i = veclength(&vscreen->windows) - 1; i >= 0; i--)
     {
@@ -43,11 +43,11 @@ void sendglobalevent(struct VScreen *vscreen, enum VWndMsg msg, long param)
     }
 }
 
-void removeevent(struct VScreen *vscreen, enum VWndMsg msg)
+void removeevent(VScreen *vscreen, VWNDMSG msg)
 {
     for (int i = 0; i < veclength(&vscreen->windows); i++)
     {
-        struct VWnd *vwnd = vecget(&vscreen->windows, i);
+        VWnd *vwnd = vecget(&vscreen->windows, i);
         if (*vwnd->msg & msg)
         {
             *vwnd->msg = *vwnd->msg ^ msg;
@@ -55,9 +55,9 @@ void removeevent(struct VScreen *vscreen, enum VWndMsg msg)
     }
 }
 
-int processmsg(struct VScreen *vscreen, VWNDIDX vwndidx, enum VWndMsg msg, struct MsgFlags *msgflags)
+int processmsg(VScreen *vscreen, VWNDIDX vwndidx, VWNDMSG msg, MsgFlags *msgflags)
 {
-    struct VWnd *vwnd = vecget(&vscreen->windows, vwndidx);
+    VWnd *vwnd = vecget(&vscreen->windows, vwndidx);
     if (msg & SCALED && msg & MOUSEMOVED)
     {
         short x = HIWORD(msgflags->mousemoved);
@@ -101,16 +101,16 @@ int processmsg(struct VScreen *vscreen, VWNDIDX vwndidx, enum VWndMsg msg, struc
     return NO_REDRAW;
 }
 
-int handlevwndmessages(struct VScreen *vscreen)
+int handlevwndmessages(VScreen *vscreen)
 {
     int redraw = NO_REDRAW;
     for (int i = 0; i < veclength(&vscreen->windows); i++)
     {
-        struct VWnd *vwnd = vecget(&vscreen->windows, i);
+        VWnd *vwnd = vecget(&vscreen->windows, i);
 
-        if (vwnd->msg && vwnd->focused)
+        if (vwnd->msg && isfocused(vscreen, i))
         {
-            enum VWndMsg msg = *vwnd->msg;
+            VWNDMSG msg = *vwnd->msg;
             if (processmsg(vscreen, i, msg, vwnd->msgflags))
             {
                 redraw = REDRAW;

@@ -12,7 +12,7 @@ void initgea()
 
 HELEMENT newelement(int top, int bottom, int left, int right, unsigned int *anchorx, unsigned int *anchory)
 {
-    struct Element *elem = malloc(sizeof(struct Element));
+    Element *elem = malloc(sizeof(Element));
 
     elem->left = left;
     elem->right = right;
@@ -31,9 +31,9 @@ void rmelement(HELEMENT helem)
     free(element);
 }
 
-void executeelem(HELEMENT helem, struct VScreen *vscreen, VWNDIDX vwndidx)
+void executeelem(HELEMENT helem, VScreen *vscreen, VWNDIDX vwndidx)
 {
-    struct Element *element = vecget(&gea, helem);
+    Element *element = vecget(&gea, helem);
 
     if (element->behavior == NULL)
     {
@@ -45,7 +45,7 @@ void executeelem(HELEMENT helem, struct VScreen *vscreen, VWNDIDX vwndidx)
 
 int ptinelem(HELEMENT helem, short x, short y)
 {
-    struct Element *element = vecget(&gea, helem);
+    Element *element = vecget(&gea, helem);
 
     RECT elemrect = {0};
     elemrect.top = element->top + *element->anchory;
@@ -60,9 +60,9 @@ int ptinelem(HELEMENT helem, short x, short y)
     return PtInRect(&elemrect, pt);
 }
 
-void drawelement(HDC hdc, struct VScreen *vscreen, HELEMENT helem, LPRECT wnddim)
+void drawelement(HDC hdc, VScreen *vscreen, HELEMENT helem, LPRECT wnddim)
 {
-    struct Element *element = vecget(&gea, helem);
+    Element *element = vecget(&gea, helem);
     COORD top = element->top + *element->anchory;
     COORD bottom = element->bottom + *element->anchory;
     COORD left = element->left + *element->anchorx;
@@ -74,28 +74,28 @@ void drawelement(HDC hdc, struct VScreen *vscreen, HELEMENT helem, LPRECT wnddim
     drawstylerect(hdc, left, top, right - left, bottom - top);
 }
 
-void addclickable(HELEMENT helem, void (*behavior)(struct VScreen *vscreen, VWNDIDX vwndidx))
+void addclickable(HELEMENT helem, void (*behavior)(VScreen *vscreen, VWNDIDX vwndidx))
 {
-    struct Element *element = vecget(&gea, helem);
+    Element *element = vecget(&gea, helem);
     element->attributes = element->attributes | CLICKABLE;
     element->behavior = behavior;
 }
 
-void addhoverable(HELEMENT helem, void (*behavior)(struct VScreen *vscreen, VWNDIDX vwndidx))
+void addhoverable(HELEMENT helem, void (*behavior)(VScreen *vscreen, VWNDIDX vwndidx))
 {
-    struct Element *element = vecget(&gea, helem);
+    Element *element = vecget(&gea, helem);
     element->attributes = element->attributes | HOVERABLE;
     element->behavior = behavior;
 }
 
 void addhasimage(HELEMENT helem, HBITMAP bmp)
 {
-    struct Element *element = vecget(&gea, helem);
+    Element *element = vecget(&gea, helem);
     element->attributes = element->attributes | HASIMAGE;
     element->bmp = bmp;
 }
 
-void addattribute(HELEMENT helem, enum ElemAttribute attribute, void *param)
+void addattribute(HELEMENT helem, ELEMATTRIBUTE attribute, void *param)
 {
     switch (attribute)
     {
@@ -111,8 +111,8 @@ void addattribute(HELEMENT helem, enum ElemAttribute attribute, void *param)
     }
 }
 
-int hasattribute(HELEMENT helem, enum ElemAttribute attribute)
+int hasattribute(HELEMENT helem, ELEMATTRIBUTE attribute)
 {
-    struct Element *element = vecget(&gea, helem);
+    Element *element = vecget(&gea, helem);
     return (element->attributes & attribute) != 0;
 }

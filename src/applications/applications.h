@@ -5,7 +5,7 @@ typedef struct
 {
     const char *name;
 
-    void (*launcher)(struct VScreen *vscreen, VWNDIDX vwndidx);
+    void (*launcher)(VScreen *vscreen, VWNDIDX vwndidx);
 } Application;
 
-extern const Application* applications[2];
+extern const Application *applications[2];

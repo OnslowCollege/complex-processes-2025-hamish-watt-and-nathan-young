@@ -12,12 +12,12 @@
 
 #define COORD short
 
-struct VScreen
+typedef struct
 {
     unsigned int w;
     unsigned int h;
     VEC windows;
-};
+} VScreen;
 
 enum WndRgn
 {
@@ -33,12 +33,12 @@ enum WndRgn
     MOVEREGION,
 };
 
-struct VScreen *createvscreen(unsigned int w, unsigned int h);
-void vcoordcvt(struct VScreen *vscreen, COORD *x, COORD *y, LPRECT wnddim);
-void rcoordcvt(struct VScreen *vscreen, COORD *x, COORD *y, LPRECT wnddim);
-void scalevwnd(struct VScreen *vscreen, VWNDIDX vwndidx, WNDRGN wndrgn, short sclx, short scly);
-void movevwnd(struct VScreen *vscreen, VWNDIDX vwndidx, short dx, short dy, COORD moveinitx, COORD moveinity);
-WNDRGN inwndrgn(struct VScreen *vscreen, VWNDIDX vwndidx, int ptx, int pty, LPRECT wnddim);
-void drawvwnd(struct VScreen *vscreen, VWNDIDX vwndidx, HDC hdc, LPRECT wnddim);
-float getaspctscl(struct VScreen *vscreen, LPRECT wnddim);
-void refreshvwndidx(struct VScreen *vscreen);
+VScreen *createvscreen(unsigned int w, unsigned int h);
+void vcoordcvt(VScreen *vscreen, COORD *x, COORD *y, LPRECT wnddim);
+void rcoordcvt(VScreen *vscreen, COORD *x, COORD *y, LPRECT wnddim);
+void scalevwnd(VScreen *vscreen, VWNDIDX vwndidx, WNDRGN wndrgn, short sclx, short scly);
+void movevwnd(VScreen *vscreen, VWNDIDX vwndidx, short dx, short dy, COORD moveinitx, COORD moveinity);
+WNDRGN inwndrgn(VScreen *vscreen, VWNDIDX vwndidx, int ptx, int pty, LPRECT wnddim);
+void drawvwnd(VScreen *vscreen, VWNDIDX vwndidx, HDC hdc, LPRECT wnddim);
+float getaspctscl(VScreen *vscreen, LPRECT wnddim);
+void refreshvwndidx(VScreen *vscreen);

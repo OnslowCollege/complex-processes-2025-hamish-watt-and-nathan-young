@@ -1,14 +1,16 @@
 #pragma once
 #include "./screen.h"
 
-struct MsgFlags
+#define VWNDMSG enum VWndMsg
+
+typedef struct
 {
     long mousemoved;
     long scaled;
     long moved;
     long windowmoved;
     long mouseclicked;
-};
+} MsgFlags;
 
 /* These values cannot overlap in binary so that they can be combined with a bitwise OR */
 enum VWndMsg
@@ -20,8 +22,8 @@ enum VWndMsg
     MOUSECLICKED = 0b00010000,
 };
 
-int handlevwndmessages(struct VScreen *vscreen);
-void sendvwndevent(struct VScreen *vscreen, VWNDIDX vwndidx, enum VWndMsg msg, long param);
-void sendglobalevent(struct VScreen *vscreen, enum VWndMsg msg, long param);
-void removeevent(struct VScreen *vscreen, enum VWndMsg msg);
+int handlevwndmessages(VScreen *vscreen);
+void sendvwndevent(VScreen *vscreen, VWNDIDX vwndidx, VWNDMSG msg, long param);
+void sendglobalevent(VScreen *vscreen, VWNDMSG msg, long param);
+void removeevent(VScreen *vscreen, VWNDMSG msg);
 void initgea();

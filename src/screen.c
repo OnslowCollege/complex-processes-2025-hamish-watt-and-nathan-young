@@ -10,9 +10,9 @@
 #define MIN_WINDOW_WIDTH 50
 #define MIN_WINDOW_HEIGHT 40
 
-struct VScreen *createvscreen(unsigned int w, unsigned int h)
+VScreen *createvscreen(unsigned int w, unsigned int h)
 {
-    struct VScreen *screen = malloc(sizeof(struct VScreen));
+    VScreen *screen = malloc(sizeof(VScreen));
     screen->w = w;
     screen->h = h;
     screen->windows = createvec(30);
@@ -20,9 +20,9 @@ struct VScreen *createvscreen(unsigned int w, unsigned int h)
     return screen;
 }
 
-void drawvwnd(struct VScreen *vscreen, VWNDIDX vwndidx, HDC hdc, LPRECT wnddim)
+void drawvwnd(VScreen *vscreen, VWNDIDX vwndidx, HDC hdc, LPRECT wnddim)
 {
-    struct VWnd *vwnd = vecget(&vscreen->windows, vwndidx);
+    VWnd *vwnd = vecget(&vscreen->windows, vwndidx);
 
     COORD left = vwnd->left;
     COORD top = vwnd->top;
@@ -61,9 +61,9 @@ void drawvwnd(struct VScreen *vscreen, VWNDIDX vwndidx, HDC hdc, LPRECT wnddim)
     }
 }
 
-WNDRGN inwndrgn(struct VScreen *vscreen, VWNDIDX vwndidx, int ptx, int pty, LPRECT wnddim)
+WNDRGN inwndrgn(VScreen *vscreen, VWNDIDX vwndidx, int ptx, int pty, LPRECT wnddim)
 {
-    struct VWnd *vwnd = vecget(&vscreen->windows, vwndidx);
+    VWnd *vwnd = vecget(&vscreen->windows, vwndidx);
 
     if (*vwnd->vwndstyle != DEFAULT)
     {
@@ -136,9 +136,9 @@ WNDRGN inwndrgn(struct VScreen *vscreen, VWNDIDX vwndidx, int ptx, int pty, LPRE
     return INWINDOW;
 }
 
-void movevwnd(struct VScreen *vscreen, VWNDIDX vwndidx, short dx, short dy, COORD moveinitx, COORD moveinity)
+void movevwnd(VScreen *vscreen, VWNDIDX vwndidx, short dx, short dy, COORD moveinitx, COORD moveinity)
 {
-    struct VWnd *vwnd = vecget(&vscreen->windows, vwndidx);
+    VWnd *vwnd = vecget(&vscreen->windows, vwndidx);
 
     short x = moveinitx + dx;
     short y = moveinity + dy;
@@ -152,9 +152,9 @@ void movevwnd(struct VScreen *vscreen, VWNDIDX vwndidx, short dx, short dy, COOR
     vwnd->bottom = y + h;
 }
 
-void scalevwnd(struct VScreen *vscreen, VWNDIDX vwndidx, WNDRGN wndrgn, short x, short y)
+void scalevwnd(VScreen *vscreen, VWNDIDX vwndidx, WNDRGN wndrgn, short x, short y)
 {
-    struct VWnd *vwnd = vecget(&vscreen->windows, vwndidx);
+    VWnd *vwnd = vecget(&vscreen->windows, vwndidx);
 
     switch (wndrgn)
     {
@@ -191,7 +191,7 @@ void scalevwnd(struct VScreen *vscreen, VWNDIDX vwndidx, WNDRGN wndrgn, short x,
     }
 }
 
-void vcoordcvt(struct VScreen *vscreen, COORD *x, COORD *y, LPRECT wnddim)
+void vcoordcvt(VScreen *vscreen, COORD *x, COORD *y, LPRECT wnddim)
 {
     float aspctscl = getaspctscl(vscreen, wnddim);
     // Calculate offset to virtual window is centered.
@@ -202,7 +202,7 @@ void vcoordcvt(struct VScreen *vscreen, COORD *x, COORD *y, LPRECT wnddim)
     *y = ((float)(*y) * aspctscl) + yoffset;
 }
 
-void rcoordcvt(struct VScreen *vscreen, COORD *x, COORD *y, LPRECT wnddim)
+void rcoordcvt(VScreen *vscreen, COORD *x, COORD *y, LPRECT wnddim)
 {
     float aspctscl = getaspctscl(vscreen, wnddim);
     // Calculate offset to virtual window is centered.
@@ -213,7 +213,7 @@ void rcoordcvt(struct VScreen *vscreen, COORD *x, COORD *y, LPRECT wnddim)
     *y = ((float)(*y - yoffset) / aspctscl);
 }
 
-float getaspctscl(struct VScreen *vscreen, LPRECT wnddim)
+float getaspctscl(VScreen *vscreen, LPRECT wnddim)
 {
     LONG wndw = wnddim->right - wnddim->left;
     LONG wndh = wnddim->bottom - wnddim->top;
@@ -224,11 +224,11 @@ float getaspctscl(struct VScreen *vscreen, LPRECT wnddim)
     return wndsclx < wndscly ? wndsclx : wndscly;
 }
 
-void refreshvwndidx(struct VScreen *vscreen)
+void refreshvwndidx(VScreen *vscreen)
 {
     for (int i = 0; i < veclength(&vscreen->windows); i++)
     {
-        struct VWnd *vwnd = vecget(&vscreen->windows, i);
+        VWnd *vwnd = vecget(&vscreen->windows, i);
         vwnd->vwndidx = i;
     }
 }

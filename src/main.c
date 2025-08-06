@@ -16,7 +16,7 @@
 
 LRESULT __stdcall windowProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam);
 
-static struct VScreen *vscreen = NULL;
+static VScreen *vscreen = NULL;
 
 HBITMAP g_hbmtemp;
 
@@ -73,17 +73,17 @@ LRESULT __stdcall windowProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
         g_hbmtemp = LoadBitmapA(GetModuleHandle(NULL), "temp");
         vscreen = createvscreen(VSCREEN_RIGHT, VSCREEN_BOTTOM);
 
-        struct VWnd *desktop = createvwnd(VSCREEN_TOP, VSCREEN_BOTTOM, VSCREEN_LEFT, VSCREEN_RIGHT, DESKTOP);
+        VWnd *desktop = createvwnd(VSCREEN_TOP, VSCREEN_BOTTOM, VSCREEN_LEFT, VSCREEN_RIGHT, DESKTOP);
         bindvwnd(vscreen, desktop);
 
-        struct VWnd *taskbar =
+        VWnd *taskbar =
             createvwnd(VSCREEN_BOTTOM - TASKBAR_HEIGHT, VSCREEN_BOTTOM, VSCREEN_LEFT, VSCREEN_RIGHT, TASKBAR);
         bindvwnd(vscreen, taskbar);
 
-        struct VWnd *test_vwnd = createvwnd(10, 50, 100, 200, DEFAULT);
+        VWnd *test_vwnd = createvwnd(10, 50, 100, 200, DEFAULT);
         bindvwnd(vscreen, test_vwnd);
 
-        struct VWnd *test_vwnd2 = createvwnd(10, 50, 130, 230, DEFAULT);
+        VWnd *test_vwnd2 = createvwnd(10, 50, 130, 230, DEFAULT);
         bindvwnd(vscreen, test_vwnd2);
 
         if (!g_hbmtemp)
@@ -113,7 +113,7 @@ LRESULT __stdcall windowProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
             {
                 if (!isfocused(vscreen, i))
                 {
-                    printf("focusing\n");
+                    printf("focusing %d\n", i);
                     focusvwnd(vscreen, i);
                     break;
                 }
@@ -158,7 +158,6 @@ LRESULT __stdcall windowProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 
         long param = ((long)x << 16) | (y & 0xffff);
 
-        printf("mouse clicked\n");
         sendglobalevent(vscreen, MOUSECLICKED, param);
 
         removeevent(vscreen, SCALED);

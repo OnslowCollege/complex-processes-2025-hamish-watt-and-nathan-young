@@ -4,8 +4,9 @@
 #include <windows.h>
 
 #define TOOLBAR_HEIGHT 20
+#define VWNDSTYLE enum VWndStyle
 
-struct VWnd
+typedef struct
 {
     int vwndidx;
     int focused;
@@ -16,8 +17,8 @@ struct VWnd
     enum VWndState *vwndstate;
     enum VWndMsg *msg;
 
-    struct MsgFlags *msgflags;
-};
+    MsgFlags *msgflags;
+} VWnd;
 
 enum VWndStyle
 {
@@ -33,10 +34,9 @@ enum VWndState
     MINIMIZED,
 };
 
-struct VWnd *createvwnd(unsigned int top, unsigned int bottom, unsigned int left, unsigned int right,
-                        enum VWndStyle vwndstyle);
+VWnd *createvwnd(unsigned int top, unsigned int bottom, unsigned int left, unsigned int right, VWNDSTYLE vwndstyle);
 
-int isfocused(struct VScreen *vscreen, VWNDIDX vwndidx);
-void focusvwnd(struct VScreen *vscreen, VWNDIDX vwndidx);
-VWNDIDX bindvwnd(struct VScreen *vscreen, struct VWnd *vwnd);
-void clrvwnd(struct VScreen *vscreen, VWNDIDX vwndidx);
+int isfocused(VScreen *vscreen, VWNDIDX vwndidx);
+void focusvwnd(VScreen *vscreen, VWNDIDX vwndidx);
+VWNDIDX bindvwnd(VScreen *vscreen, VWnd *vwnd);
+void clrvwnd(VScreen *vscreen, VWNDIDX vwndidx);

@@ -6,20 +6,19 @@
 
 #define BORDER_SIZE 32
 
-struct VWnd *createvwnd(unsigned int top, unsigned int bottom, unsigned int left, unsigned int right,
-                        enum VWndStyle vwndstyle)
+VWnd *createvwnd(unsigned int top, unsigned int bottom, unsigned int left, unsigned int right, VWNDSTYLE vwndstyle)
 {
-    struct VWnd *vwnd = malloc(sizeof(struct VWnd));
+    VWnd *vwnd = malloc(sizeof(VWnd));
     vwnd->top = top;
     vwnd->bottom = bottom;
     vwnd->left = left;
     vwnd->right = right;
     vwnd->pxarr = malloc(3 * (right - left - BORDER_SIZE) * (bottom - top - BORDER_SIZE));
     vwnd->elements = createvec(15);
-    vwnd->vwndstyle = malloc(sizeof(enum VWndStyle));
+    vwnd->vwndstyle = malloc(sizeof(VWNDSTYLE));
     *vwnd->vwndstyle = vwndstyle;
-    vwnd->msg = malloc(sizeof(enum VWndMsg));
-    vwnd->msgflags = malloc(sizeof(struct MsgFlags));
+    vwnd->msg = malloc(sizeof(VWNDMSG));
+    vwnd->msgflags = malloc(sizeof(MsgFlags));
 
     switch (*vwnd->vwndstyle)
     {
@@ -50,31 +49,37 @@ struct VWnd *createvwnd(unsigned int top, unsigned int bottom, unsigned int left
     return vwnd;
 }
 
-VWNDIDX bindvwnd(struct VScreen *vscreen, struct VWnd *vwnd)
+VWNDIDX bindvwnd(VScreen *vscreen, VWnd *vwnd)
 {
-    static int next_vwndidx = 0;
+    int vwndidx = veclength(&vscreen->windows);
     pushvec(&vscreen->windows, vwnd);
 
-    printf("vwndidx: %d\n", next_vwndidx);
+    printf("vwndidx: %d\n", vwndidx);
 
-    focusvwnd(vscreen, next_vwndidx);
+    focusvwnd(vscreen, vwndidx);
 
-    return next_vwndidx++;
+    return vwndidx++;
 }
 
-int isfocused(struct VScreen *vscreen, VWNDIDX vwndidx)
+int isfocused(VScreen *vscreen, VWNDIDX vwndidx)
 {
-    struct VWnd *vwnd = vecget(&vscreen->windows, vwndidx);
+    VWnd *vwnd = vecget(&vscreen->windows, vwndidx);
+
+    if (*vwnd->vwndstyle != DEFAULT)
+    {
+        return 1;
+    }
+
     return vwnd->focused;
 }
 
-void focusvwnd(struct VScreen *vscreen, VWNDIDX vwndidx)
+void focusvwnd(VScreen *vscreen, VWNDIDX vwndidx)
 {
-    struct VWnd *vwnd = vecget(&vscreen->windows, vwndidx);
+    VWnd *vwnd = vecget(&vscreen->windows, vwndidx);
 
     for (int i = 0; i < veclength(&vscreen->windows); i++)
     {
-        struct VWnd *other_wnd = vecget(&vscreen->windows, i);
+        VWnd *other_wnd = vecget(&vscreen->windows, i);
         other_wnd->focused = 0;
     }
 
@@ -91,9 +96,9 @@ void focusvwnd(struct VScreen *vscreen, VWNDIDX vwndidx)
     refreshvwndidx(vscreen);
 }
 
-void clrvwnd(struct VScreen *vscreen, VWNDIDX vwndidx)
+void clrvwnd(VScreen *vscreen, VWNDIDX vwndidx)
 {
-    struct VWnd *vwnd = vecget(&vscreen->windows, vwndidx);
+    VWnd *vwnd = vecget(&vscreen->windows, vwndidx);
 
     rmvec(&vscreen->windows, vwndidx);
 

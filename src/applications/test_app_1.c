@@ -1,9 +1,9 @@
-#include "applications.h"
 #include "../vwnd.h"
+#include "applications.h"
 
-static void launcher(struct VScreen *vscreen, VWNDIDX vwndidx)
+static void launcher(VScreen *vscreen, VWNDIDX vwndidx)
 {
-    struct VWnd *test_app_1 = createvwnd(100, 300, 400, 500, DEFAULT);
+    VWnd *test_app_1 = createvwnd(100, 300, 400, 500, DEFAULT);
     bindvwnd(vscreen, test_app_1);
 }
 
