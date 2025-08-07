@@ -37,7 +37,7 @@ void *vecget(VEC *v, int idx)
 
 void rmvec(VEC *v, int idx)
 {
-    memmove(v->elems[idx], v->elems[idx + 1], veclength(v) * sizeof(void *) - idx * sizeof(void *) - sizeof(void *));
+    memmove(&v->elems[idx], &v->elems[idx + 1], veclength(v) * sizeof(void *) - idx * sizeof(void *) - sizeof(void *));
     v->idx -= sizeof(void *);
 }
 

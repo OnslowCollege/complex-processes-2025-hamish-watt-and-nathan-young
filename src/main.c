@@ -115,6 +115,7 @@ LRESULT __stdcall windowProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
                 {
                     printf("focusing %d\n", i);
                     focusvwnd(vscreen, i);
+                    InvalidateRect(hwnd, NULL, FALSE);
                     break;
                 }
 
