@@ -10,6 +10,7 @@ typedef struct
 {
     int vwndidx;
     int focused;
+
     unsigned int top, bottom, left, right;
     unsigned int *pxarr;
     VEC elements;

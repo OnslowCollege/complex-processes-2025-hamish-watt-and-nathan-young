@@ -9,6 +9,7 @@
 VWnd *createvwnd(unsigned int top, unsigned int bottom, unsigned int left, unsigned int right, VWNDSTYLE vwndstyle)
 {
     VWnd *vwnd = malloc(sizeof(VWnd));
+
     vwnd->top = top;
     vwnd->bottom = bottom;
     vwnd->left = left;
@@ -58,7 +59,7 @@ VWNDIDX bindvwnd(VScreen *vscreen, VWnd *vwnd)
 
     focusvwnd(vscreen, vwndidx);
 
-    return vwndidx++;
+    return vwndidx;
 }
 
 int isfocused(VScreen *vscreen, VWNDIDX vwndidx)

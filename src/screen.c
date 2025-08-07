@@ -3,6 +3,7 @@
 #include "./graphics.h"
 #include "./utils.h"
 #include "./vwnd.h"
+#include <stdio.h>
 #include <windows.h>
 
 #define SCALEREGIONSIZE 10
@@ -24,10 +25,17 @@ void drawvwnd(VScreen *vscreen, VWNDIDX vwndidx, HDC hdc, LPRECT wnddim)
 {
     VWnd *vwnd = vecget(&vscreen->windows, vwndidx);
 
+    if (vwnd == NULL)
+    {
+        fprintf(stderr, "Could not get vwnd from windows array");
+    }
+
     COORD left = vwnd->left;
     COORD top = vwnd->top;
     COORD right = vwnd->right;
     COORD bottom = vwnd->bottom;
+
+    printf("vwndidx: %d\n  top: %d\n  bottom: %d\n  left: %d\n  right: %d\n", vwndidx, top, bottom, left, right);
 
     vcoordcvt(vscreen, &left, &top, wnddim);
     vcoordcvt(vscreen, &right, &bottom, wnddim);

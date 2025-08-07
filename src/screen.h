@@ -34,11 +34,19 @@ enum WndRgn
 };
 
 VScreen *createvscreen(unsigned int w, unsigned int h);
+
 void vcoordcvt(VScreen *vscreen, COORD *x, COORD *y, LPRECT wnddim);
+
 void rcoordcvt(VScreen *vscreen, COORD *x, COORD *y, LPRECT wnddim);
+
 void scalevwnd(VScreen *vscreen, VWNDIDX vwndidx, WNDRGN wndrgn, short sclx, short scly);
+
 void movevwnd(VScreen *vscreen, VWNDIDX vwndidx, short dx, short dy, COORD moveinitx, COORD moveinity);
+
 WNDRGN inwndrgn(VScreen *vscreen, VWNDIDX vwndidx, int ptx, int pty, LPRECT wnddim);
+
 void drawvwnd(VScreen *vscreen, VWNDIDX vwndidx, HDC hdc, LPRECT wnddim);
+
 float getaspctscl(VScreen *vscreen, LPRECT wnddim);
+
 void refreshvwndidx(VScreen *vscreen);

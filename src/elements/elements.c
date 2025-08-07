@@ -1,6 +1,7 @@
 #include "./elements.h"
 #include "../graphics.h"
 #include "../utils.h"
+#include <stdio.h>
 #include <windows.h>
 
 static VEC gea;
@@ -14,6 +15,11 @@ HELEMENT newelement(int top, int bottom, int left, int right, unsigned int *anch
 {
     Element *elem = malloc(sizeof(Element));
 
+    if (elem == NULL)
+    {
+        fprintf(stderr, "Could not allocate new element\n");
+    }
+
     elem->left = left;
     elem->right = right;
     elem->bottom = bottom;
@@ -22,6 +28,8 @@ HELEMENT newelement(int top, int bottom, int left, int right, unsigned int *anch
     elem->anchory = anchory;
 
     pushvec(&gea, elem);
+    printf("gea length: %d\n", veclength(&gea));
+
     return veclength(&gea) - 1;
 }
 
