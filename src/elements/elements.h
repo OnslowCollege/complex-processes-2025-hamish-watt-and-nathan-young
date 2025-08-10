@@ -11,6 +11,8 @@ enum ElemAttribute
     CLICKABLE = 0b00000001,
     HOVERABLE = 0b00000101,
     HASIMAGE = 0b00000010,
+    // This name is very bad.
+    DOUBLECLICKABLE = 0b00001000,
 };
 
 typedef struct

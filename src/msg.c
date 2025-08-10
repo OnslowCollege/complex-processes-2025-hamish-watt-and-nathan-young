@@ -2,6 +2,7 @@
 #include "elements/elements.h"
 #include "screen.h"
 #include "vwnd.h"
+#include <stdio.h>
 #include <windows.h>
 
 static COORD moveinitx;
@@ -27,6 +28,9 @@ void sendvwndevent(VScreen *vscreen, VWNDIDX vwndidx, VWNDMSG msg, long param)
             moveinity = vwnd->top;
             break;
         case MOUSECLICKED:
+            vwnd->msgflags->mouseclicked = param;
+            break;
+        case DOUBLECLICKED:
             vwnd->msgflags->mouseclicked = param;
             break;
         default:
@@ -86,6 +90,26 @@ int processmsg(VScreen *vscreen, VWNDIDX vwndidx, VWNDMSG msg, MsgFlags *msgflag
         {
             HELEMENT helem = *(HELEMENT *)vecget(&vwnd->elements, i);
             if (hasattribute(helem, CLICKABLE))
+            {
+                COORD x = HIWORD(msgflags->mouseclicked);
+                COORD y = LOWORD(msgflags->mouseclicked);
+
+                if (ptinelem(helem, x, y))
+                {
+                    executeelem(helem, vscreen, vwndidx);
+                    return REDRAW;
+                }
+            }
+        }
+    }
+
+    if (msg & DOUBLECLICKED)
+    {
+        *vwnd->msg = *vwnd->msg ^ DOUBLECLICKED;
+        for (int i = 0; i < veclength(&vwnd->elements); i++)
+        {
+            HELEMENT helem = *(HELEMENT *)vecget(&vwnd->elements, i);
+            if (hasattribute(helem, DOUBLECLICKABLE))
             {
                 COORD x = HIWORD(msgflags->mouseclicked);
                 COORD y = LOWORD(msgflags->mouseclicked);

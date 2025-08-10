@@ -29,6 +29,7 @@ int __stdcall WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdL
     wndClass.hInstance = hInstance;
     wndClass.lpszClassName = CLASS_NAME;
     wndClass.hCursor = LoadCursor(NULL, IDC_ARROW);
+    wndClass.style = CS_DBLCLKS;
 
     RegisterClass(&wndClass);
 
@@ -125,7 +126,11 @@ LRESULT __stdcall windowProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
                     break;
                 }
 
-                sendvwndevent(vscreen, i, SCALED, wndrgn);
+                if (wndrgn != INWINDOW)
+                {
+                    sendvwndevent(vscreen, i, SCALED, wndrgn);
+                    break;
+                }
                 break;
             }
         }
@@ -133,6 +138,8 @@ LRESULT __stdcall windowProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
         return 0;
     }
     case WM_MOUSEMOVE: {
+        if (wParam & MK_LBUTTON)
+        {
         POINT pt = {GET_X_LPARAM(lParam), GET_Y_LPARAM(lParam)};
         COORD x = (short)pt.x;
         COORD y = (short)pt.y;
@@ -143,7 +150,7 @@ LRESULT __stdcall windowProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
         long param = ((long)x << 16) | (y & 0xffff);
 
         sendglobalevent(vscreen, MOUSEMOVED, param);
-
+        }
         return 0;
     }
     case WM_LBUTTONUP: {
@@ -163,6 +170,21 @@ LRESULT __stdcall windowProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 
         removeevent(vscreen, SCALED);
         removeevent(vscreen, MOVED);
+        return 0;
+    }
+    case WM_LBUTTONDBLCLK: {
+        POINT pt = {GET_X_LPARAM(lParam), GET_Y_LPARAM(lParam)};
+
+        RECT wndrect;
+        GetClientRect(hwnd, &wndrect);
+
+        COORD x = pt.x;
+        COORD y = pt.y;
+        rcoordcvt(vscreen, &x, &y, &wndrect);
+
+        long param = ((long)x << 16) | (y & 0xffff);
+
+        sendglobalevent(vscreen, DOUBLECLICKED, param);
         return 0;
     }
     case WM_SIZE: {

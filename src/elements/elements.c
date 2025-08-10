@@ -96,6 +96,13 @@ void addhoverable(HELEMENT helem, void (*behavior)(VScreen *vscreen, VWNDIDX vwn
     element->behavior = behavior;
 }
 
+void adddoubleable(HELEMENT helem, void (*behavior)(VScreen *vscreen, VWNDIDX vwndidx))
+{
+    Element *element = vecget(&gea, helem);
+    element->attributes = element->attributes | DOUBLECLICKABLE;
+    element->behavior = behavior;
+}
+
 void addhasimage(HELEMENT helem, HBITMAP bmp)
 {
     Element *element = vecget(&gea, helem);
@@ -109,6 +116,9 @@ void addattribute(HELEMENT helem, ELEMATTRIBUTE attribute, void *param)
     {
     case CLICKABLE:
         addclickable(helem, param);
+        break;
+    case DOUBLECLICKABLE:
+        adddoubleable(helem, param);
         break;
     case HOVERABLE:
         addhoverable(helem, param);

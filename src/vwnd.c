@@ -43,6 +43,11 @@ VWnd *createvwnd(unsigned int top, unsigned int bottom, unsigned int left, unsig
         break;
     }
     case DESKTOP: {
+        HELEMENT *testicon = malloc(sizeof(HELEMENT));
+        *testicon = newelement(100, 120, 100, 120, &vwnd->left, &vwnd->top);
+        addattribute(*testicon, DOUBLECLICKABLE, applications[0]->launcher);
+
+        pushvec(&vwnd->elements, testicon);
         break;
     }
     }

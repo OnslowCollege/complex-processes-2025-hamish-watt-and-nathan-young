@@ -20,6 +20,7 @@ enum VWndMsg
     MOVED = 0b00000100,
     WINDOWMOVED = 0b00001000,
     MOUSECLICKED = 0b00010000,
+    DOUBLECLICKED = 0b00100000,
 };
 
 int handlevwndmessages(VScreen *vscreen);
