@@ -79,7 +79,15 @@ void drawelement(HDC hdc, VScreen *vscreen, HELEMENT helem, LPRECT wnddim)
     vcoordcvt(vscreen, &left, &top, wnddim);
     vcoordcvt(vscreen, &right, &bottom, wnddim);
 
-    drawstylerect(hdc, left, top, right - left, bottom - top);
+    if (hasattribute(helem, HASSTYLERECT))
+    {
+        drawstylerect(hdc, left, top, right - left, bottom - top);
+    }
+
+    if (hasattribute(helem, HASIMAGE))
+    {
+        drawimage(hdc, element->bmp, left, top, right - left, bottom - top);
+    }
 }
 
 void addclickable(HELEMENT helem, void (*behavior)(VScreen *vscreen, VWNDIDX vwndidx))
@@ -110,21 +118,26 @@ void addhasimage(HELEMENT helem, HBITMAP bmp)
     element->bmp = bmp;
 }
 
-void addattribute(HELEMENT helem, ELEMATTRIBUTE attribute, void *param)
+void addattribute(HELEMENT helem, ELEMATTRIBUTE attribute, int param)
 {
     switch (attribute)
     {
     case CLICKABLE:
-        addclickable(helem, param);
+        addclickable(helem, (void *)param);
         break;
     case DOUBLECLICKABLE:
         adddoubleable(helem, param);
         break;
     case HOVERABLE:
-        addhoverable(helem, param);
+        addhoverable(helem, (void *)param);
         break;
+    case HASSTYLERECT: {
+        Element *element = vecget(&gea, helem);
+        element->attributes = element->attributes | HASSTYLERECT;
+        break;
+    }
     case HASIMAGE:
-        addhasimage(helem, param);
+        addhasimage(helem, (HBITMAP)param);
         break;
     }
 }

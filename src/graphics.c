@@ -1,4 +1,5 @@
 #include "./graphics.h"
+#include <stdio.h>
 
 #define COLOR_BYTES 4
 #define BASE_COLOR 0xd6b9ce
@@ -49,5 +50,33 @@ void drawstylerect(HDC hdc, int x, int y, int w, int h)
 
     SelectObject(memdc, olddib);
     DeleteObject(dib);
+    DeleteDC(memdc);
+}
+
+void drawimage(HDC hdc, HBITMAP dib, int x, int y, int w, int h)
+{
+    BITMAPINFOHEADER bih;
+    BITMAPINFO bi;
+
+    HDC memdc = CreateCompatibleDC(hdc);
+
+    bih.biSize = sizeof(BITMAPINFOHEADER);
+    bih.biWidth = (long)w;
+    bih.biHeight = (long)h;
+    bih.biPlanes = 1;
+    bih.biBitCount = 32;
+    bih.biCompression = BI_RGB;
+
+    bi.bmiHeader = bih;
+
+    bi.bmiHeader.biSizeImage = (COLOR_BYTES * w) * h;
+
+    BITMAP bm;
+    GetObject(dib, sizeof(BITMAP), &bm);
+
+    HBITMAP olddib = SelectObject(memdc, dib);
+    StretchBlt(hdc, x, y, w, h, memdc, 0, 0, bm.bmWidth, bm.bmHeight, SRCCOPY);
+
+    SelectObject(memdc, olddib);
     DeleteDC(memdc);
 }

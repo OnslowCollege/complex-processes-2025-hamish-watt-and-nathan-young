@@ -17,8 +17,8 @@
 LRESULT __stdcall windowProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam);
 
 static VScreen *vscreen = NULL;
-
-HBITMAP g_hbmtemp;
+static COORD lastclick_x;
+static COORD lastclick_y;
 
 int __stdcall WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine, int nShowCmd)
 {
@@ -71,7 +71,6 @@ LRESULT __stdcall windowProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
     case WM_CREATE: {
         initgea();
 
-        g_hbmtemp = LoadBitmapA(GetModuleHandle(NULL), "temp");
         vscreen = createvscreen(VSCREEN_RIGHT, VSCREEN_BOTTOM);
 
         VWnd *desktop = createvwnd(VSCREEN_TOP, VSCREEN_BOTTOM, VSCREEN_LEFT, VSCREEN_RIGHT, DESKTOP);
@@ -87,11 +86,6 @@ LRESULT __stdcall windowProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
         VWnd *test_vwnd2 = createvwnd(10, 50, 130, 230, DEFAULT);
         bindvwnd(vscreen, test_vwnd2);
 
-        if (!g_hbmtemp)
-        {
-            printf("Could not load test bitmap\n");
-        }
-
         return 0;
     }
     case WM_LBUTTONDOWN: {
@@ -105,6 +99,9 @@ LRESULT __stdcall windowProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
         COORD y = pt.y;
         rcoordcvt(vscreen, &x, &y, &wndrect);
 
+        lastclick_x = x;
+        lastclick_y = y;
+
         long param = ((long)x << 16) | (y & 0xffff);
 
         for (int i = veclength(&vscreen->windows) - 1; i >= 0; i--)
@@ -114,7 +111,6 @@ LRESULT __stdcall windowProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
             {
                 if (!isfocused(vscreen, i))
                 {
-                    printf("focusing %d\n", i);
                     focusvwnd(vscreen, i);
                     InvalidateRect(hwnd, NULL, FALSE);
                     break;
@@ -164,9 +160,11 @@ LRESULT __stdcall windowProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
         COORD y = pt.y;
         rcoordcvt(vscreen, &x, &y, &wndrect);
 
-        long param = ((long)x << 16) | (y & 0xffff);
-
-        sendglobalevent(vscreen, MOUSECLICKED, param);
+        if (abs(x - lastclick_x) < 5 && abs(y - lastclick_y) < 5)
+        {
+            long param = ((long)x << 16) | (y & 0xffff);
+            sendglobalevent(vscreen, MOUSECLICKED, param);
+        }
 
         removeevent(vscreen, SCALED);
         removeevent(vscreen, MOVED);

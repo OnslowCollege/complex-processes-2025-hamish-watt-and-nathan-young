@@ -26,7 +26,8 @@ VWnd *createvwnd(unsigned int top, unsigned int bottom, unsigned int left, unsig
     case DEFAULT: {
         HELEMENT *hclosebutton = malloc(sizeof(HELEMENT));
         *hclosebutton = newelement(0, TOOLBAR_HEIGHT, -TOOLBAR_HEIGHT, 0, &vwnd->right, &vwnd->top);
-        addattribute(*hclosebutton, CLICKABLE, clrvwnd);
+        addattribute(*hclosebutton, HASSTYLERECT, 0);
+        addattribute(*hclosebutton, CLICKABLE, (int)clrvwnd);
 
         pushvec(&vwnd->elements, hclosebutton);
         break;
@@ -34,9 +35,12 @@ VWnd *createvwnd(unsigned int top, unsigned int bottom, unsigned int left, unsig
     case TASKBAR: {
         for (int i = 0; i < sizeof(applications) / sizeof(applications[0]); i++)
         {
+            HBITMAP hbmp = LoadBitmapA(GetModuleHandle(NULL), "temp");
             HELEMENT *testicon = malloc(sizeof(HELEMENT));
             *testicon = newelement(0, (vwnd->bottom - vwnd->top), i * 40, i * 40 + 40, &vwnd->left, &vwnd->top);
-            addattribute(*testicon, CLICKABLE, applications[i]->launcher);
+            addattribute(*testicon, CLICKABLE, (int)applications[i]->launcher);
+            addattribute(*testicon, HASSTYLERECT, 0);
+            addattribute(*testicon, HASIMAGE, (int)hbmp);
 
             pushvec(&vwnd->elements, testicon);
         }

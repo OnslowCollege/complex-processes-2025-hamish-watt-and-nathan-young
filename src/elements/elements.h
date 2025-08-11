@@ -9,10 +9,11 @@
 enum ElemAttribute
 {
     CLICKABLE = 0b00000001,
-    HOVERABLE = 0b00000101,
+    HOVERABLE = 0b00000100,
     HASIMAGE = 0b00000010,
     // This name is very bad.
     DOUBLECLICKABLE = 0b00001000,
+    HASSTYLERECT = 0b00001000,
 };
 
 typedef struct
@@ -31,7 +32,7 @@ typedef struct
 HELEMENT newelement(int top, int bottom, int left, int right, unsigned int *anchorx, unsigned int *anchory);
 
 void drawelement(HDC hdc, VScreen *vscreen, HELEMENT helem, LPRECT wnddim);
-void addattribute(HELEMENT elem, ELEMATTRIBUTE, void *param);
+void addattribute(HELEMENT elem, ELEMATTRIBUTE, int param);
 int hasattribute(HELEMENT elem, ELEMATTRIBUTE);
 int ptinelem(HELEMENT elem, short x, short y);
 void executeelem(HELEMENT elem, VScreen *vscreen, VWNDIDX vwndidx);
