@@ -8,4 +8,4 @@ typedef struct
     void (*launcher)(VScreen *vscreen, VWNDIDX vwndidx);
 } Application;
 
-extern const Application *applications[2];
+extern const Application *applications[3];

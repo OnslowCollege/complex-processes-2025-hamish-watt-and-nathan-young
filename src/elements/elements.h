@@ -12,7 +12,7 @@ enum ElemAttribute
     HOVERABLE = 0b00000100,
     HASIMAGE = 0b00000010,
     // This name is very bad.
-    DOUBLECLICKABLE = 0b00001000,
+    DOUBLECLICKABLE = 0b00010000,
     HASSTYLERECT = 0b00001000,
 };
 

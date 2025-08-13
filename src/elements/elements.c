@@ -126,7 +126,7 @@ void addattribute(HELEMENT helem, ELEMATTRIBUTE attribute, int param)
         addclickable(helem, (void *)param);
         break;
     case DOUBLECLICKABLE:
-        adddoubleable(helem, param);
+        adddoubleable(helem, (void *)param);
         break;
     case HOVERABLE:
         addhoverable(helem, (void *)param);

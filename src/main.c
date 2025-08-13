@@ -2,7 +2,7 @@
 #include "./screen.h"
 #include "./utils.h"
 #include "./vwnd.h"
-#include <stdio.h>
+#include "applications/applications.h"
 #include <windows.h>
 #include <windowsx.h>
 #include <wingdi.h>
@@ -12,13 +12,18 @@
 #define VSCREEN_BOTTOM 600
 #define VSCREEN_RIGHT 800
 
-#define TASKBAR_HEIGHT 30
+#define CLICK_TIMER_ID 1
 
 LRESULT __stdcall windowProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam);
 
 static VScreen *vscreen = NULL;
+
 static COORD lastclick_x;
 static COORD lastclick_y;
+
+static BOOL isDragging = FALSE;
+
+HBITMAP g_hbmtemp;
 
 int __stdcall WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine, int nShowCmd)
 {
@@ -32,6 +37,8 @@ int __stdcall WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdL
     wndClass.style = CS_DBLCLKS;
 
     RegisterClass(&wndClass);
+
+    SetDoubleClickTime(200);
 
     HWND hwnd = CreateWindowEx(0, CLASS_NAME, "kdemulate", WS_OVERLAPPEDWINDOW, CW_USEDEFAULT, CW_USEDEFAULT,
                                CW_USEDEFAULT, CW_USEDEFAULT, NULL, NULL, hInstance, NULL);
@@ -76,9 +83,7 @@ LRESULT __stdcall windowProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
         VWnd *desktop = createvwnd(VSCREEN_TOP, VSCREEN_BOTTOM, VSCREEN_LEFT, VSCREEN_RIGHT, DESKTOP);
         bindvwnd(vscreen, desktop);
 
-        VWnd *taskbar =
-            createvwnd(VSCREEN_BOTTOM - TASKBAR_HEIGHT, VSCREEN_BOTTOM, VSCREEN_LEFT, VSCREEN_RIGHT, TASKBAR);
-        bindvwnd(vscreen, taskbar);
+        applications[0]->launcher(vscreen, 0);
 
         VWnd *test_vwnd = createvwnd(10, 50, 100, 200, DEFAULT);
         bindvwnd(vscreen, test_vwnd);
@@ -90,6 +95,7 @@ LRESULT __stdcall windowProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
     }
     case WM_LBUTTONDOWN: {
         SetCapture(hwnd);
+        isDragging = FALSE;
         POINT pt = {GET_X_LPARAM(lParam), GET_Y_LPARAM(lParam)};
 
         RECT wndrect;
@@ -102,8 +108,6 @@ LRESULT __stdcall windowProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
         lastclick_x = x;
         lastclick_y = y;
 
-        long param = ((long)x << 16) | (y & 0xffff);
-
         for (int i = veclength(&vscreen->windows) - 1; i >= 0; i--)
         {
             WNDRGN wndrgn = inwndrgn(vscreen, i, pt.x, pt.y, &wndrect);
@@ -115,18 +119,6 @@ LRESULT __stdcall windowProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
                     InvalidateRect(hwnd, NULL, FALSE);
                     break;
                 }
-
-                if (wndrgn == MOVEREGION)
-                {
-                    sendvwndevent(vscreen, i, MOVED, param);
-                    break;
-                }
-
-                if (wndrgn != INWINDOW)
-                {
-                    sendvwndevent(vscreen, i, SCALED, wndrgn);
-                    break;
-                }
                 break;
             }
         }
@@ -134,8 +126,6 @@ LRESULT __stdcall windowProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
         return 0;
     }
     case WM_MOUSEMOVE: {
-        if (wParam & MK_LBUTTON)
-        {
         POINT pt = {GET_X_LPARAM(lParam), GET_Y_LPARAM(lParam)};
         COORD x = (short)pt.x;
         COORD y = (short)pt.y;
@@ -145,32 +135,55 @@ LRESULT __stdcall windowProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
         rcoordcvt(vscreen, &x, &y, &wnddim);
         long param = ((long)x << 16) | (y & 0xffff);
 
-        sendglobalevent(vscreen, MOUSEMOVED, param);
+        if (wParam & MK_LBUTTON && !isDragging)
+        {
+            if (abs(x) >= 5 || abs(y) >= 5)
+            {
+                isDragging = TRUE;
+                // Current drag code, should replace with dragstart.
+                for (int i = veclength(&vscreen->windows) - 1; i >= 0; i--)
+                {
+                    WNDRGN wndrgn = inwndrgn(vscreen, i, pt.x, pt.y, &wnddim);
+                    if (wndrgn)
+                    {
+                        if (wndrgn == MOVEREGION)
+                        {
+                            sendvwndevent(vscreen, i, MOVED, param);
+                            break;
+                        }
+
+                        else if (wndrgn != INWINDOW)
+                        {
+                            sendvwndevent(vscreen, i, SCALED, wndrgn);
+                            break;
+                        }
+                        break;
+                    }
+                }
+            }
+        }
+        if (isDragging)
+        {
+            sendglobalevent(vscreen, MOUSEMOVED, param);
         }
         return 0;
     }
     case WM_LBUTTONUP: {
         ReleaseCapture();
-        POINT pt = {GET_X_LPARAM(lParam), GET_Y_LPARAM(lParam)};
-
-        RECT wndrect;
-        GetClientRect(hwnd, &wndrect);
-
-        COORD x = pt.x;
-        COORD y = pt.y;
-        rcoordcvt(vscreen, &x, &y, &wndrect);
-
-        if (abs(x - lastclick_x) < 5 && abs(y - lastclick_y) < 5)
+        if (isDragging)
         {
-            long param = ((long)x << 16) | (y & 0xffff);
-            sendglobalevent(vscreen, MOUSECLICKED, param);
+            removeevent(vscreen, SCALED);
+            removeevent(vscreen, MOVED);
+            isDragging = FALSE;
         }
-
-        removeevent(vscreen, SCALED);
-        removeevent(vscreen, MOVED);
+        else
+        {
+            SetTimer(hwnd, CLICK_TIMER_ID, GetDoubleClickTime(), NULL);
+        }
         return 0;
     }
     case WM_LBUTTONDBLCLK: {
+        KillTimer(hwnd, CLICK_TIMER_ID);
         POINT pt = {GET_X_LPARAM(lParam), GET_Y_LPARAM(lParam)};
 
         RECT wndrect;
@@ -184,6 +197,14 @@ LRESULT __stdcall windowProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 
         sendglobalevent(vscreen, DOUBLECLICKED, param);
         return 0;
+    }
+    case WM_TIMER: {
+        if (wParam == CLICK_TIMER_ID)
+        {
+            KillTimer(hwnd, CLICK_TIMER_ID);
+            long param = ((long)lastclick_x << 16) | (lastclick_y & 0xffff);
+            sendglobalevent(vscreen, MOUSECLICKED, param);
+        }
     }
     case WM_SIZE: {
         InvalidateRect(hwnd, NULL, FALSE);
