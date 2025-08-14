@@ -6,12 +6,10 @@
 #define BOTTOM_COLOR 0x6b6555
 #define TOP_COLOR 0xe3f7e8
 
-void drawstylerect(HDC hdc, int x, int y, int w, int h)
+HBITMAP createstylerect(HDC hdc, int w, int h)
 {
     BITMAPINFOHEADER bih;
     BITMAPINFO bi;
-
-    HDC memdc = CreateCompatibleDC(hdc);
 
     bih.biSize = sizeof(BITMAPINFOHEADER);
     bih.biWidth = (long)w;
@@ -27,9 +25,7 @@ void drawstylerect(HDC hdc, int x, int y, int w, int h)
     bi.bmiHeader.biSizeImage = p_bytes;
 
     void *pixels = NULL;
-    HBITMAP dib = CreateDIBSection(memdc, &bi, DIB_RGB_COLORS, &pixels, NULL, 0);
-
-    HBITMAP olddib = SelectObject(memdc, dib);
+    HBITMAP dib = CreateDIBSection(hdc, &bi, DIB_RGB_COLORS, &pixels, NULL, 0);
 
     // fill entire square
     fillcolor(pixels, BASE_COLOR, p_bytes);
@@ -46,10 +42,33 @@ void drawstylerect(HDC hdc, int x, int y, int w, int h)
     fillcolor(pixels + COLOR_BYTES * w * (h - 1), TOP_COLOR, COLOR_BYTES * w);
     fillcolor(pixels + COLOR_BYTES * w * (h - 2), TOP_COLOR, COLOR_BYTES * w - 4);
 
+    return dib;
+}
+
+void drawstylerect(HDC hdc, HDC memdc, int x, int y, int w, int h, HBITMAP cache)
+{
+    HBITMAP dib;
+
+    if (cache == NULL)
+    {
+        dib = createstylerect(memdc, w, h);
+    }
+    else
+    {
+        dib = cache;
+    }
+
+    HBITMAP olddib = SelectObject(memdc, dib);
+
     BitBlt(hdc, x, y, w, h, memdc, 0, 0, SRCCOPY);
 
     SelectObject(memdc, olddib);
-    DeleteObject(dib);
+
+    if (cache == NULL)
+    {
+        DeleteObject(dib);
+    }
+
     DeleteDC(memdc);
 }
 

@@ -14,7 +14,6 @@ VWnd *createvwnd(unsigned int top, unsigned int bottom, unsigned int left, unsig
     vwnd->bottom = bottom;
     vwnd->left = left;
     vwnd->right = right;
-    vwnd->pxarr = malloc(3 * (right - left - BORDER_SIZE) * (bottom - top - BORDER_SIZE));
     vwnd->elements = createvec(15);
     vwnd->vwndstyle = malloc(sizeof(VWNDSTYLE));
     *vwnd->vwndstyle = vwndstyle;
@@ -112,7 +111,6 @@ void clrvwnd(VScreen *vscreen, VWNDIDX vwndidx)
 
     rmvec(&vscreen->windows, vwndidx);
 
-    free(vwnd->pxarr);
     for (int i = 0; i < veclength(&vwnd->elements); i++)
     {
         free(vecget(&vwnd->elements, i));

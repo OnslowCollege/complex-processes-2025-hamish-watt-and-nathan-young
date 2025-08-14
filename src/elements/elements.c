@@ -79,9 +79,11 @@ void drawelement(HDC hdc, VScreen *vscreen, HELEMENT helem, LPRECT wnddim)
     vcoordcvt(vscreen, &left, &top, wnddim);
     vcoordcvt(vscreen, &right, &bottom, wnddim);
 
+    HDC memdc = CreateCompatibleDC(hdc);
+
     if (hasattribute(helem, HASSTYLERECT))
     {
-        drawstylerect(hdc, left, top, right - left, bottom - top);
+        drawstylerect(hdc, memdc, left, top, right - left, bottom - top, NULL);
     }
 
     if (hasattribute(helem, HASIMAGE))

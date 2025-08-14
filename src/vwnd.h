@@ -11,8 +11,11 @@ typedef struct
     int vwndidx;
     int focused;
 
+    HBITMAP bmp;
+    int bitmap_w, bitmap_h;
+    HBITMAP toolbarbmp;
+
     unsigned int top, bottom, left, right;
-    unsigned int *pxarr;
     VEC elements;
     enum VWndStyle *vwndstyle;
     enum VWndState *vwndstate;
