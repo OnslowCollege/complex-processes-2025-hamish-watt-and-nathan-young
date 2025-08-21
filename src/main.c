@@ -7,11 +7,6 @@
 #include <windowsx.h>
 #include <wingdi.h>
 
-#define VSCREEN_TOP 0
-#define VSCREEN_LEFT 0
-#define VSCREEN_BOTTOM 600
-#define VSCREEN_RIGHT 800
-
 #define CLICK_TIMER_ID 1
 
 LRESULT __stdcall windowProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam);
@@ -80,10 +75,9 @@ LRESULT __stdcall windowProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 
         vscreen = createvscreen(VSCREEN_RIGHT, VSCREEN_BOTTOM);
 
-        VWnd *desktop = createvwnd(VSCREEN_TOP, VSCREEN_BOTTOM, VSCREEN_LEFT, VSCREEN_RIGHT, DESKTOP);
-        bindvwnd(vscreen, desktop);
-
         applications[0]->launcher(vscreen, 0);
+
+        applications[1]->launcher(vscreen, 0);
 
         VWnd *test_vwnd = createvwnd(10, 50, 100, 200, DEFAULT);
         bindvwnd(vscreen, test_vwnd);
