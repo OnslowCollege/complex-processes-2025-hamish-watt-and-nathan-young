@@ -30,7 +30,7 @@ typedef struct
 // context must be either vwnd or vscreen depending on the location of the element
 HELEMENT newelement(int top, int bottom, int left, int right, unsigned int *anchorx, unsigned int *anchory);
 
-void drawelement(HDC hdc, VScreen *vscreen, HELEMENT helem, LPRECT wnddim);
+void drawelement(HDC hdc, VScreen *vscreen, HELEMENT helem);
 void addattribute(HELEMENT elem, ELEMATTRIBUTE, int param);
 int hasattribute(HELEMENT elem, ELEMATTRIBUTE);
 int ptinelem(HELEMENT elem, short x, short y);

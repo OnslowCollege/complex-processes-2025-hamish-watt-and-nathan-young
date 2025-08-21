@@ -17,6 +17,7 @@ typedef struct
     unsigned int w;
     unsigned int h;
     VEC windows;
+    RECT wnddim;
 } VScreen;
 
 enum WndRgn
@@ -33,20 +34,20 @@ enum WndRgn
     MOVEREGION,
 };
 
-VScreen *createvscreen(unsigned int w, unsigned int h);
+VScreen *createvscreen(unsigned int w, unsigned int h, RECT wnddim);
 
-void vcoordcvt(VScreen *vscreen, COORD *x, COORD *y, LPRECT wnddim);
+void vcoordcvt(VScreen *vscreen, COORD *x, COORD *y);
 
-void rcoordcvt(VScreen *vscreen, COORD *x, COORD *y, LPRECT wnddim);
+void rcoordcvt(VScreen *vscreen, COORD *x, COORD *y);
 
 void scalevwnd(VScreen *vscreen, VWNDIDX vwndidx, WNDRGN wndrgn, short sclx, short scly);
 
 void movevwnd(VScreen *vscreen, VWNDIDX vwndidx, short dx, short dy, COORD moveinitx, COORD moveinity);
 
-WNDRGN inwndrgn(VScreen *vscreen, VWNDIDX vwndidx, int ptx, int pty, LPRECT wnddim);
+WNDRGN inwndrgn(VScreen *vscreen, VWNDIDX vwndidx, int ptx, int pty);
 
-void drawvwnd(VScreen *vscreen, VWNDIDX vwndidx, HDC hdc, LPRECT wnddim);
+void drawvwnd(VScreen *vscreen, VWNDIDX vwndidx, HDC hdc);
 
-float getaspctscl(VScreen *vscreen, LPRECT wnddim);
+float getaspctscl(VScreen *vscreen);
 
 void refreshvwndidx(VScreen *vscreen);

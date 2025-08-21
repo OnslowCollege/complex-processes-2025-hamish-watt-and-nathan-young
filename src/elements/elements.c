@@ -68,7 +68,7 @@ int ptinelem(HELEMENT helem, short x, short y)
     return PtInRect(&elemrect, pt);
 }
 
-void drawelement(HDC hdc, VScreen *vscreen, HELEMENT helem, LPRECT wnddim)
+void drawelement(HDC hdc, VScreen *vscreen, HELEMENT helem)
 {
     Element *element = vecget(&gea, helem);
     COORD top = element->top + *element->anchory;
@@ -76,8 +76,8 @@ void drawelement(HDC hdc, VScreen *vscreen, HELEMENT helem, LPRECT wnddim)
     COORD left = element->left + *element->anchorx;
     COORD right = element->right + *element->anchorx;
 
-    vcoordcvt(vscreen, &left, &top, wnddim);
-    vcoordcvt(vscreen, &right, &bottom, wnddim);
+    vcoordcvt(vscreen, &left, &top);
+    vcoordcvt(vscreen, &right, &bottom);
 
     HDC memdc = CreateCompatibleDC(hdc);
 

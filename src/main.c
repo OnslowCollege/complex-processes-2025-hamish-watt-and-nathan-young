@@ -73,7 +73,10 @@ LRESULT __stdcall windowProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
     case WM_CREATE: {
         initgea();
 
-        vscreen = createvscreen(VSCREEN_RIGHT, VSCREEN_BOTTOM);
+        RECT wnddim;
+        GetClientRect(hwnd, &wnddim);
+
+        vscreen = createvscreen(VSCREEN_RIGHT, VSCREEN_BOTTOM, wnddim);
 
         applications[0]->launcher(vscreen, 0);
 
@@ -92,19 +95,16 @@ LRESULT __stdcall windowProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
         isDragging = FALSE;
         POINT pt = {GET_X_LPARAM(lParam), GET_Y_LPARAM(lParam)};
 
-        RECT wndrect;
-        GetClientRect(hwnd, &wndrect);
-
         COORD x = pt.x;
         COORD y = pt.y;
-        rcoordcvt(vscreen, &x, &y, &wndrect);
+        rcoordcvt(vscreen, &x, &y);
 
         lastclick_x = x;
         lastclick_y = y;
 
         for (int i = veclength(&vscreen->windows) - 1; i >= 0; i--)
         {
-            WNDRGN wndrgn = inwndrgn(vscreen, i, pt.x, pt.y, &wndrect);
+            WNDRGN wndrgn = inwndrgn(vscreen, i, pt.x, pt.y);
             if (wndrgn)
             {
                 if (!isfocused(vscreen, i))
@@ -124,9 +124,7 @@ LRESULT __stdcall windowProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
         COORD x = (short)pt.x;
         COORD y = (short)pt.y;
 
-        RECT wnddim;
-        GetClientRect(hwnd, &wnddim);
-        rcoordcvt(vscreen, &x, &y, &wnddim);
+        rcoordcvt(vscreen, &x, &y);
         long param = ((long)x << 16) | (y & 0xffff);
 
         if (wParam & MK_LBUTTON && !isDragging)
@@ -137,7 +135,7 @@ LRESULT __stdcall windowProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
                 // Current drag code, should replace with dragstart.
                 for (int i = veclength(&vscreen->windows) - 1; i >= 0; i--)
                 {
-                    WNDRGN wndrgn = inwndrgn(vscreen, i, pt.x, pt.y, &wnddim);
+                    WNDRGN wndrgn = inwndrgn(vscreen, i, pt.x, pt.y);
                     if (wndrgn)
                     {
                         if (wndrgn == MOVEREGION)
@@ -180,12 +178,10 @@ LRESULT __stdcall windowProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
         KillTimer(hwnd, CLICK_TIMER_ID);
         POINT pt = {GET_X_LPARAM(lParam), GET_Y_LPARAM(lParam)};
 
-        RECT wndrect;
-        GetClientRect(hwnd, &wndrect);
 
         COORD x = pt.x;
         COORD y = pt.y;
-        rcoordcvt(vscreen, &x, &y, &wndrect);
+        rcoordcvt(vscreen, &x, &y);
 
         long param = ((long)x << 16) | (y & 0xffff);
 
@@ -201,6 +197,9 @@ LRESULT __stdcall windowProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
         }
     }
     case WM_SIZE: {
+        RECT wnddim;
+        GetClientRect(hwnd, &wnddim);
+        vscreen->wnddim = wnddim;
         InvalidateRect(hwnd, NULL, FALSE);
         return 0;
     }
@@ -212,12 +211,10 @@ LRESULT __stdcall windowProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
         BeginPaint(hwnd, &ps);
 
         FillRect(ps.hdc, &ps.rcPaint, hbrush);
-        RECT wnddim;
-        GetClientRect(hwnd, &wnddim);
 
         for (int i = 0; i < veclength(&vscreen->windows); i++)
         {
-            drawvwnd(vscreen, i, ps.hdc, &wnddim);
+            drawvwnd(vscreen, i, ps.hdc);
         }
 
         EndPaint(hwnd, &ps);

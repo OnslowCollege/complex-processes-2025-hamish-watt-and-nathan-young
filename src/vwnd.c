@@ -1,5 +1,4 @@
 #include "./vwnd.h"
-#include "./applications/applications.h"
 #include "./elements/elements.h"
 #include <stdio.h>
 #include <stdlib.h>

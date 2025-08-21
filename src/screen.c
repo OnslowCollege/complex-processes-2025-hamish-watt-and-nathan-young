@@ -11,17 +11,18 @@
 #define MIN_WINDOW_WIDTH 50
 #define MIN_WINDOW_HEIGHT 40
 
-VScreen *createvscreen(unsigned int w, unsigned int h)
+VScreen *createvscreen(unsigned int w, unsigned int h, RECT wnddim)
 {
     VScreen *screen = malloc(sizeof(VScreen));
     screen->w = w;
     screen->h = h;
     screen->windows = createvec(30);
+    screen->wnddim = wnddim;
 
     return screen;
 }
 
-void drawvwnd(VScreen *vscreen, VWNDIDX vwndidx, HDC hdc, LPRECT wnddim)
+void drawvwnd(VScreen *vscreen, VWNDIDX vwndidx, HDC hdc)
 {
     VWnd *vwnd = vecget(&vscreen->windows, vwndidx);
 
@@ -38,10 +39,10 @@ void drawvwnd(VScreen *vscreen, VWNDIDX vwndidx, HDC hdc, LPRECT wnddim)
     COORD toolbarright = vwnd->right;
     COORD toolbarbottom = vwnd->top + TOOLBAR_HEIGHT;
 
-    vcoordcvt(vscreen, &left, &top, wnddim);
-    vcoordcvt(vscreen, &right, &bottom, wnddim);
+    vcoordcvt(vscreen, &left, &top);
+    vcoordcvt(vscreen, &right, &bottom);
 
-    vcoordcvt(vscreen, &toolbarright, &toolbarbottom, wnddim);
+    vcoordcvt(vscreen, &toolbarright, &toolbarbottom);
     // check if the bitmap dimensions are different to the real window dimensions
     if (vwnd->bmp != NULL)
     {
@@ -106,11 +107,11 @@ void drawvwnd(VScreen *vscreen, VWNDIDX vwndidx, HDC hdc, LPRECT wnddim)
     for (int i = 0; i < veclength(&vwnd->elements); i++)
     {
         HELEMENT helem = *(HELEMENT *)vecget(&vwnd->elements, i);
-        drawelement(hdc, vscreen, helem, wnddim);
+        drawelement(hdc, vscreen, helem);
     }
 }
 
-WNDRGN inwndrgn(VScreen *vscreen, VWNDIDX vwndidx, int ptx, int pty, LPRECT wnddim)
+WNDRGN inwndrgn(VScreen *vscreen, VWNDIDX vwndidx, int ptx, int pty)
 {
     VWnd *vwnd = vecget(&vscreen->windows, vwndidx);
 
@@ -124,8 +125,8 @@ WNDRGN inwndrgn(VScreen *vscreen, VWNDIDX vwndidx, int ptx, int pty, LPRECT wndd
     COORD right = vwnd->right;
     COORD bottom = vwnd->bottom;
 
-    vcoordcvt(vscreen, &left, &top, wnddim);
-    vcoordcvt(vscreen, &right, &bottom, wnddim);
+    vcoordcvt(vscreen, &left, &top);
+    vcoordcvt(vscreen, &right, &bottom);
 
     RECT sclrect = {left - SCALEREGIONSIZE, top - SCALEREGIONSIZE, right + SCALEREGIONSIZE, bottom + SCALEREGIONSIZE};
     POINT pt = {ptx, pty};
@@ -240,9 +241,10 @@ void scalevwnd(VScreen *vscreen, VWNDIDX vwndidx, WNDRGN wndrgn, short x, short 
     }
 }
 
-void vcoordcvt(VScreen *vscreen, COORD *x, COORD *y, LPRECT wnddim)
+void vcoordcvt(VScreen *vscreen, COORD *x, COORD *y)
 {
-    float aspctscl = getaspctscl(vscreen, wnddim);
+    LPRECT wnddim = &vscreen->wnddim;
+    float aspctscl = getaspctscl(vscreen);
     // Calculate offset to virtual window is centered.
     float xoffset = ((wnddim->right - wnddim->left) - (vscreen->w * aspctscl)) / 2;
     float yoffset = ((wnddim->bottom - wnddim->top) - (vscreen->h * aspctscl)) / 2;
@@ -251,9 +253,10 @@ void vcoordcvt(VScreen *vscreen, COORD *x, COORD *y, LPRECT wnddim)
     *y = ((float)(*y) * aspctscl) + yoffset;
 }
 
-void rcoordcvt(VScreen *vscreen, COORD *x, COORD *y, LPRECT wnddim)
+void rcoordcvt(VScreen *vscreen, COORD *x, COORD *y)
 {
-    float aspctscl = getaspctscl(vscreen, wnddim);
+    LPRECT wnddim = &vscreen->wnddim;
+    float aspctscl = getaspctscl(vscreen);
     // Calculate offset to virtual window is centered.
     float xoffset = ((wnddim->right - wnddim->left) - (vscreen->w * aspctscl)) / 2;
     float yoffset = ((wnddim->bottom - wnddim->top) - (vscreen->h * aspctscl)) / 2;
@@ -262,8 +265,9 @@ void rcoordcvt(VScreen *vscreen, COORD *x, COORD *y, LPRECT wnddim)
     *y = ((float)(*y - yoffset) / aspctscl);
 }
 
-float getaspctscl(VScreen *vscreen, LPRECT wnddim)
+float getaspctscl(VScreen *vscreen)
 {
+    LPRECT wnddim = &vscreen->wnddim;
     LONG wndw = wnddim->right - wnddim->left;
     LONG wndh = wnddim->bottom - wnddim->top;
     float wndsclx = (float)wndw / (float)vscreen->w;
