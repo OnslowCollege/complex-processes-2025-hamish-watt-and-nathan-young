@@ -32,23 +32,12 @@ VWnd *createvwnd(unsigned int top, unsigned int bottom, unsigned int left, unsig
         break;
     }
     case TASKBAR: {
-        for (int i = 1; i < sizeof(applications) / sizeof(applications[0]); i++)
-        {
-            HBITMAP hbmp = LoadBitmapA(GetModuleHandle(NULL), "temp");
-            HELEMENT *testicon = malloc(sizeof(HELEMENT));
-            *testicon = newelement(0, (vwnd->bottom - vwnd->top), i * 40, i * 40 + 40, &vwnd->left, &vwnd->top);
-            addattribute(*testicon, CLICKABLE, (int)applications[i]->launcher);
-            addattribute(*testicon, HASSTYLERECT, 0);
-            addattribute(*testicon, HASIMAGE, (int)hbmp);
-
-            pushvec(&vwnd->elements, testicon);
-        }
         break;
     }
     case DESKTOP: {
         HELEMENT *testicon = malloc(sizeof(HELEMENT));
         *testicon = newelement(100, 120, 100, 120, &vwnd->left, &vwnd->top);
-        addattribute(*testicon, DOUBLECLICKABLE, (int)applications[0]->launcher);
+        addattribute(*testicon, DOUBLECLICKABLE, (int)applications[1]->launcher);
 
         pushvec(&vwnd->elements, testicon);
         break;
