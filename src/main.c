@@ -195,17 +195,15 @@ LRESULT __stdcall windowProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
             rcoordcvt(vscreen, &x, &y);
             long param = ((long)x << 16) | (y & 0xffff);
 
-            printf("clicked\n");
             for (int i = veclength(&vscreen->windows) - 1; i >= 0; i--)
             {
-                printf("clicked but for loop\n");
                 WNDRGN wndrgn = inwndrgn(vscreen, i, lastclick_x, lastclick_y);
-                if (wndrgn)
+                // This is temporary to get single click to work with taskbar and desktop
+                // inwndrgn automatically assumes that non default is false.
+                if (wndrgn || i < 2)
                 {
-                    printf("clicked but wndrgn\n");
                     if (isfocused(vscreen, i))
                     {
-                        printf("clicked but focused\n");
                         sendvwndevent(vscreen, i, MOUSECLICKED, param);
                         break;
                     }
