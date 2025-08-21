@@ -3,6 +3,7 @@
 #include "./utils.h"
 #include "./vwnd.h"
 #include "applications/applications.h"
+#include <stdio.h>
 #include <windows.h>
 #include <windowsx.h>
 #include <wingdi.h>
@@ -95,12 +96,8 @@ LRESULT __stdcall windowProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
         isDragging = FALSE;
         POINT pt = {GET_X_LPARAM(lParam), GET_Y_LPARAM(lParam)};
 
-        COORD x = pt.x;
-        COORD y = pt.y;
-        rcoordcvt(vscreen, &x, &y);
-
-        lastclick_x = x;
-        lastclick_y = y;
+        lastclick_x = pt.x;
+        lastclick_y = pt.y;
 
         for (int i = veclength(&vscreen->windows) - 1; i >= 0; i--)
         {
@@ -178,7 +175,6 @@ LRESULT __stdcall windowProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
         KillTimer(hwnd, CLICK_TIMER_ID);
         POINT pt = {GET_X_LPARAM(lParam), GET_Y_LPARAM(lParam)};
 
-
         COORD x = pt.x;
         COORD y = pt.y;
         rcoordcvt(vscreen, &x, &y);
@@ -192,8 +188,29 @@ LRESULT __stdcall windowProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
         if (wParam == CLICK_TIMER_ID)
         {
             KillTimer(hwnd, CLICK_TIMER_ID);
-            long param = ((long)lastclick_x << 16) | (lastclick_y & 0xffff);
-            sendglobalevent(vscreen, MOUSECLICKED, param);
+
+            COORD x = lastclick_x;
+            COORD y = lastclick_y;
+
+            rcoordcvt(vscreen, &x, &y);
+            long param = ((long)x << 16) | (y & 0xffff);
+
+            printf("clicked\n");
+            for (int i = veclength(&vscreen->windows) - 1; i >= 0; i--)
+            {
+                printf("clicked but for loop\n");
+                WNDRGN wndrgn = inwndrgn(vscreen, i, lastclick_x, lastclick_y);
+                if (wndrgn)
+                {
+                    printf("clicked but wndrgn\n");
+                    if (isfocused(vscreen, i))
+                    {
+                        printf("clicked but focused\n");
+                        sendvwndevent(vscreen, i, MOUSECLICKED, param);
+                        break;
+                    }
+                }
+            }
         }
     }
     case WM_SIZE: {
