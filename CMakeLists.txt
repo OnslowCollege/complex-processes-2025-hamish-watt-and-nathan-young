@@ -4,7 +4,7 @@ project(kdemulate C ASM_NASM)
 
 set(CMAKE_EXPORT_COMPILE_COMMANDS TRUE)
 
-set(ASM_SOURCES src/asm/fillcolor.asm)
+set(ASM_SOURCES src/asm/fillcolor.asm src/asm/fillgradient.asm)
 set(C_SOURCES src/main.c src/graphics.c src/screen.c src/vwnd.c src/utils.c src/msg.c src/elements/elements.c src/applications/applications.c src/applications/test_app_1.c src/applications/test_app_2.c src/applications/taskbar.c src/applications/desktop.c resource.rc)
 
 add_executable(kdemulate ${C_SOURCES} ${ASM_SOURCES})

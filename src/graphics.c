@@ -6,6 +6,9 @@
 #define BOTTOM_COLOR 0x6b6555
 #define TOP_COLOR 0xe3f7e8
 
+#define TOOLBARSTARTCOLOR 0x0d065e
+#define TOOLBARENDCOLOR 0x5648f7
+
 HBITMAP createstylerect(HDC hdc, int w, int h)
 {
     BITMAPINFOHEADER bih;
@@ -45,39 +48,10 @@ HBITMAP createstylerect(HDC hdc, int w, int h)
     return dib;
 }
 
-void drawstylerect(HDC hdc, HDC memdc, int x, int y, int w, int h, HBITMAP cache)
-{
-    HBITMAP dib;
-
-    if (cache == NULL)
-    {
-        dib = createstylerect(memdc, w, h);
-    }
-    else
-    {
-        dib = cache;
-    }
-
-    HBITMAP olddib = SelectObject(memdc, dib);
-
-    BitBlt(hdc, x, y, w, h, memdc, 0, 0, SRCCOPY);
-
-    SelectObject(memdc, olddib);
-
-    if (cache == NULL)
-    {
-        DeleteObject(dib);
-    }
-
-    DeleteDC(memdc);
-}
-
-void drawimage(HDC hdc, HBITMAP dib, int x, int y, int w, int h)
+HBITMAP createtoolbarrect(HDC hdc, int w, int h, int isfocused)
 {
     BITMAPINFOHEADER bih;
     BITMAPINFO bi;
-
-    HDC memdc = CreateCompatibleDC(hdc);
 
     bih.biSize = sizeof(BITMAPINFOHEADER);
     bih.biWidth = (long)w;
@@ -88,8 +62,46 @@ void drawimage(HDC hdc, HBITMAP dib, int x, int y, int w, int h)
 
     bi.bmiHeader = bih;
 
-    bi.bmiHeader.biSizeImage = (COLOR_BYTES * w) * h;
+    int p_bytes = (COLOR_BYTES * w) * h;
 
+    bi.bmiHeader.biSizeImage = p_bytes;
+
+    void *pixels = NULL;
+    HBITMAP dib = CreateDIBSection(hdc, &bi, DIB_RGB_COLORS, &pixels, NULL, 0);
+
+    // fill entire square
+    printf("Beginning drawing gradient\n");
+    fillgradient(pixels, TOOLBARSTARTCOLOR, TOOLBARENDCOLOR, p_bytes, w);
+    printf("%d, %d, %d\n", ((int *)pixels)[0], ((int *)pixels)[1], ((int *)pixels)[2]);
+
+    // fill sides
+    fillcolorvertical(pixels, TOP_COLOR, COLOR_BYTES * h, COLOR_BYTES * w);
+    fillcolorvertical(pixels + COLOR_BYTES, TOP_COLOR, COLOR_BYTES * h, COLOR_BYTES * w);
+    fillcolorvertical(pixels + COLOR_BYTES * (w - 1), BOTTOM_COLOR, COLOR_BYTES * h, COLOR_BYTES * w);
+    fillcolorvertical(pixels + COLOR_BYTES * (w - 2), BOTTOM_COLOR, COLOR_BYTES * h, COLOR_BYTES * w);
+
+    // fill bottom and top
+    fillcolor(pixels, BOTTOM_COLOR, COLOR_BYTES * w);
+    fillcolor(pixels + (COLOR_BYTES * w + 4), BOTTOM_COLOR, COLOR_BYTES * w - 4);
+    fillcolor(pixels + COLOR_BYTES * w * (h - 1), TOP_COLOR, COLOR_BYTES * w);
+    fillcolor(pixels + COLOR_BYTES * w * (h - 2), TOP_COLOR, COLOR_BYTES * w - 4);
+
+    return dib;
+}
+
+/* Draws a HBITMAP */
+void drawimage(HDC hdc, HDC memdc, HBITMAP dib, int x, int y, int w, int h)
+{
+    HBITMAP olddib = SelectObject(memdc, dib);
+
+    BitBlt(hdc, x, y, w, h, memdc, 0, 0, SRCCOPY);
+
+    SelectObject(memdc, olddib);
+}
+
+/* Draws a HBITMAP stretching to fit destination size passed in */
+void drawimage_stretched(HDC hdc, HDC memdc, HBITMAP dib, int x, int y, int w, int h)
+{
     BITMAP bm;
     GetObject(dib, sizeof(BITMAP), &bm);
 
@@ -97,5 +109,4 @@ void drawimage(HDC hdc, HBITMAP dib, int x, int y, int w, int h)
     StretchBlt(hdc, x, y, w, h, memdc, 0, 0, bm.bmWidth, bm.bmHeight, SRCCOPY);
 
     SelectObject(memdc, olddib);
-    DeleteDC(memdc);
 }

@@ -96,6 +96,7 @@ void clrvwnd(VScreen *vscreen, VWNDIDX vwndidx)
 
     for (int i = 0; i < veclength(&vwnd->elements); i++)
     {
+        rmelement(*(HELEMENT *)(vecget(&vwnd->elements, i)));
         free(vecget(&vwnd->elements, i));
     }
     clrvec(&vwnd->elements);

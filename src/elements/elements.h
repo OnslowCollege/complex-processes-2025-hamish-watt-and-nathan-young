@@ -35,3 +35,4 @@ void addattribute(HELEMENT elem, ELEMATTRIBUTE, int param);
 int hasattribute(HELEMENT elem, ELEMATTRIBUTE);
 int ptinelem(HELEMENT elem, short x, short y);
 void executeelem(HELEMENT elem, VScreen *vscreen, VWNDIDX vwndidx);
+void rmelement(HELEMENT helem);

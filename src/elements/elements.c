@@ -80,16 +80,20 @@ void drawelement(HDC hdc, VScreen *vscreen, HELEMENT helem)
     vcoordcvt(vscreen, &right, &bottom);
 
     HDC memdc = CreateCompatibleDC(hdc);
+    HBITMAP stylerect_dib = createstylerect(memdc, right - left, bottom - top);
 
     if (hasattribute(helem, HASSTYLERECT))
     {
-        drawstylerect(hdc, memdc, left, top, right - left, bottom - top, NULL);
+        drawimage(hdc, memdc, stylerect_dib, left, top, right - left, bottom - top);
     }
 
     if (hasattribute(helem, HASIMAGE))
     {
-        drawimage(hdc, element->bmp, left, top, right - left, bottom - top);
+        drawimage_stretched(hdc, memdc, element->bmp, left, top, right - left, bottom - top);
     }
+
+    DeleteObject(stylerect_dib);
+    DeleteDC(memdc);
 }
 
 void addclickable(HELEMENT helem, void (*behavior)(VScreen *vscreen, VWNDIDX vwndidx))

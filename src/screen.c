@@ -41,48 +41,39 @@ void drawvwnd(VScreen *vscreen, VWNDIDX vwndidx, HDC hdc)
 
     vcoordcvt(vscreen, &left, &top);
     vcoordcvt(vscreen, &right, &bottom);
-
     vcoordcvt(vscreen, &toolbarright, &toolbarbottom);
-    // check if the bitmap dimensions are different to the real window dimensions
-    if (vwnd->bmp != NULL)
-    {
-        if (vwnd->bitmap_w != (right - left) - 1 && vwnd->bitmap_w != right - left ||
-            vwnd->bitmap_h != (bottom - top) - 1 && vwnd->bitmap_h != bottom - top)
-        {
-            // free the bitmap cache for a new bitmap to be able to be created
-            printf("%d, %d, %d, %d\n", vwnd->bitmap_w, right - left, vwnd->bitmap_h, bottom - top);
-            free(vwnd->bmp);
-            vwnd->bmp = NULL;
 
-            if (vwnd->toolbarbmp != NULL)
-            {
-                free(vwnd->toolbarbmp);
-                vwnd->toolbarbmp = NULL;
-            }
-        }
+    // check if the bitmap dimensions are different to the real window dimensions
+    if (vwnd->bitmap_w != (right - left) - 1 && vwnd->bitmap_w != right - left ||
+        vwnd->bitmap_h != (bottom - top) - 1 && vwnd->bitmap_h != bottom - top)
+    {
+        // free the bitmap cache for a new bitmap to be able to be created
+        DeleteObject(vwnd->bmp);
+        DeleteObject(vwnd->toolbarbmp);
+        vwnd->bmp = 0;
+        vwnd->toolbarbmp = 0;
     }
 
     HDC memdc = CreateCompatibleDC(hdc);
-    HDC toolbardc = CreateCompatibleDC(hdc);
 
     switch (*vwnd->vwndstyle)
     {
     case DEFAULT: {
 
-        if (vwnd->bmp == NULL)
+        if (vwnd->bmp == 0)
         {
             vwnd->bmp = createstylerect(memdc, right - left, bottom - top);
             vwnd->bitmap_w = right - left;
             vwnd->bitmap_h = bottom - top;
         }
 
-        if (vwnd->toolbarbmp == NULL)
+        if (vwnd->toolbarbmp == 0)
         {
-            vwnd->toolbarbmp = createstylerect(toolbardc, toolbarright - left, toolbarbottom - top);
+            vwnd->toolbarbmp = createtoolbarrect(memdc, toolbarright - left, toolbarbottom - top, 1);
         }
 
-        drawstylerect(hdc, memdc, left, top, right - left, bottom - top, vwnd->bmp);
-        drawstylerect(hdc, toolbardc, left, top, toolbarright - left, toolbarbottom - top, NULL);
+        drawimage(hdc, memdc, vwnd->bmp, left, top, right - left, bottom - top);
+        drawimage(hdc, memdc, vwnd->toolbarbmp, left, top, toolbarright - left, toolbarbottom - top);
         break;
     }
     case DESKTOP: {
@@ -91,18 +82,19 @@ void drawvwnd(VScreen *vscreen, VWNDIDX vwndidx, HDC hdc)
         break;
     }
     case TASKBAR: {
-        if (vwnd->bmp == NULL)
+        if (vwnd->bmp == 0)
         {
-            vwnd->bmp = malloc(sizeof(HBITMAP));
             vwnd->bmp = createstylerect(memdc, right - left, bottom - top);
             vwnd->bitmap_w = right - left;
             vwnd->bitmap_h = bottom - top;
         }
 
-        drawstylerect(hdc, memdc, left, top, right - left, bottom - top, vwnd->bmp);
+        drawimage(hdc, memdc, vwnd->bmp, left, top, right - left, bottom - top);
         break;
     }
     }
+
+    DeleteDC(memdc);
 
     for (int i = 0; i < veclength(&vwnd->elements); i++)
     {
