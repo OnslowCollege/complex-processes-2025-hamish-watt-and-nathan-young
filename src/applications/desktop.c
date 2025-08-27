@@ -7,8 +7,17 @@ static void launcher(VScreen *vscreen, VWNDIDX vwndidx)
     VWnd *desktop = createvwnd(VSCREEN_TOP, VSCREEN_BOTTOM, VSCREEN_LEFT, VSCREEN_RIGHT, DESKTOP);
     bindvwnd(vscreen, desktop);
     HELEMENT *testicon = malloc(sizeof(HELEMENT));
-    *testicon = newelement(100, 120, 100, 120, &desktop->left, &desktop->top);
+    *testicon = newelement(100, 160, 100, 160, &desktop->left, &desktop->top);
     addattribute(*testicon, DOUBLECLICKABLE, (int)applications[2]->launcher);
+
+    char *test_str = malloc(9);
+    test_str = "test app\0";
+
+    TextInfo *textinfo = malloc(sizeof(TextInfo));
+    textinfo->text = test_str;
+    textinfo->color = RGB(123, 123, 123);
+
+    addattribute(*testicon, HASTEXT, (int)textinfo);
 
     pushvec(&desktop->elements, testicon);
 }

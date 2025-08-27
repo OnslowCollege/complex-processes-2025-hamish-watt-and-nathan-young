@@ -79,6 +79,8 @@ void drawelement(HDC hdc, VScreen *vscreen, HELEMENT helem)
     vcoordcvt(vscreen, &left, &top);
     vcoordcvt(vscreen, &right, &bottom);
 
+    RECT elemrect = { left, top, right, bottom };
+
     HDC memdc = CreateCompatibleDC(hdc);
     HBITMAP stylerect_dib = createstylerect(memdc, right - left, bottom - top);
 
@@ -92,6 +94,14 @@ void drawelement(HDC hdc, VScreen *vscreen, HELEMENT helem)
         drawimage_stretched(hdc, memdc, element->bmp, left, top, right - left, bottom - top);
     }
 
+    if (hasattribute(helem, HASTEXT))
+    {
+        SetTextColor(hdc, GetNearestColor(hdc, element->textinfo->color));
+
+        int result = DrawText(hdc, element->textinfo->text, -1, &elemrect, DT_CENTER | DT_BOTTOM | DT_SINGLELINE);
+        printf("Draw text result = %d\n", result);
+    }
+
     DeleteObject(stylerect_dib);
     DeleteDC(memdc);
 }
@@ -102,6 +112,12 @@ void addclickable(HELEMENT helem, void (*behavior)(VScreen *vscreen, VWNDIDX vwn
     element->attributes = element->attributes | CLICKABLE;
     element->behavior = behavior;
 }
+
+void addhastext(HELEMENT helem, TextInfo *text) {
+    Element *element = vecget(&gea, helem);
+    element->attributes = element->attributes | HASTEXT;
+    element->textinfo = text;
+};
 
 void addhoverable(HELEMENT helem, void (*behavior)(VScreen *vscreen, VWNDIDX vwndidx))
 {
@@ -145,6 +161,8 @@ void addattribute(HELEMENT helem, ELEMATTRIBUTE attribute, int param)
     case HASIMAGE:
         addhasimage(helem, (HBITMAP)param);
         break;
+    case HASTEXT:
+        addhastext(helem, (TextInfo *)param);
     }
 }
 

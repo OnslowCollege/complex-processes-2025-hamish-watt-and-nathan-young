@@ -224,6 +224,7 @@ LRESULT __stdcall windowProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
         HBRUSH hbrush = CreateSolidBrush(0);
 
         BeginPaint(hwnd, &ps);
+        SetBkMode(ps.hdc, TRANSPARENT);
 
         FillRect(ps.hdc, &ps.rcPaint, hbrush);
 

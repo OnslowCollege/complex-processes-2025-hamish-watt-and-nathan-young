@@ -13,7 +13,14 @@ enum ElemAttribute
     HASIMAGE = 0b00000010,
     DOUBLECLICKABLE = 0b00001000,
     HASSTYLERECT = 0b00010000,
+    HASTEXT = 0b00100000
 };
+
+typedef struct
+{
+    char *text;
+    COLORREF color;
+} TextInfo;
 
 typedef struct
 {
@@ -25,6 +32,8 @@ typedef struct
     int left, right, bottom, top;
 
     unsigned int *anchorx, *anchory;
+
+    TextInfo *textinfo;
 } Element;
 
 // context must be either vwnd or vscreen depending on the location of the element
