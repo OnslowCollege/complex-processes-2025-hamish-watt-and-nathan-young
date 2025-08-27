@@ -10,6 +10,9 @@ static void launcher(VScreen *vscreen, VWNDIDX vwndidx)
     *testicon = newelement(100, 160, 100, 160, &desktop->left, &desktop->top);
     addattribute(*testicon, DOUBLECLICKABLE, (int)applications[2]->launcher);
 
+    HBITMAP hbmp = LoadBitmapA(GetModuleHandle(NULL), "chrome");
+    addattribute(*testicon, HASIMAGE, (int)hbmp);
+
     char *test_str = malloc(9);
     test_str = "test app\0";
 

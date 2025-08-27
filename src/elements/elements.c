@@ -26,6 +26,7 @@ HELEMENT newelement(int top, int bottom, int left, int right, unsigned int *anch
     elem->top = top;
     elem->anchorx = anchorx;
     elem->anchory = anchory;
+    elem->attributes = 0;
 
     pushvec(&gea, elem);
     printf("gea length: %d\n", veclength(&gea));
@@ -82,11 +83,12 @@ void drawelement(HDC hdc, VScreen *vscreen, HELEMENT helem)
     RECT elemrect = { left, top, right, bottom };
 
     HDC memdc = CreateCompatibleDC(hdc);
-    HBITMAP stylerect_dib = createstylerect(memdc, right - left, bottom - top);
 
     if (hasattribute(helem, HASSTYLERECT))
     {
+        HBITMAP stylerect_dib = createstylerect(memdc, right - left, bottom - top);
         drawimage(hdc, memdc, stylerect_dib, left, top, right - left, bottom - top);
+        DeleteObject(stylerect_dib);
     }
 
     if (hasattribute(helem, HASIMAGE))
@@ -102,7 +104,6 @@ void drawelement(HDC hdc, VScreen *vscreen, HELEMENT helem)
         printf("Draw text result = %d\n", result);
     }
 
-    DeleteObject(stylerect_dib);
     DeleteDC(memdc);
 }
 
@@ -163,6 +164,7 @@ void addattribute(HELEMENT helem, ELEMATTRIBUTE attribute, int param)
         break;
     case HASTEXT:
         addhastext(helem, (TextInfo *)param);
+        break;
     }
 }
 
