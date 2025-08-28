@@ -80,8 +80,8 @@ LRESULT __stdcall windowProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
         vscreen = createvscreen(VSCREEN_RIGHT, VSCREEN_BOTTOM, wnddim);
 
         applications[0]->launcher(vscreen, 0);
-
         applications[1]->launcher(vscreen, 0);
+        applications[2]->launcher(vscreen, 0);
 
         VWnd *test_vwnd = createvwnd(10, 50, 100, 200, DEFAULT);
         bindvwnd(vscreen, test_vwnd);

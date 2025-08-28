@@ -3,7 +3,7 @@
 
 static void launcher(VScreen *vscreen, VWNDIDX vwndidx)
 {
-    VWnd *test_app_2 = createvwnd(100, 300, 100, 300, DEFAULT);
+    VWnd *test_app_2 = createvwnd(100, 300, 400, 800, DEFAULT);
     bindvwnd(vscreen, test_app_2);
 }
 

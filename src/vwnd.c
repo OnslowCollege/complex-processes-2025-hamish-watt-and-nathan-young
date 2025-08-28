@@ -30,12 +30,8 @@ VWnd *createvwnd(unsigned int top, unsigned int bottom, unsigned int left, unsig
         pushvec(&vwnd->elements, hclosebutton);
         break;
     }
-    case TASKBAR: {
+    default:
         break;
-    }
-    case DESKTOP: {
-        break;
-    }
     }
 
     return vwnd;
@@ -99,7 +95,9 @@ void clrvwnd(VScreen *vscreen, VWNDIDX vwndidx)
         rmelement(*(HELEMENT *)(vecget(&vwnd->elements, i)));
         free(vecget(&vwnd->elements, i));
     }
+
     clrvec(&vwnd->elements);
+    free(vwnd->application);
     free(vwnd->msg);
     free(vwnd->vwndstyle);
     free(vwnd->msgflags);

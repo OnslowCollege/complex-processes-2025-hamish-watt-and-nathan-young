@@ -70,21 +70,15 @@ HBITMAP createtoolbarrect(HDC hdc, int w, int h, int isfocused)
     HBITMAP dib = CreateDIBSection(hdc, &bi, DIB_RGB_COLORS, &pixels, NULL, 0);
 
     // fill entire square
-    printf("Beginning drawing gradient\n");
     fillgradient(pixels, TOOLBARSTARTCOLOR, TOOLBARENDCOLOR, p_bytes, w);
-    printf("%d, %d, %d\n", ((int *)pixels)[0], ((int *)pixels)[1], ((int *)pixels)[2]);
 
     // fill sides
-    fillcolorvertical(pixels, TOP_COLOR, COLOR_BYTES * h, COLOR_BYTES * w);
-    fillcolorvertical(pixels + COLOR_BYTES, TOP_COLOR, COLOR_BYTES * h, COLOR_BYTES * w);
-    fillcolorvertical(pixels + COLOR_BYTES * (w - 1), BOTTOM_COLOR, COLOR_BYTES * h, COLOR_BYTES * w);
-    fillcolorvertical(pixels + COLOR_BYTES * (w - 2), BOTTOM_COLOR, COLOR_BYTES * h, COLOR_BYTES * w);
+    fillcolorvertical(pixels, BOTTOM_COLOR, COLOR_BYTES * h, COLOR_BYTES * w);
+    fillcolorvertical(pixels + COLOR_BYTES * (w - 1), TOP_COLOR, COLOR_BYTES * h, COLOR_BYTES * w);
 
     // fill bottom and top
-    fillcolor(pixels, BOTTOM_COLOR, COLOR_BYTES * w);
-    fillcolor(pixels + (COLOR_BYTES * w + 4), BOTTOM_COLOR, COLOR_BYTES * w - 4);
-    fillcolor(pixels + COLOR_BYTES * w * (h - 1), TOP_COLOR, COLOR_BYTES * w);
-    fillcolor(pixels + COLOR_BYTES * w * (h - 2), TOP_COLOR, COLOR_BYTES * w - 4);
+    fillcolor(pixels, TOP_COLOR, COLOR_BYTES * w);
+    fillcolor(pixels + COLOR_BYTES * w * (h - 1), BOTTOM_COLOR, COLOR_BYTES * w);
 
     return dib;
 }

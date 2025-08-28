@@ -2,14 +2,18 @@
 
 #include "./msg.h"
 #include <windows.h>
+#include "applications/applications.h"
 
 #define TOOLBAR_HEIGHT 20
+#define TOPBAR_HEIGHT 18
 #define VWNDSTYLE enum VWndStyle
 
 typedef struct
 {
     int vwndidx;
     int focused;
+
+    Application *application;
 
     HBITMAP bmp;
     int bitmap_w, bitmap_h;
@@ -29,6 +33,7 @@ enum VWndStyle
     DEFAULT = 1,
     TASKBAR,
     DESKTOP,
+    TOPBAR,
 };
 
 enum VWndState

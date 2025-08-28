@@ -8,7 +8,7 @@ static void launcher(VScreen *vscreen, VWNDIDX vwndidx)
 {
     VWnd *taskbar = createvwnd(VSCREEN_BOTTOM - TASKBAR_HEIGHT, VSCREEN_BOTTOM, VSCREEN_LEFT, VSCREEN_RIGHT, TASKBAR);
     bindvwnd(vscreen, taskbar);
-    for (int i = 2; i < sizeof(applications) / sizeof(applications[0]); i++)
+    for (int i = 3; i < sizeof(applications) / sizeof(applications[0]); i++)
     {
         HBITMAP hbmp = LoadBitmapA(GetModuleHandle(NULL), "temp");
         HELEMENT *testicon = malloc(sizeof(HELEMENT));

@@ -11,6 +11,7 @@
 #define MIN_WINDOW_WIDTH 50
 #define MIN_WINDOW_HEIGHT 40
 
+
 VScreen *createvscreen(unsigned int w, unsigned int h, RECT wnddim)
 {
     VScreen *screen = malloc(sizeof(VScreen));
@@ -36,12 +37,18 @@ void drawvwnd(VScreen *vscreen, VWNDIDX vwndidx, HDC hdc)
     COORD right = vwnd->right;
     COORD bottom = vwnd->bottom;
 
-    COORD toolbarright = vwnd->right;
-    COORD toolbarbottom = vwnd->top + TOOLBAR_HEIGHT;
+    COORD toolbartop = vwnd->top + 3;
+    COORD toolbarleft = vwnd->left + 40;
+    COORD toolbarright = vwnd->right - 40;
+    COORD toolbarbottom = vwnd->top + TOOLBAR_HEIGHT - 3;
 
     vcoordcvt(vscreen, &left, &top);
     vcoordcvt(vscreen, &right, &bottom);
+    vcoordcvt(vscreen, &toolbarleft, &toolbartop);
     vcoordcvt(vscreen, &toolbarright, &toolbarbottom);
+
+    RECT toolbarrect = {toolbarleft, toolbartop, toolbarright, toolbarbottom};
+
 
     // check if the bitmap dimensions are different to the real window dimensions
     if (vwnd->bitmap_w != (right - left) - 1 && vwnd->bitmap_w != right - left ||
@@ -69,11 +76,17 @@ void drawvwnd(VScreen *vscreen, VWNDIDX vwndidx, HDC hdc)
 
         if (vwnd->toolbarbmp == 0)
         {
-            vwnd->toolbarbmp = createtoolbarrect(memdc, toolbarright - left, toolbarbottom - top, 1);
+            vwnd->toolbarbmp = createtoolbarrect(memdc, toolbarright - toolbarleft, toolbarbottom - toolbartop, 1);
+        }
+
+        if (vwnd->application != NULL)
+        {
+            printf("Found application\n");
+            DrawText(hdc, vwnd->application->name, -1, &toolbarrect, DT_LEFT | DT_VCENTER | DT_SINGLELINE);
         }
 
         drawimage(hdc, memdc, vwnd->bmp, left, top, right - left, bottom - top);
-        drawimage(hdc, memdc, vwnd->toolbarbmp, left, top, toolbarright - left, toolbarbottom - top);
+        drawimage(hdc, memdc, vwnd->toolbarbmp, toolbarleft, toolbartop, toolbarright - toolbarleft, toolbarbottom - toolbartop);
         break;
     }
     case DESKTOP: {
@@ -82,6 +95,17 @@ void drawvwnd(VScreen *vscreen, VWNDIDX vwndidx, HDC hdc)
         break;
     }
     case TASKBAR: {
+        if (vwnd->bmp == 0)
+        {
+            vwnd->bmp = createstylerect(memdc, right - left, bottom - top);
+            vwnd->bitmap_w = right - left;
+            vwnd->bitmap_h = bottom - top;
+        }
+
+        drawimage(hdc, memdc, vwnd->bmp, left, top, right - left, bottom - top);
+        break;
+    }
+    case TOPBAR: {
         if (vwnd->bmp == 0)
         {
             vwnd->bmp = createstylerect(memdc, right - left, bottom - top);
