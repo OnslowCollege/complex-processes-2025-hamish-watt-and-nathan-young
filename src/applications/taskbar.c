@@ -12,7 +12,7 @@ static void launcher(VScreen *vscreen, VWNDIDX vwndidx)
     {
         HBITMAP hbmp = LoadBitmapA(GetModuleHandle(NULL), "temp");
         HELEMENT *testicon = malloc(sizeof(HELEMENT));
-        *testicon = newelement(0, (taskbar->bottom - taskbar->top), (i-2) * 40, (i-2) * 40 + 40, &taskbar->left, &taskbar->top);
+        *testicon = newelement(0, (taskbar->bottom - taskbar->top), (i-3) * 40, (i-3) * 40 + 40, &taskbar->left, &taskbar->top);
         addattribute(*testicon, CLICKABLE, (int)applications[i]->launcher);
         addattribute(*testicon, HASSTYLERECT, 0);
         addattribute(*testicon, HASIMAGE, (int)hbmp);

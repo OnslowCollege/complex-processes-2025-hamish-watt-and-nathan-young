@@ -19,6 +19,7 @@ static void launcher(VScreen *vscreen, VWNDIDX vwndidx)
     TextInfo *textinfo = malloc(sizeof(TextInfo));
     textinfo->text = test_str;
     textinfo->color = RGB(123, 123, 123);
+    textinfo->highlight = RGB(0, 0, 0);
 
     addattribute(*testicon, HASTEXT, (int)textinfo);
 

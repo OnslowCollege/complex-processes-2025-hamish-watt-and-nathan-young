@@ -98,10 +98,13 @@ void drawelement(HDC hdc, VScreen *vscreen, HELEMENT helem)
 
     if (hasattribute(helem, HASTEXT))
     {
+        SetBkMode(hdc, OPAQUE);
+        SetBkColor(hdc, GetNearestColor(hdc, element->textinfo->highlight));
         SetTextColor(hdc, GetNearestColor(hdc, element->textinfo->color));
 
         int result = DrawText(hdc, element->textinfo->text, -1, &elemrect, DT_CENTER | DT_BOTTOM | DT_SINGLELINE);
         printf("Draw text result = %d\n", result);
+        SetBkMode(hdc, TRANSPARENT);
     }
 
     DeleteDC(memdc);

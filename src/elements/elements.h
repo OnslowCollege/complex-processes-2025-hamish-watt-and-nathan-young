@@ -20,6 +20,7 @@ typedef struct
 {
     char *text;
     COLORREF color;
+    COLORREF highlight;
 } TextInfo;
 
 typedef struct
