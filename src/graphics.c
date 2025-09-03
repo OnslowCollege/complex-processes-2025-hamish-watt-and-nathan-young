@@ -1,5 +1,4 @@
 #include "./graphics.h"
-#include <stdio.h>
 
 #define COLOR_BYTES 4
 #define BASE_COLOR 0xd6b9ce

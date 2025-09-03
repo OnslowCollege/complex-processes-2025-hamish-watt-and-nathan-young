@@ -11,7 +11,6 @@
 #define MIN_WINDOW_WIDTH 50
 #define MIN_WINDOW_HEIGHT 40
 
-
 VScreen *createvscreen(unsigned int w, unsigned int h, RECT wnddim)
 {
     VScreen *screen = malloc(sizeof(VScreen));
@@ -49,7 +48,6 @@ void drawvwnd(VScreen *vscreen, VWNDIDX vwndidx, HDC hdc)
 
     RECT toolbarrect = {toolbarleft, toolbartop, toolbarright, toolbarbottom};
 
-
     // check if the bitmap dimensions are different to the real window dimensions
     if (vwnd->bitmap_w != (right - left) - 1 && vwnd->bitmap_w != right - left ||
         vwnd->bitmap_h != (bottom - top) - 1 && vwnd->bitmap_h != bottom - top)
@@ -65,6 +63,7 @@ void drawvwnd(VScreen *vscreen, VWNDIDX vwndidx, HDC hdc)
 
     switch (*vwnd->vwndstyle)
     {
+    case STATIC:
     case DEFAULT: {
 
         if (vwnd->bmp == 0)
@@ -86,7 +85,8 @@ void drawvwnd(VScreen *vscreen, VWNDIDX vwndidx, HDC hdc)
         }
 
         drawimage(hdc, memdc, vwnd->bmp, left, top, right - left, bottom - top);
-        drawimage(hdc, memdc, vwnd->toolbarbmp, toolbarleft, toolbartop, toolbarright - toolbarleft, toolbarbottom - toolbartop);
+        drawimage(hdc, memdc, vwnd->toolbarbmp, toolbarleft, toolbartop, toolbarright - toolbarleft,
+                  toolbarbottom - toolbartop);
         break;
     }
     case DESKTOP: {
@@ -131,7 +131,7 @@ WNDRGN inwndrgn(VScreen *vscreen, VWNDIDX vwndidx, int ptx, int pty)
 {
     VWnd *vwnd = vecget(&vscreen->windows, vwndidx);
 
-    if (*vwnd->vwndstyle != DEFAULT)
+    if (*vwnd->vwndstyle != DEFAULT && *vwnd->vwndstyle != STATIC)
     {
         return 0;
     }
@@ -221,6 +221,11 @@ void movevwnd(VScreen *vscreen, VWNDIDX vwndidx, short dx, short dy, COORD movei
 void scalevwnd(VScreen *vscreen, VWNDIDX vwndidx, WNDRGN wndrgn, short x, short y)
 {
     VWnd *vwnd = vecget(&vscreen->windows, vwndidx);
+
+    if (*vwnd->vwndstyle == STATIC)
+    {
+        return;
+    }
 
     switch (wndrgn)
     {

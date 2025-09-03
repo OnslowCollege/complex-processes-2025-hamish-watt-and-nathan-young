@@ -30,6 +30,15 @@ VWnd *createvwnd(unsigned int top, unsigned int bottom, unsigned int left, unsig
         pushvec(&vwnd->elements, hclosebutton);
         break;
     }
+    case STATIC: {
+        HELEMENT *hclosebutton = malloc(sizeof(HELEMENT));
+        *hclosebutton = newelement(0, TOOLBAR_HEIGHT, -TOOLBAR_HEIGHT, 0, &vwnd->right, &vwnd->top);
+        addattribute(*hclosebutton, HASSTYLERECT, 0);
+        addattribute(*hclosebutton, CLICKABLE, (int)clrvwnd);
+
+        pushvec(&vwnd->elements, hclosebutton);
+        break;
+    }
     default:
         break;
     }
@@ -53,7 +62,7 @@ int isfocused(VScreen *vscreen, VWNDIDX vwndidx)
 {
     VWnd *vwnd = vecget(&vscreen->windows, vwndidx);
 
-    if (*vwnd->vwndstyle != DEFAULT)
+    if (*vwnd->vwndstyle != DEFAULT && *vwnd->vwndstyle != STATIC)
     {
         return 1;
     }

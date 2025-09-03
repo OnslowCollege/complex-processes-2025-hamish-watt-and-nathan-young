@@ -34,6 +34,7 @@ enum VWndStyle
     TASKBAR,
     DESKTOP,
     TOPBAR,
+    STATIC,
 };
 
 enum VWndState

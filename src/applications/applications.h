@@ -1,6 +1,7 @@
 #pragma once
 #include "../screen.h"
 #include "../msg.h"
+#include <windows.h>
 
 #define VSCREEN_TOP 0
 #define VSCREEN_LEFT 0
