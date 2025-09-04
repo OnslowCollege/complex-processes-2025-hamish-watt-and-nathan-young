@@ -80,7 +80,7 @@ void drawelement(HDC hdc, VScreen *vscreen, HELEMENT helem)
     vcoordcvt(vscreen, &left, &top);
     vcoordcvt(vscreen, &right, &bottom);
 
-    RECT elemrect = { left, top, right, bottom };
+    RECT elemrect = {left, top, right, bottom};
 
     HDC memdc = CreateCompatibleDC(hdc);
 
@@ -98,8 +98,12 @@ void drawelement(HDC hdc, VScreen *vscreen, HELEMENT helem)
 
     if (hasattribute(helem, HASTEXT))
     {
-        SetBkMode(hdc, OPAQUE);
-        SetBkColor(hdc, GetNearestColor(hdc, element->textinfo->highlight));
+        // Surely we'll never have red highlight.
+        if (element->textinfo->highlight != RGB(255, 0, 0))
+        {
+            SetBkMode(hdc, OPAQUE);
+            SetBkColor(hdc, GetNearestColor(hdc, element->textinfo->highlight));
+        }
         SetTextColor(hdc, GetNearestColor(hdc, element->textinfo->color));
 
         int result = DrawText(hdc, element->textinfo->text, -1, &elemrect, DT_CENTER | DT_BOTTOM | DT_SINGLELINE);
@@ -117,7 +121,8 @@ void addclickable(HELEMENT helem, void (*behavior)(VScreen *vscreen, VWNDIDX vwn
     element->behavior = behavior;
 }
 
-void addhastext(HELEMENT helem, TextInfo *text) {
+void addhastext(HELEMENT helem, TextInfo *text)
+{
     Element *element = vecget(&gea, helem);
     element->attributes = element->attributes | HASTEXT;
     element->textinfo = text;

@@ -8,7 +8,7 @@ static void launcher(VScreen *vscreen, VWNDIDX vwndidx)
     bindvwnd(vscreen, desktop);
     HELEMENT *testicon = malloc(sizeof(HELEMENT));
     *testicon = newelement(100, 160, 100, 160, &desktop->left, &desktop->top);
-    addattribute(*testicon, DOUBLECLICKABLE, (int)applications[3]->launcher);
+    addattribute(*testicon, DOUBLECLICKABLE, (int)applications[4]->launcher);
 
     HBITMAP hbmp = LoadBitmapA(GetModuleHandle(NULL), "chrome");
     addattribute(*testicon, HASIMAGE, (int)hbmp);

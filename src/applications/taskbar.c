@@ -4,47 +4,32 @@
 
 #define TASKBAR_HEIGHT 40
 
+static void drawicon(VWnd *taskbar, char *name, int top, int bottom, int left, int right)
+{
+    HBITMAP bmp = LoadBitmapA(GetModuleHandle(NULL), name);
+    HELEMENT *icon = malloc(sizeof(HELEMENT));
+    *icon = newelement(top, bottom, left, right, &taskbar->left, &taskbar->top);
+    addattribute(*icon, HASIMAGE, (int)bmp);
+    pushvec(&taskbar->elements, icon);
+}
+
 static void launcher(VScreen *vscreen, VWNDIDX vwndidx)
 {
     VWnd *taskbar = createvwnd(VSCREEN_BOTTOM - TASKBAR_HEIGHT, VSCREEN_BOTTOM, VSCREEN_LEFT, VSCREEN_RIGHT, TASKBAR);
     bindvwnd(vscreen, taskbar);
 
     // Kde start logo.
-    HBITMAP kbmp = LoadBitmapA(GetModuleHandle(NULL), "kde_logo");
-    HELEMENT *kde_logo = malloc(sizeof(HELEMENT));
-    *kde_logo = newelement(0, TASKBAR_HEIGHT, 0, TASKBAR_HEIGHT, &taskbar->left, &taskbar->top);
-    addattribute(*kde_logo, HASIMAGE, (int)kbmp);
-    pushvec(&taskbar->elements, kde_logo);
+    drawicon(taskbar, "kde_logo", 2, TASKBAR_HEIGHT - 2, 2, TASKBAR_HEIGHT - 2);
     // Window list icon.
-    HBITMAP wndlstbmp = LoadBitmapA(GetModuleHandle(NULL), "large-window_list");
-    HELEMENT *wndlst = malloc(sizeof(HELEMENT));
-    *wndlst = newelement(0, TASKBAR_HEIGHT, TASKBAR_HEIGHT, 2 * TASKBAR_HEIGHT, &taskbar->left, &taskbar->top);
-    addattribute(*wndlst, HASIMAGE, (int)wndlstbmp);
-    pushvec(&taskbar->elements, wndlst);
+    drawicon(taskbar, "large-window_list", 2, TASKBAR_HEIGHT - 2, (TASKBAR_HEIGHT - 2), 2 * (TASKBAR_HEIGHT - 2));
     // Kfm Home icon.
-    HBITMAP fmhbmp = LoadBitmapA(GetModuleHandle(NULL), "kfm_home");
-    HELEMENT *kfmh = malloc(sizeof(HELEMENT));
-    *kfmh = newelement(0, TASKBAR_HEIGHT, 2 * TASKBAR_HEIGHT, 3 * TASKBAR_HEIGHT, &taskbar->left, &taskbar->top);
-    addattribute(*kfmh, HASIMAGE, (int)fmhbmp);
-    pushvec(&taskbar->elements, kfmh);
+    drawicon(taskbar, "kfm_home", 2, TASKBAR_HEIGHT - 2, 2 * (TASKBAR_HEIGHT - 2), 3 * (TASKBAR_HEIGHT - 2));
     // Settings Icon.
-    HBITMAP kcbmp = LoadBitmapA(GetModuleHandle(NULL), "large-kcontrol");
-    HELEMENT *kcontrol = malloc(sizeof(HELEMENT));
-    *kcontrol = newelement(0, TASKBAR_HEIGHT, 3 * TASKBAR_HEIGHT, 4 * TASKBAR_HEIGHT, &taskbar->left, &taskbar->top);
-    addattribute(*kcontrol, HASIMAGE, (int)kcbmp);
-    pushvec(&taskbar->elements, kcontrol);
+    drawicon(taskbar, "large-kcontrol", 2, TASKBAR_HEIGHT - 2, 3 * (TASKBAR_HEIGHT - 2), 4 * (TASKBAR_HEIGHT - 2));
     // Find files application.
-    HBITMAP ffbmp = LoadBitmapA(GetModuleHandle(NULL), "large-kfind");
-    HELEMENT *kfind = malloc(sizeof(HELEMENT));
-    *kfind = newelement(0, TASKBAR_HEIGHT, 4 * TASKBAR_HEIGHT, 5 * TASKBAR_HEIGHT, &taskbar->left, &taskbar->top);
-    addattribute(*kfind, HASIMAGE, (int)ffbmp);
-    pushvec(&taskbar->elements, kfind);
+    drawicon(taskbar, "large-kfind", 2, TASKBAR_HEIGHT - 2, 4 * (TASKBAR_HEIGHT - 2), 5 * (TASKBAR_HEIGHT - 2));
     // Utilities Package.
-    HBITMAP utlbmp = LoadBitmapA(GetModuleHandle(NULL), "utils_package");
-    HELEMENT *utils = malloc(sizeof(HELEMENT));
-    *utils = newelement(0, TASKBAR_HEIGHT, 5 * TASKBAR_HEIGHT, 6 * TASKBAR_HEIGHT, &taskbar->left, &taskbar->top);
-    addattribute(*utils, HASIMAGE, (int)utlbmp);
-    pushvec(&taskbar->elements, utils);
+    drawicon(taskbar, "utils_package", 2, TASKBAR_HEIGHT - 2, 5 * (TASKBAR_HEIGHT - 2), 6 * (TASKBAR_HEIGHT - 2));
 }
 
 Application taskbar = {

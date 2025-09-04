@@ -1,8 +1,8 @@
-#include "../vwnd.h"
 #include "../msg.h"
+#include "../vwnd.h"
 #include "applications.h"
 
-void messagehandler(VScreen *vscreen, VWNDIDX vwndidx, VWNDMSG msg, MsgFlags *msgflags)
+static void messagehandler(VScreen *vscreen, VWNDIDX vwndidx, VWNDMSG msg, MsgFlags *msgflags)
 {
     return;
 }
@@ -17,8 +17,4 @@ static void launcher(VScreen *vscreen, VWNDIDX vwndidx)
     bindapplication(vscreen, vwndidx, &test_app_1);
 }
 
-Application test_app_1 = {
-    .name = "test app 1",
-    .launcher = launcher,
-    .messagehandler = messagehandler
-};
+Application test_app_1 = {.name = "test app 1", .launcher = launcher, .messagehandler = messagehandler};

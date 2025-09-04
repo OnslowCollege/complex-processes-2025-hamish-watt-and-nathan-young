@@ -21,16 +21,8 @@ VWnd *createvwnd(unsigned int top, unsigned int bottom, unsigned int left, unsig
 
     switch (*vwnd->vwndstyle)
     {
+    case STATIC:
     case DEFAULT: {
-        HELEMENT *hclosebutton = malloc(sizeof(HELEMENT));
-        *hclosebutton = newelement(0, TOOLBAR_HEIGHT, -TOOLBAR_HEIGHT, 0, &vwnd->right, &vwnd->top);
-        addattribute(*hclosebutton, HASSTYLERECT, 0);
-        addattribute(*hclosebutton, CLICKABLE, (int)clrvwnd);
-
-        pushvec(&vwnd->elements, hclosebutton);
-        break;
-    }
-    case STATIC: {
         HELEMENT *hclosebutton = malloc(sizeof(HELEMENT));
         *hclosebutton = newelement(0, TOOLBAR_HEIGHT, -TOOLBAR_HEIGHT, 0, &vwnd->right, &vwnd->top);
         addattribute(*hclosebutton, HASSTYLERECT, 0);
