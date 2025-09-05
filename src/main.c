@@ -3,7 +3,6 @@
 #include "./utils.h"
 #include "./vwnd.h"
 #include "applications/applications.h"
-#include <stdio.h>
 #include <windows.h>
 #include <windowsx.h>
 #include <wingdi.h>

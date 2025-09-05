@@ -227,38 +227,86 @@ void scalevwnd(VScreen *vscreen, VWNDIDX vwndidx, WNDRGN wndrgn, short x, short 
         return;
     }
 
+    COORD prev_top = vwnd->top;
+    COORD prev_bottom = vwnd->bottom;
+    COORD prev_left = vwnd->left;
+    COORD prev_right = vwnd->right;
+
     switch (wndrgn)
     {
     case TOPLEFT:
+        if (x >= vwnd->right || y >= vwnd->bottom)
+        {
+            return;
+        }
         vwnd->left = x;
         vwnd->top = y;
         break;
     case TOPRIGHT:
+        if (x <= vwnd->left || y >= vwnd->bottom)
+        {
+            return;
+        }
         vwnd->right = x;
         vwnd->top = y;
         break;
     case BOTTOMLEFT:
+        if (x >= vwnd->right || y <= vwnd->top)
+        {
+            return;
+        }
         vwnd->left = x;
         vwnd->bottom = y;
         break;
     case BOTTOMRIGHT:
+        if (x <= vwnd->left || y <= vwnd->top)
+        {
+            return;
+        }
         vwnd->right = x;
         vwnd->bottom = y;
         break;
     case TOP:
+        if (y >= vwnd->bottom)
+        {
+            return;
+        }
         vwnd->top = y;
         break;
     case BOTTOM:
+        if (y <= vwnd->top)
+        {
+            return;
+        }
         vwnd->bottom = y;
         break;
     case LEFT:
+        if (x >= vwnd->right)
+        {
+            return;
+        }
         vwnd->left = x;
         break;
     case RIGHT:
+        if (x <= vwnd->left)
+        {
+            return;
+        }
         vwnd->right = x;
         break;
     default:
         break;
+    }
+
+    if (vwnd->right - vwnd->left < 200)
+    {
+        vwnd->left = prev_left;
+        vwnd->right = prev_right;
+    }
+    if (vwnd->bottom - vwnd->top < 150)
+    {
+        vwnd->top = prev_top;
+        vwnd->bottom = prev_bottom;
     }
 }
 

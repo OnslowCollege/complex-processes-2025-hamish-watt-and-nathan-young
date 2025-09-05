@@ -1,16 +1,49 @@
 #include "../elements/elements.h"
 #include "../vwnd.h"
 #include "applications.h"
+#include <stdio.h>
 
-#define TASKBAR_HEIGHT 40
 
-static void drawicon(VWnd *taskbar, char *name, int top, int bottom, int left, int right)
+static char *get_month(int x)
+{
+    switch (x)
+    {
+    case 1:
+        return "Jan";
+    case 2:
+        return "Feb";
+    case 3:
+        return "Mar";
+    case 4:
+        return "Apr";
+    case 5:
+        return "May";
+    case 6:
+        return "Jun";
+    case 7:
+        return "Jul";
+    case 8:
+        return "Aug";
+    case 9:
+        return "Sep";
+    case 10:
+        return "Oct";
+    case 11:
+        return "Nov";
+    case 12:
+        return "Dec";
+    default:
+        return "Err";
+    }
+}
+
+static HELEMENT *drawicon(VWnd *taskbar, char *name, int top, int bottom, int left, int right)
 {
     HBITMAP bmp = LoadBitmapA(GetModuleHandle(NULL), name);
     HELEMENT *icon = malloc(sizeof(HELEMENT));
     *icon = newelement(top, bottom, left, right, &taskbar->left, &taskbar->top);
     addattribute(*icon, HASIMAGE, (int)bmp);
-    pushvec(&taskbar->elements, icon);
+    return icon;
 }
 
 static void launcher(VScreen *vscreen, VWNDIDX vwndidx)
@@ -19,17 +52,40 @@ static void launcher(VScreen *vscreen, VWNDIDX vwndidx)
     bindvwnd(vscreen, taskbar);
 
     // Kde start logo.
-    drawicon(taskbar, "kde_logo", 2, TASKBAR_HEIGHT - 2, 2, TASKBAR_HEIGHT - 2);
+    HELEMENT *kde_logo = drawicon(taskbar, "kde_logo", 2, TASKBAR_HEIGHT - 2, 2, TASKBAR_HEIGHT - 2);
+    pushvec(&taskbar->elements, kde_logo);
     // Window list icon.
-    drawicon(taskbar, "large-window_list", 2, TASKBAR_HEIGHT - 2, (TASKBAR_HEIGHT - 2), 2 * (TASKBAR_HEIGHT - 2));
+    HELEMENT *wnd_list = drawicon(taskbar, "large-window_list", 2, TASKBAR_HEIGHT - 2, (TASKBAR_HEIGHT - 2), 2 * (TASKBAR_HEIGHT - 2));
+    pushvec(&taskbar->elements, wnd_list);
     // Kfm Home icon.
-    drawicon(taskbar, "kfm_home", 2, TASKBAR_HEIGHT - 2, 2 * (TASKBAR_HEIGHT - 2), 3 * (TASKBAR_HEIGHT - 2));
+    HELEMENT *kfm_home = drawicon(taskbar, "kfm_home", 2, TASKBAR_HEIGHT - 2, 2 * (TASKBAR_HEIGHT - 2), 3 * (TASKBAR_HEIGHT - 2));
+    pushvec(&taskbar->elements, kfm_home);
     // Settings Icon.
-    drawicon(taskbar, "large-kcontrol", 2, TASKBAR_HEIGHT - 2, 3 * (TASKBAR_HEIGHT - 2), 4 * (TASKBAR_HEIGHT - 2));
+    HELEMENT *kcontrol = drawicon(taskbar, "large-kcontrol", 2, TASKBAR_HEIGHT - 2, 3 * (TASKBAR_HEIGHT - 2), 4 * (TASKBAR_HEIGHT - 2));
+    pushvec(&taskbar->elements, kcontrol);
     // Find files application.
-    drawicon(taskbar, "large-kfind", 2, TASKBAR_HEIGHT - 2, 4 * (TASKBAR_HEIGHT - 2), 5 * (TASKBAR_HEIGHT - 2));
+    HELEMENT *kfind = drawicon(taskbar, "large-kfind", 2, TASKBAR_HEIGHT - 2, 4 * (TASKBAR_HEIGHT - 2), 5 * (TASKBAR_HEIGHT - 2));
+    addattribute(*kfind, CLICKABLE, (int)applications[3]->launcher);
+    pushvec(&taskbar->elements, kfind);
     // Utilities Package.
-    drawicon(taskbar, "utils_package", 2, TASKBAR_HEIGHT - 2, 5 * (TASKBAR_HEIGHT - 2), 6 * (TASKBAR_HEIGHT - 2));
+    HELEMENT *utils_package = drawicon(taskbar, "utils_package", 2, TASKBAR_HEIGHT - 2, 5 * (TASKBAR_HEIGHT - 2), 6 * (TASKBAR_HEIGHT - 2));
+    pushvec(&taskbar->elements, utils_package);
+
+    SYSTEMTIME st;
+    GetLocalTime(&st);
+    HELEMENT *time = malloc(sizeof(HELEMENT));
+    *time = newelement(2, TASKBAR_HEIGHT - 2, TASKBAR_HEIGHT - 2, 2, &taskbar->right, &taskbar->top);
+
+    char *time_str = malloc(20);
+    sprintf(time_str, "%02d:%02d\n%s %02d\0", st.wHour, st.wMinute, get_month(st.wMonth), st.wDay);
+
+    TextInfo *textinfo = malloc(sizeof(TextInfo));
+    textinfo->text = time_str;
+    textinfo->color = RGB(123, 123, 123);
+    textinfo->highlight = RGB(255, 0, 0);
+
+    addattribute(*time, HASTEXT, (int)textinfo);
+    pushvec(&taskbar->elements, time);
 }
 
 Application taskbar = {
