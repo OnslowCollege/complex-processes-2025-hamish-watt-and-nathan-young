@@ -8,8 +8,6 @@
 
 #define SCALEREGIONSIZE 10
 #define MOVEREGIONSIZE 10
-#define MIN_WINDOW_WIDTH 50
-#define MIN_WINDOW_HEIGHT 40
 
 VScreen *createvscreen(unsigned int w, unsigned int h, RECT wnddim)
 {
@@ -206,11 +204,23 @@ void movevwnd(VScreen *vscreen, VWNDIDX vwndidx, short dx, short dy, COORD movei
 {
     VWnd *vwnd = vecget(&vscreen->windows, vwndidx);
 
-    short x = moveinitx + dx;
-    short y = moveinity + dy;
+    COORD x = moveinitx + dx;
+    COORD y = moveinity + dy;
 
-    short w = vwnd->right - vwnd->left;
-    short h = vwnd->bottom - vwnd->top;
+    COORD w = vwnd->right - vwnd->left;
+    COORD h = vwnd->bottom - vwnd->top;
+
+    // Clamp x to within the vscreen.
+    if (x < 0)
+        x = 0;
+    if (x + w > vscreen->w)
+        x = vscreen->w - w;
+    
+    // Clamp y to within the vscreen and top/bottom bars.
+    if (y < TOPBAR_HEIGHT)
+        y = TOPBAR_HEIGHT;
+    if (y + h > vscreen->h - TASKBAR_HEIGHT)
+        y = vscreen->h - h - TASKBAR_HEIGHT;
 
     vwnd->left = x;
     vwnd->right = x + w;
