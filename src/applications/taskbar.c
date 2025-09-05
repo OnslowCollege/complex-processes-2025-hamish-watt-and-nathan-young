@@ -74,18 +74,30 @@ static void launcher(VScreen *vscreen, VWNDIDX vwndidx)
     SYSTEMTIME st;
     GetLocalTime(&st);
     HELEMENT *time = malloc(sizeof(HELEMENT));
-    *time = newelement(2, TASKBAR_HEIGHT - 2, TASKBAR_HEIGHT - 2, 2, &taskbar->right, &taskbar->top);
+    *time = newelement(2, (TASKBAR_HEIGHT / 2) - 2, -TASKBAR_HEIGHT + 2, -2, &taskbar->right, &taskbar->top);
+    HELEMENT *date = malloc(sizeof(HELEMENT));
+    *date = newelement((TASKBAR_HEIGHT / 2) - 2, TASKBAR_HEIGHT - 2, -TASKBAR_HEIGHT + 2, -2, &taskbar->right, &taskbar->top);
 
-    char *time_str = malloc(20);
-    sprintf(time_str, "%02d:%02d\n%s %02d\0", st.wHour, st.wMinute, get_month(st.wMonth), st.wDay);
+    char *time_str = malloc(8);
+    sprintf(time_str, "%02d:%02d\0", st.wHour, st.wMinute);
 
-    TextInfo *textinfo = malloc(sizeof(TextInfo));
-    textinfo->text = time_str;
-    textinfo->color = RGB(123, 123, 123);
-    textinfo->highlight = RGB(255, 0, 0);
+    char *date_str = malloc(8);
+    sprintf(date_str, "%s %02d\0", get_month(st.wMonth), st.wDay);
 
-    addattribute(*time, HASTEXT, (int)textinfo);
+    TextInfo *time_textinfo = malloc(sizeof(TextInfo));
+    time_textinfo->text = time_str;
+    time_textinfo->color = RGB(0, 0, 0);
+    time_textinfo->highlight = RGB(255, 0, 0);
+
+    TextInfo *date_textinfo = malloc(sizeof(TextInfo));
+    date_textinfo->text = date_str;
+    date_textinfo->color = RGB(0, 0, 0);
+    date_textinfo->highlight = RGB(255, 0, 0);
+
+    addattribute(*time, HASTEXT, (int)time_textinfo);
+    addattribute(*date, HASTEXT, (int)date_textinfo);
     pushvec(&taskbar->elements, time);
+    pushvec(&taskbar->elements, date);
 }
 
 Application taskbar = {
