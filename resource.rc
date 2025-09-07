@@ -6,3 +6,4 @@ kfm_home BITMAP kfm_home.bmp
 large-kcontrol BITMAP large-kcontrol.bmp
 large-kfind BITMAP large-kfind.bmp
 utils_package BITMAP large-utilities_package.bmp
+close BITMAP close.bmp

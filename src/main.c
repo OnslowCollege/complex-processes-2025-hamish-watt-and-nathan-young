@@ -193,7 +193,7 @@ LRESULT __stdcall windowProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
                 WNDRGN wndrgn = inwndrgn(vscreen, i, lastclick_x, lastclick_y);
                 // This is temporary to get single click to work with taskbar and desktop
                 // inwndrgn automatically assumes that non default is false.
-                if (wndrgn || i < 2)
+                if (wndrgn || i <= 2)
                 {
                     if (isfocused(vscreen, i))
                     {
