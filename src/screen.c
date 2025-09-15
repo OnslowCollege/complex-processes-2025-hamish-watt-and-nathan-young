@@ -76,12 +76,6 @@ void drawvwnd(VScreen *vscreen, VWNDIDX vwndidx, HDC hdc)
             vwnd->toolbarbmp = createtoolbarrect(memdc, toolbarright - toolbarleft, toolbarbottom - toolbartop, 1);
         }
 
-        if (vwnd->application != NULL)
-        {
-            printf("Found application\n");
-            DrawText(hdc, vwnd->application->name, -1, &toolbarrect, DT_LEFT | DT_VCENTER | DT_SINGLELINE);
-        }
-
         drawimage(hdc, memdc, vwnd->bmp, left, top, right - left, bottom - top);
         drawimage(hdc, memdc, vwnd->toolbarbmp, toolbarleft, toolbartop, toolbarright - toolbarleft,
                   toolbarbottom - toolbartop);
