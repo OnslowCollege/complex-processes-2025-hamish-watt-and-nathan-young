@@ -141,7 +141,7 @@ WNDRGN inwndrgn(VScreen *vscreen, VWNDIDX vwndidx, int ptx, int pty)
 {
     VWnd *vwnd = vecget(&vscreen->windows, vwndidx);
 
-    if (*vwnd->vwndstyle != DEFAULT && *vwnd->vwndstyle != STATIC)
+    if (*vwnd->vwndstyle == DESKTOP)
     {
         return 0;
     }
@@ -216,6 +216,11 @@ void movevwnd(VScreen *vscreen, VWNDIDX vwndidx, short dx, short dy, COORD movei
 {
     VWnd *vwnd = vecget(&vscreen->windows, vwndidx);
 
+    if (*vwnd->vwndstyle != DEFAULT && *vwnd->vwndstyle != STATIC)
+    {
+        return;
+    }
+
     COORD x = moveinitx + dx;
     COORD y = moveinity + dy;
 
@@ -244,7 +249,7 @@ void scalevwnd(VScreen *vscreen, VWNDIDX vwndidx, WNDRGN wndrgn, short x, short 
 {
     VWnd *vwnd = vecget(&vscreen->windows, vwndidx);
 
-    if (*vwnd->vwndstyle == STATIC)
+    if (*vwnd->vwndstyle != DEFAULT)
     {
         return;
     }

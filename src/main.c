@@ -197,14 +197,10 @@ LRESULT __stdcall windowProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 
             for (int i = veclength(&vscreen->windows) - 1; i >= 0; i--)
             {
-                printf("iteration at timer: %d\n", i);
                 WNDRGN wndrgn = inwndrgn(vscreen, i, lastclick_x, lastclick_y);
                 VWnd *vwnd = vecget(&vscreen->windows, i);
-                // This is temporary to get single click to work with taskbar and desktop
-                // inwndrgn automatically assumes that non default is false.
-                if ((wndrgn && isfocused(vscreen, i)) || *vwnd->vwndstyle == TASKBAR || *vwnd->vwndstyle == TOPBAR)
+                if (wndrgn && isfocused(vscreen, i))
                 {
-                    printf("Veclength at mouseclicked send = %d\n", veclength(&vwnd->elements));
                     sendvwndevent(vscreen, i, MOUSECLICKED, param);
                     break;
                 }
