@@ -3,6 +3,7 @@
 #include "./utils.h"
 #include "./vwnd.h"
 #include "applications/applications.h"
+#include <stdio.h>
 #include <windows.h>
 #include <windowsx.h>
 #include <wingdi.h>
@@ -78,9 +79,15 @@ LRESULT __stdcall windowProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 
         vscreen = createvscreen(VSCREEN_RIGHT, VSCREEN_BOTTOM, wnddim);
 
+        // Desktop.
         applications[0]->launcher(vscreen, 0);
+        // Taskbar.
         applications[1]->launcher(vscreen, 0);
+        // Topbar.
         applications[2]->launcher(vscreen, 0);
+
+        VWnd *taskbar = vecget(&vscreen->windows, 1);
+        printf("Taskbar veclength from creation = %d\n", veclength(&taskbar->elements));
 
         return 0;
     }
@@ -190,16 +197,16 @@ LRESULT __stdcall windowProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 
             for (int i = veclength(&vscreen->windows) - 1; i >= 0; i--)
             {
+                printf("iteration at timer: %d\n", i);
                 WNDRGN wndrgn = inwndrgn(vscreen, i, lastclick_x, lastclick_y);
+                VWnd *vwnd = vecget(&vscreen->windows, i);
                 // This is temporary to get single click to work with taskbar and desktop
                 // inwndrgn automatically assumes that non default is false.
-                if (wndrgn || i <= 2)
+                if ((wndrgn && isfocused(vscreen, i)) || *vwnd->vwndstyle == TASKBAR || *vwnd->vwndstyle == TOPBAR)
                 {
-                    if (isfocused(vscreen, i))
-                    {
-                        sendvwndevent(vscreen, i, MOUSECLICKED, param);
-                        break;
-                    }
+                    printf("Veclength at mouseclicked send = %d\n", veclength(&vwnd->elements));
+                    sendvwndevent(vscreen, i, MOUSECLICKED, param);
+                    break;
                 }
             }
         }

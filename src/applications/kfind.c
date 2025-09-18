@@ -1,6 +1,7 @@
 #include "../msg.h"
 #include "../vwnd.h"
 #include "applications.h"
+#include <stdio.h>
 
 static void messagehandler(VScreen *vscreen, VWNDIDX vwndidx, VWNDMSG msg, MsgFlags *msgflags)
 {
@@ -11,7 +12,8 @@ Application kfind;
 
 static void launcher(VScreen *vscreen, VWNDIDX vwndidx)
 {
-    VWnd *kfind_vwnd = createvwnd(200, 500, 300, 600, STATIC);
+    printf("Called\n");
+    VWnd *kfind_vwnd = createvwnd(200, 300, 300, 600, STATIC);
     bindvwnd(vscreen, kfind_vwnd);
 
     bindapplication(vscreen, vwndidx, &kfind);

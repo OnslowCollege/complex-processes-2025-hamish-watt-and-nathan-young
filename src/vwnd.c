@@ -21,7 +21,16 @@ VWnd *createvwnd(unsigned int top, unsigned int bottom, unsigned int left, unsig
 
     switch (*vwnd->vwndstyle)
     {
-    case STATIC:
+    case STATIC: {
+        HELEMENT *hclosebutton = malloc(sizeof(HELEMENT));
+        *hclosebutton = newelement(2, TOOLBAR_HEIGHT, -TOOLBAR_HEIGHT, -2, &vwnd->right, &vwnd->top);
+        HBITMAP bmpclosebutton = LoadBitmapA(GetModuleHandle(NULL), "close");
+        addattribute(*hclosebutton, HASIMAGE, (int)bmpclosebutton);
+        addattribute(*hclosebutton, CLICKABLE, (int)clrvwnd);
+
+        pushvec(&vwnd->elements, hclosebutton);
+        break;
+    }
     case DEFAULT: {
         HELEMENT *hclosebutton = malloc(sizeof(HELEMENT));
         *hclosebutton = newelement(2, TOOLBAR_HEIGHT, -TOOLBAR_HEIGHT, -2, &vwnd->right, &vwnd->top);

@@ -61,7 +61,25 @@ void drawvwnd(VScreen *vscreen, VWNDIDX vwndidx, HDC hdc)
 
     switch (*vwnd->vwndstyle)
     {
-    case STATIC:
+    case STATIC: {
+
+        if (vwnd->bmp == 0)
+        {
+            vwnd->bmp = createstylerect(memdc, right - left, bottom - top);
+            vwnd->bitmap_w = right - left;
+            vwnd->bitmap_h = bottom - top;
+        }
+
+        if (vwnd->toolbarbmp == 0)
+        {
+            vwnd->toolbarbmp = createtoolbarrect(memdc, toolbarright - toolbarleft, toolbarbottom - toolbartop, 1);
+        }
+
+        drawimage(hdc, memdc, vwnd->bmp, left, top, right - left, bottom - top);
+        drawimage(hdc, memdc, vwnd->toolbarbmp, toolbarleft, toolbartop, toolbarright - toolbarleft,
+                  toolbarbottom - toolbartop);
+        break;
+    }
     case DEFAULT: {
 
         if (vwnd->bmp == 0)
@@ -209,7 +227,7 @@ void movevwnd(VScreen *vscreen, VWNDIDX vwndidx, short dx, short dy, COORD movei
         x = 0;
     if (x + w > vscreen->w)
         x = vscreen->w - w;
-    
+
     // Clamp y to within the vscreen and top/bottom bars.
     if (y < TOPBAR_HEIGHT)
         y = TOPBAR_HEIGHT;

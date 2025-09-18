@@ -53,18 +53,22 @@ static void launcher(VScreen *vscreen, VWNDIDX vwndidx)
     // Kde start logo.
     HELEMENT *kde_logo = drawicon(taskbar, "kde_logo", 2, TASKBAR_HEIGHT - 2, 2, TASKBAR_HEIGHT - 2);
     pushvec(&taskbar->elements, kde_logo);
+    printf("Veclength = %d\n", veclength(&taskbar->elements));
     // Window list icon.
     HELEMENT *wnd_list =
         drawicon(taskbar, "large-window_list", 2, TASKBAR_HEIGHT - 2, (TASKBAR_HEIGHT - 2), 2 * (TASKBAR_HEIGHT - 2));
     pushvec(&taskbar->elements, wnd_list);
+    printf("Veclength = %d\n", veclength(&taskbar->elements));
     // Kfm Home icon.
     HELEMENT *kfm_home =
         drawicon(taskbar, "kfm_home", 2, TASKBAR_HEIGHT - 2, 2 * (TASKBAR_HEIGHT - 2), 3 * (TASKBAR_HEIGHT - 2));
     pushvec(&taskbar->elements, kfm_home);
+    printf("Veclength = %d\n", veclength(&taskbar->elements));
     // Settings Icon.
     HELEMENT *kcontrol =
         drawicon(taskbar, "large-kcontrol", 2, TASKBAR_HEIGHT - 2, 3 * (TASKBAR_HEIGHT - 2), 4 * (TASKBAR_HEIGHT - 2));
     pushvec(&taskbar->elements, kcontrol);
+    printf("Veclength = %d\n", veclength(&taskbar->elements));
     // Find files application.
     HBITMAP kfindbmp = LoadBitmapA(GetModuleHandle(NULL), "large-kfind");
     HELEMENT *kfind = malloc(sizeof(HELEMENT));
@@ -73,10 +77,12 @@ static void launcher(VScreen *vscreen, VWNDIDX vwndidx)
     addattribute(*kfind, HASIMAGE, (int)kfindbmp);
     addattribute(*kfind, CLICKABLE, (int)applications[3]->launcher);
     pushvec(&taskbar->elements, kfind);
+    printf("Veclength = %d\n", veclength(&taskbar->elements));
     // Utilities Package.
     HELEMENT *utils_package =
         drawicon(taskbar, "utils_package", 2, TASKBAR_HEIGHT - 2, 5 * (TASKBAR_HEIGHT - 2), 6 * (TASKBAR_HEIGHT - 2));
     pushvec(&taskbar->elements, utils_package);
+    printf("Veclength = %d\n", veclength(&taskbar->elements));
 
     SYSTEMTIME st;
     GetLocalTime(&st);
@@ -105,7 +111,9 @@ static void launcher(VScreen *vscreen, VWNDIDX vwndidx)
     addattribute(*time, HASTEXT, (int)time_textinfo);
     addattribute(*date, HASTEXT, (int)date_textinfo);
     pushvec(&taskbar->elements, time);
+    printf("Veclength = %d\n", veclength(&taskbar->elements));
     pushvec(&taskbar->elements, date);
+    printf("Veclength = %d\n", veclength(&taskbar->elements));
 }
 
 Application taskbar = {

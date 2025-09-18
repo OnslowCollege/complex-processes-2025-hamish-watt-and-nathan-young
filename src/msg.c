@@ -2,6 +2,7 @@
 #include "elements/elements.h"
 #include "screen.h"
 #include "vwnd.h"
+#include <stdio.h>
 #include <windows.h>
 
 static COORD moveinitx;
@@ -84,9 +85,12 @@ int processmsg(VScreen *vscreen, VWNDIDX vwndidx, VWNDMSG msg, MsgFlags *msgflag
 
     if (msg & MOUSECLICKED)
     {
+        printf("Mouse Clicked\n");
         *vwnd->msg = *vwnd->msg ^ MOUSECLICKED;
+        printf("%d\n", veclength(&vwnd->elements));
         for (int i = 0; i < veclength(&vwnd->elements); i++)
         {
+
             HELEMENT helem = *(HELEMENT *)vecget(&vwnd->elements, i);
             if (hasattribute(helem, CLICKABLE))
             {
@@ -102,7 +106,7 @@ int processmsg(VScreen *vscreen, VWNDIDX vwndidx, VWNDMSG msg, MsgFlags *msgflag
         }
     }
 
-    if (msg & DOUBLECLICKED)
+    else if (msg & DOUBLECLICKED)
     {
         *vwnd->msg = *vwnd->msg ^ DOUBLECLICKED;
         for (int i = 0; i < veclength(&vwnd->elements); i++)
@@ -131,7 +135,7 @@ int handlevwndmessages(VScreen *vscreen)
     {
         VWnd *vwnd = vecget(&vscreen->windows, i);
 
-        if (vwnd->msg && isfocused(vscreen, i))
+        if ((vwnd->msg && isfocused(vscreen, i)) || *vwnd->vwndstyle == TASKBAR || *vwnd->vwndstyle == TOPBAR)
         {
             VWNDMSG msg = *vwnd->msg;
             if (processmsg(vscreen, i, msg, vwnd->msgflags))
