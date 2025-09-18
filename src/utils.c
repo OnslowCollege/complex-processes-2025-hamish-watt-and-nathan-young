@@ -18,7 +18,7 @@ void pushvec(VEC *v, void *element)
     if (v->idx >= v->capacity)
     {
         v->capacity *= 2;
-        v->elems = realloc(v->elems, v->capacity * sizeof(void *));
+        v->elems = realloc(v->elems, v->capacity);
 
         if (v->elems == NULL)
         {
