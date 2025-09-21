@@ -34,6 +34,12 @@ HELEMENT newelement(int top, int bottom, int left, int right, unsigned int *anch
     return veclength(&gea) - 1;
 }
 
+Element *getelement(HELEMENT helem)
+{
+    Element *element = vecget(&gea, helem);
+    return element;
+}
+
 void rmelement(HELEMENT helem)
 {
     struct Element *element = vecget(&gea, helem);
@@ -180,4 +186,10 @@ int hasattribute(HELEMENT helem, ELEMATTRIBUTE attribute)
 {
     Element *element = vecget(&gea, helem);
     return (element->attributes & attribute) != 0;
+}
+
+void clrtext(TextInfo *text)
+{
+    free(text->text);
+    free(text);
 }

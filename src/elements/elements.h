@@ -41,8 +41,10 @@ typedef struct
 HELEMENT newelement(int top, int bottom, int left, int right, unsigned int *anchorx, unsigned int *anchory);
 
 void drawelement(HDC hdc, VScreen *vscreen, HELEMENT helem);
+Element * getelement(HELEMENT helem);
 void addattribute(HELEMENT elem, ELEMATTRIBUTE, int param);
 int hasattribute(HELEMENT elem, ELEMATTRIBUTE);
 int ptinelem(HELEMENT elem, short x, short y);
 void executeelem(HELEMENT elem, VScreen *vscreen, VWNDIDX vwndidx);
 void rmelement(HELEMENT helem);
+void clrtext(TextInfo *text);

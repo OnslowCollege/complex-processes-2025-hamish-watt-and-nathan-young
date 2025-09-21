@@ -86,8 +86,6 @@ LRESULT __stdcall windowProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
         // Topbar.
         applications[2]->launcher(vscreen, 0);
 
-        VWnd *taskbar = vecget(&vscreen->windows, 1);
-        printf("Taskbar veclength from creation = %d\n", veclength(&taskbar->elements));
 
         return 0;
     }

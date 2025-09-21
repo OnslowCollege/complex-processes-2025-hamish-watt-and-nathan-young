@@ -85,9 +85,7 @@ int processmsg(VScreen *vscreen, VWNDIDX vwndidx, VWNDMSG msg, MsgFlags *msgflag
 
     if (msg & MOUSECLICKED)
     {
-        printf("Mouse Clicked\n");
         *vwnd->msg = *vwnd->msg ^ MOUSECLICKED;
-        printf("%d\n", veclength(&vwnd->elements));
         for (int i = 0; i < veclength(&vwnd->elements); i++)
         {
 
