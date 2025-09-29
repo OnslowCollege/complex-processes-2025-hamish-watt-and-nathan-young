@@ -2,6 +2,8 @@
 #include "../vwnd.h"
 #include "applications.h"
 
+#define APPLICATIONINDEX 3
+
 static void messagehandler(VScreen *vscreen, VWNDIDX vwndidx, VWNDMSG msg, MsgFlags *msgflags)
 {
     return;
@@ -15,6 +17,7 @@ static void launcher(VScreen *vscreen, VWNDIDX vwndidx)
     bindvwnd(vscreen, test_vwnd_1);
 
     bindapplication(vscreen, vwndidx, &test_app_1);
+    default_launcher(vscreen, APPLICATIONINDEX);
 }
 
 Application test_app_1 = {.name = "test app 1", .launcher = launcher, .messagehandler = messagehandler};

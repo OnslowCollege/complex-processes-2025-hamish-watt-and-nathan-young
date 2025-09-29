@@ -73,7 +73,7 @@ void drawvwnd(VScreen *vscreen, VWNDIDX vwndidx, HDC hdc)
 
         if (vwnd->toolbarbmp == 0)
         {
-            vwnd->toolbarbmp = createtoolbarrect(memdc, toolbarright - toolbarleft, toolbarbottom - toolbartop, 1);
+            vwnd->toolbarbmp = createtoolbarrect(memdc, toolbarright - toolbarleft, toolbarbottom - toolbartop, vwnd->focused);
         }
 
         drawimage(hdc, memdc, vwnd->bmp, left, top, right - left, bottom - top);

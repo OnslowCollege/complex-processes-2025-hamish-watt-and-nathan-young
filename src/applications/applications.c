@@ -20,3 +20,7 @@ void bindapplication(VScreen *vscreen, VWNDIDX vwndidx, Application *application
     VWnd *vwnd = vecget(&vscreen->windows, vwndidx);
     vwnd->application = application;
 }
+
+void default_launcher(VScreen *vscreen, int appidx) {
+    sendglobalevent(vscreen, APPOPENED, appidx);
+}

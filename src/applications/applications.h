@@ -19,3 +19,4 @@ typedef struct
 extern const Application *applications[5];
 
 void bindapplication(VScreen *vscreen, VWNDIDX vwndidx, Application *application);
+void default_launcher(VScreen *vscreen, int appidx);

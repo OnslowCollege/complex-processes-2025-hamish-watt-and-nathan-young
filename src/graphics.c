@@ -5,6 +5,8 @@
 #define BOTTOM_COLOR 0x6b6555
 #define TOP_COLOR 0xe3f7e8
 
+#define NOT_FOCUSED_COLOR 0x40444a
+
 #define TOOLBARSTARTCOLOR 0x0d065e
 #define TOOLBARENDCOLOR 0x5648f7
 
@@ -68,16 +70,24 @@ HBITMAP createtoolbarrect(HDC hdc, int w, int h, int isfocused)
     void *pixels = NULL;
     HBITMAP dib = CreateDIBSection(hdc, &bi, DIB_RGB_COLORS, &pixels, NULL, 0);
 
-    // fill entire square
-    fillgradient(pixels, TOOLBARSTARTCOLOR, TOOLBARENDCOLOR, p_bytes, w);
+    if (isfocused)
+    {
+        // fill entire square
+        fillgradient(pixels, TOOLBARSTARTCOLOR, TOOLBARENDCOLOR, p_bytes, w);
 
-    // fill sides
-    fillcolorvertical(pixels, BOTTOM_COLOR, COLOR_BYTES * h, COLOR_BYTES * w);
-    fillcolorvertical(pixels + COLOR_BYTES * (w - 1), TOP_COLOR, COLOR_BYTES * h, COLOR_BYTES * w);
+        // fill sides
+        fillcolorvertical(pixels, BOTTOM_COLOR, COLOR_BYTES * h, COLOR_BYTES * w);
+        fillcolorvertical(pixels + COLOR_BYTES * (w - 1), TOP_COLOR, COLOR_BYTES * h, COLOR_BYTES * w);
 
-    // fill bottom and top
-    fillcolor(pixels, TOP_COLOR, COLOR_BYTES * w);
-    fillcolor(pixels + COLOR_BYTES * w * (h - 1), BOTTOM_COLOR, COLOR_BYTES * w);
+        // fill bottom and top
+        fillcolor(pixels, TOP_COLOR, COLOR_BYTES * w);
+        fillcolor(pixels + COLOR_BYTES * w * (h - 1), BOTTOM_COLOR, COLOR_BYTES * w);
+    } 
+    else
+    {
+        fillgradient(pixels, NOT_FOCUSED_COLOR, BASE_COLOR, p_bytes, w);
+    }
+
 
     return dib;
 }

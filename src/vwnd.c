@@ -80,6 +80,12 @@ void focusvwnd(VScreen *vscreen, VWNDIDX vwndidx)
     {
         VWnd *other_wnd = vecget(&vscreen->windows, i);
         other_wnd->focused = 0;
+
+        if (other_wnd->toolbarbmp != NULL)
+        {
+            DeleteObject(other_wnd->toolbarbmp);
+            other_wnd->toolbarbmp = NULL;
+        }
     }
 
     vwnd->focused = 1;
