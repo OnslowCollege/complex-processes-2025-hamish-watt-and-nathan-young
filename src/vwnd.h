@@ -4,7 +4,7 @@
 #include <windows.h>
 #include "applications/applications.h"
 
-#define TOOLBAR_HEIGHT 20
+#define TOOLBAR_HEIGHT 18
 #define TOPBAR_HEIGHT 18
 #define TASKBAR_HEIGHT 40
 #define VWNDSTYLE enum VWndStyle

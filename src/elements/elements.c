@@ -112,7 +112,7 @@ void drawelement(HDC hdc, VScreen *vscreen, HELEMENT helem)
         }
         SetTextColor(hdc, GetNearestColor(hdc, element->textinfo->color));
 
-        int result = DrawText(hdc, element->textinfo->text, -1, &elemrect, DT_CENTER | DT_BOTTOM | DT_SINGLELINE);
+        int result = DrawTextA(hdc, element->textinfo->text, -1, &elemrect, DT_CENTER | DT_BOTTOM | DT_SINGLELINE);
         printf("Draw text result = %d\n", result);
         SetBkMode(hdc, TRANSPARENT);
     }
