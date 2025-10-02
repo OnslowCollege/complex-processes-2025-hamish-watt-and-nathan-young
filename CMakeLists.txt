@@ -12,4 +12,26 @@ add_executable(kdemulate ${C_SOURCES} ${ASM_SOURCES})
 set_target_properties(kdemulate PROPERTIES ASM_NASM_OBJECT_FORMAT win32)
 set(CMAKE_ASM_NASM_FLAGS "-f win32")
 
+if(CMAKE_HOST_WIN32)
+    # run natively if on windows
+    add_custom_target(run
+        COMMAND ${CMAKE_CURRENT_BINARY_DIR}/kdemulate.exe
+        DEPENDS kdemulate
+        WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}
+    )
+else()
+    # otherwise attempt to run through wine
+    add_custom_target(run
+        COMMAND wine ${CMAKE_CURRENT_BINARY_DIR}/kdemulate.exe
+        DEPENDS kdemulate
+        WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}
+    )
+endif()
+
+add_custom_target(iso
+    COMMAND sh ${CMAKE_CURRENT_SOURCE_DIR}/buildiso.sh
+    DEPENDS kdemulate
+    WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}
+)
+
 target_include_directories(kdemulate PRIVATE res)
