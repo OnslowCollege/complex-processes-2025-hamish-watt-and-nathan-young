@@ -1,4 +1,3 @@
-#include "./msg.h"
 #include "./screen.h"
 #include "./utils.h"
 #include "./vwnd.h"
@@ -81,10 +80,10 @@ LRESULT __stdcall windowProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
         vscreen = createvscreen(VSCREEN_RIGHT, VSCREEN_BOTTOM, wnddim);
 
         // Desktop.
-        applications[0]->launcher(vscreen);
-        // Taskbar.
         applications[1]->launcher(vscreen);
         // Topbar.
+        applications[0]->launcher(vscreen);
+        // Taskbar.
         applications[2]->launcher(vscreen);
 
         return 0;

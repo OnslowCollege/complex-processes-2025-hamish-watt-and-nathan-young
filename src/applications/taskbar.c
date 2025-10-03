@@ -64,6 +64,7 @@ static void launcher(VScreen *vscreen)
     // Settings Icon.
     HELEMENT *kcontrol =
         drawicon(taskbar, "large-kcontrol", 2, TASKBAR_HEIGHT - 2, 3 * (TASKBAR_HEIGHT - 2), 4 * (TASKBAR_HEIGHT - 2));
+    addattribute(*kcontrol, CLICKABLE, (int)applications[4]->launcher);
     pushvec(&taskbar->elements, kcontrol);
     // Find files application.
     HBITMAP kfindbmp = LoadBitmapA(GetModuleHandle(NULL), "large-kfind");

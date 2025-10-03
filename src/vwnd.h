@@ -11,6 +11,7 @@
 
 typedef struct
 {
+    int id;
     int vwndidx;
     int focused;
 
@@ -46,6 +47,7 @@ enum VWndState
 };
 
 VWnd *createvwnd(unsigned int top, unsigned int bottom, unsigned int left, unsigned int right, VWNDSTYLE vwndstyle);
+VWnd *vwndbyid(VScreen *vscreen, int id);
 
 int isfocused(VScreen *vscreen, VWNDIDX vwndidx);
 void focusvwnd(VScreen *vscreen, VWNDIDX vwndidx);

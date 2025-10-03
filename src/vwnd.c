@@ -4,9 +4,16 @@
 
 #define BORDER_SIZE 32
 
+static int next_id = 0;
+
 VWnd *createvwnd(unsigned int top, unsigned int bottom, unsigned int left, unsigned int right, VWNDSTYLE vwndstyle)
 {
+
     VWnd *vwnd = malloc(sizeof(VWnd));
+
+    vwnd->id = next_id;
+
+    next_id++;
 
     vwnd->top = top;
     vwnd->bottom = bottom;
@@ -63,6 +70,18 @@ VWNDIDX bindvwnd(VScreen *vscreen, VWnd *vwnd)
     return vwndidx;
 }
 
+VWnd *vwndbyid(VScreen *vscreen, int id)
+{
+    for (int i = 0; i < veclength(&vscreen->windows); i++)
+    {
+        VWnd *vwnd = vecget(&vscreen->windows, i);
+        if (vwnd->id == id)
+            return vwnd;
+    }
+
+    return 0;
+}
+
 int isfocused(VScreen *vscreen, VWNDIDX vwndidx)
 {
     VWnd *vwnd = vecget(&vscreen->windows, vwndidx);
@@ -112,7 +131,7 @@ void clrvwnd(VScreen *vscreen, VWNDIDX vwndidx)
     {
         if (vwnd->application->unlauncher != NULL)
         {
-            vwnd->application->unlauncher(vscreen, vwndidx);
+            vwnd->application->unlauncher(vscreen, vwnd->id);
         }
     }
 

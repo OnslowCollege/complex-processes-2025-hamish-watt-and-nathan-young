@@ -2,9 +2,9 @@
 #include "../vwnd.h"
 #include "applications.h"
 
-static void messagehandler(VScreen *vscreen, VWNDIDX vwndidx, VWNDMSG msg, MsgFlags *msgflags)
+static int messagehandler(VScreen *vscreen, VWNDIDX vwndidx, VWNDMSG msg, MsgFlags *msgflags)
 {
-    return;
+    return 0;
 }
 
 Application test_app_1;
@@ -15,12 +15,13 @@ static void launcher(VScreen *vscreen)
     VWNDIDX vwndidx = bindvwnd(vscreen, test_vwnd_1);
 
     bindapplication(vscreen, vwndidx, &test_app_1);
-    default_launcher(vscreen, vwndidx);
+    default_launcher(vscreen, test_vwnd_1->id);
 }
 
-static void unlauncher(VScreen *vscreen, VWNDIDX caller)
+static void unlauncher(VScreen *vscreen, int caller)
 {
     default_unlauncher(vscreen, caller);
 }
 
-Application test_app_1 = {.name = "test app 1", .launcher = launcher, .messagehandler = messagehandler};
+Application test_app_1 = {
+    .name = "test app 1", .launcher = launcher, .messagehandler = messagehandler, .unlauncher = unlauncher};

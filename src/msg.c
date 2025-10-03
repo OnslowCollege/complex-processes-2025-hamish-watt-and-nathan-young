@@ -123,7 +123,10 @@ int processmsg(VScreen *vscreen, VWNDIDX vwndidx, VWNDMSG msg, MsgFlags *msgflag
     {
         if (vwnd->application->messagehandler != NULL)
         {
-            vwnd->application->messagehandler(vscreen, vwndidx, *vwnd->msg, msgflags);
+            status =
+                vwnd->application->messagehandler(vscreen, vwndidx, *vwnd->msg, msgflags) == REDRAW ? REDRAW : status;
+            if (status == REDRAW)
+                printf("REDRAW\n");
         }
     }
 

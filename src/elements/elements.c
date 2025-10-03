@@ -104,6 +104,8 @@ void drawelement(HDC hdc, VScreen *vscreen, HELEMENT helem)
     if (hasattribute(helem, HASTEXT))
     {
         // Surely we'll never have red highlight.
+        /* I seriously looked through the code to find out whether we had functionality
+        For no highlight just to find that you had implemented it like this ahahahahahah */
         if (element->textinfo->highlight != RGB(255, 0, 0))
         {
             SetBkMode(hdc, OPAQUE);

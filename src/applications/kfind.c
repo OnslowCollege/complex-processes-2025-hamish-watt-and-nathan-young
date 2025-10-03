@@ -3,9 +3,9 @@
 #include "../vwnd.h"
 #include "applications.h"
 
-static void messagehandler(VScreen *vscreen, VWNDIDX vwndidx, VWNDMSG msg, MsgFlags *msgflags)
+static int messagehandler(VScreen *vscreen, VWNDIDX vwndidx, VWNDMSG msg, MsgFlags *msgflags)
 {
-    return;
+    return 0;
 }
 
 Application kfind;
@@ -46,10 +46,10 @@ static void launcher(VScreen *vscreen)
     addattribute(*mainwindow, HASSTYLERECT, 0);
     pushvec(&kfind_vwnd->elements, mainwindow);
 
-    default_launcher(vscreen, vwndidx);
+    default_launcher(vscreen, kfind_vwnd->id);
 }
 
-static void unlauncher(VScreen *vscreen, VWNDIDX caller)
+static void unlauncher(VScreen *vscreen, int caller)
 {
     default_unlauncher(vscreen, caller);
 }

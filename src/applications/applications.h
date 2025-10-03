@@ -8,16 +8,13 @@
 #define VSCREEN_BOTTOM 600
 #define VSCREEN_RIGHT 800
 
-#define KFIND_IDX 3
-#define TEST_APP_1_IDX 4
-
 typedef struct
 {
     const char *name;
 
     void (*launcher)(VScreen *vscreen);
-    void (*unlauncher)(VScreen *vscreen, VWNDIDX caller);
-    void (*messagehandler)(VScreen *vscreen, VWNDIDX vwndidx, VWNDMSG msg, MsgFlags *msgflags);
+    void (*unlauncher)(VScreen *vscreen, int caller);
+    int (*messagehandler)(VScreen *vscreen, VWNDIDX vwndidx, VWNDMSG msg, MsgFlags *msgflags);
 
     void *applicationstate;
 } Application;

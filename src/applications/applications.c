@@ -8,7 +8,7 @@ extern Application kfind;
 extern Application test_app_1;
 
 const Application *applications[] = {
-    &desktop, &taskbar, &topbar, &kfind, &test_app_1,
+    &topbar, &desktop, &taskbar, &kfind, &test_app_1,
 };
 
 void bindapplication(VScreen *vscreen, VWNDIDX vwndidx, Application *application)
