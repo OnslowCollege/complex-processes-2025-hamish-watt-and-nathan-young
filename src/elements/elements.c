@@ -29,7 +29,6 @@ HELEMENT newelement(int top, int bottom, int left, int right, unsigned int *anch
     elem->attributes = 0;
 
     pushvec(&gea, elem);
-    printf("gea length: %d\n", veclength(&gea));
 
     return veclength(&gea) - 1;
 }
@@ -113,7 +112,6 @@ void drawelement(HDC hdc, VScreen *vscreen, HELEMENT helem)
         SetTextColor(hdc, GetNearestColor(hdc, element->textinfo->color));
 
         int result = DrawTextA(hdc, element->textinfo->text, -1, &elemrect, DT_CENTER | DT_BOTTOM | DT_SINGLELINE);
-        printf("Draw text result = %d\n", result);
         SetBkMode(hdc, TRANSPARENT);
     }
 

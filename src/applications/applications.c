@@ -8,11 +8,7 @@ extern Application kfind;
 extern Application test_app_1;
 
 const Application *applications[] = {
-    &desktop,
-    &taskbar,
-    &topbar,
-    &kfind,
-    &test_app_1,
+    &desktop, &taskbar, &topbar, &kfind, &test_app_1,
 };
 
 void bindapplication(VScreen *vscreen, VWNDIDX vwndidx, Application *application)
@@ -21,6 +17,12 @@ void bindapplication(VScreen *vscreen, VWNDIDX vwndidx, Application *application
     vwnd->application = application;
 }
 
-void default_launcher(VScreen *vscreen, int appidx) {
-    sendglobalevent(vscreen, APPOPENED, appidx);
+void default_launcher(VScreen *vscreen, int vwndidx)
+{
+    sendglobalevent(vscreen, APPOPENED, vwndidx);
+}
+
+void default_unlauncher(VScreen *vscreen, int caller)
+{
+    sendglobalevent(vscreen, APPCLOSED, caller);
 }

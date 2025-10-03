@@ -45,7 +45,7 @@ static HELEMENT *drawicon(VWnd *taskbar, char *name, int top, int bottom, int le
     return icon;
 }
 
-static void launcher(VScreen *vscreen, VWNDIDX vwndidx)
+static void launcher(VScreen *vscreen)
 {
     VWnd *taskbar = createvwnd(VSCREEN_BOTTOM - TASKBAR_HEIGHT, VSCREEN_BOTTOM, VSCREEN_LEFT, VSCREEN_RIGHT, TASKBAR);
     bindvwnd(vscreen, taskbar);

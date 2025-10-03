@@ -33,6 +33,12 @@ void sendvwndevent(VScreen *vscreen, VWNDIDX vwndidx, VWNDMSG msg, long param)
         case DOUBLECLICKED:
             vwnd->msgflags->mouseclicked = param;
             break;
+        case APPOPENED:
+            vwnd->msgflags->appopened = param;
+            break;
+        case APPCLOSED:
+            vwnd->msgflags->appclosed = param;
+            break;
         default:
             break;
         }
@@ -62,33 +68,16 @@ void removeevent(VScreen *vscreen, VWNDMSG msg)
 int processmsg(VScreen *vscreen, VWNDIDX vwndidx, VWNDMSG msg, MsgFlags *msgflags)
 {
     VWnd *vwnd = vecget(&vscreen->windows, vwndidx);
-    if (msg & SCALED && msg & MOUSEMOVED)
-    {
-        short x = HIWORD(msgflags->mousemoved);
-        short y = LOWORD(msgflags->mousemoved);
 
-        WNDRGN wndrgn = msgflags->scaled;
-
-        scalevwnd(vscreen, vwndidx, wndrgn, x, y);
-        return REDRAW;
-    }
-    else if (msg & MOVED && msg & MOUSEMOVED)
-    {
-        short xi = HIWORD(msgflags->windowmoved);
-        short yi = LOWORD(msgflags->windowmoved);
-        short xf = HIWORD(msgflags->mousemoved);
-        short yf = LOWORD(msgflags->mousemoved);
-
-        movevwnd(vscreen, vwndidx, xf - xi, yf - yi, moveinitx, moveinity);
-        return REDRAW;
-    }
+    int status = NO_REDRAW;
 
     if (msg & MOUSECLICKED)
     {
         *vwnd->msg = *vwnd->msg ^ MOUSECLICKED;
-        for (int i = 0; i < veclength(&vwnd->elements); i++)
+        int done = 0;
+        int i = 0;
+        while (!done)
         {
-
             HELEMENT helem = *(HELEMENT *)vecget(&vwnd->elements, i);
             if (hasattribute(helem, CLICKABLE))
             {
@@ -98,9 +87,13 @@ int processmsg(VScreen *vscreen, VWNDIDX vwndidx, VWNDMSG msg, MsgFlags *msgflag
                 if (ptinelem(helem, x, y))
                 {
                     executeelem(helem, vscreen, vwndidx);
-                    return REDRAW;
+                    status = REDRAW;
+                    printf("vwndmsg: %d\n", *vwnd->msg);
+                    break;
                 }
             }
+
+            i++;
         }
     }
 
@@ -118,18 +111,63 @@ int processmsg(VScreen *vscreen, VWNDIDX vwndidx, VWNDMSG msg, MsgFlags *msgflag
                 if (ptinelem(helem, x, y))
                 {
                     executeelem(helem, vscreen, vwndidx);
-                    return REDRAW;
+                    status = REDRAW;
+                    break;
                 }
             }
         }
     }
-    return NO_REDRAW;
+
+    // Send event to window's application if applicable.
+    if (vwnd->application != NULL)
+    {
+        if (vwnd->application->messagehandler != NULL)
+        {
+            vwnd->application->messagehandler(vscreen, vwndidx, *vwnd->msg, msgflags);
+        }
+    }
+
+    if (msg & SCALED && msg & MOUSEMOVED)
+    {
+        short x = HIWORD(msgflags->mousemoved);
+        short y = LOWORD(msgflags->mousemoved);
+
+        WNDRGN wndrgn = msgflags->scaled;
+
+        scalevwnd(vscreen, vwndidx, wndrgn, x, y);
+        status = REDRAW;
+    }
+
+    else if (msg & MOVED && msg & MOUSEMOVED)
+    {
+        short xi = HIWORD(msgflags->windowmoved);
+        short yi = LOWORD(msgflags->windowmoved);
+        short xf = HIWORD(msgflags->mousemoved);
+        short yf = LOWORD(msgflags->mousemoved);
+
+        movevwnd(vscreen, vwndidx, xf - xi, yf - yi, moveinitx, moveinity);
+        status = REDRAW;
+    }
+
+    if (msg & APPOPENED)
+    {
+        *vwnd->msg = *vwnd->msg ^ APPOPENED;
+        status = REDRAW;
+    }
+
+    if (msg & APPCLOSED)
+    {
+        *vwnd->msg = *vwnd->msg ^ APPCLOSED;
+        status = REDRAW;
+    }
+
+    return status;
 }
 
 int handlevwndmessages(VScreen *vscreen)
 {
     int redraw = NO_REDRAW;
-    for (int i = 0; i < veclength(&vscreen->windows); i++)
+    for (int i = veclength(&vscreen->windows) - 1; i >= 0; i--)
     {
         VWnd *vwnd = vecget(&vscreen->windows, i);
 

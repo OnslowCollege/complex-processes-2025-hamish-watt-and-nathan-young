@@ -1,6 +1,5 @@
 #include "./vwnd.h"
 #include "./elements/elements.h"
-#include <stdio.h>
 #include <stdlib.h>
 
 #define BORDER_SIZE 32
@@ -16,8 +15,14 @@ VWnd *createvwnd(unsigned int top, unsigned int bottom, unsigned int left, unsig
     vwnd->elements = createvec(15);
     vwnd->vwndstyle = malloc(sizeof(VWNDSTYLE));
     *vwnd->vwndstyle = vwndstyle;
+
     vwnd->msg = malloc(sizeof(VWNDMSG));
+    memset(vwnd->msg, 0, sizeof(VWNDMSG));
+
     vwnd->msgflags = malloc(sizeof(MsgFlags));
+    memset(vwnd->msgflags, 0, sizeof(MsgFlags));
+
+    vwnd->application = malloc(sizeof(Application));
 
     switch (*vwnd->vwndstyle)
     {
@@ -52,8 +57,6 @@ VWNDIDX bindvwnd(VScreen *vscreen, VWnd *vwnd)
 {
     int vwndidx = veclength(&vscreen->windows);
     pushvec(&vscreen->windows, vwnd);
-
-    printf("vwndidx: %d\n", vwndidx);
 
     focusvwnd(vscreen, vwndidx);
 
@@ -105,6 +108,16 @@ void clrvwnd(VScreen *vscreen, VWNDIDX vwndidx)
 {
     VWnd *vwnd = vecget(&vscreen->windows, vwndidx);
 
+    if (vwnd->application != NULL)
+    {
+        if (vwnd->application->unlauncher != NULL)
+        {
+            vwnd->application->unlauncher(vscreen, vwndidx);
+        }
+    }
+
+    free(vwnd->application);
+
     rmvec(&vscreen->windows, vwndidx);
 
     for (int i = 0; i < veclength(&vwnd->elements); i++)
@@ -114,7 +127,6 @@ void clrvwnd(VScreen *vscreen, VWNDIDX vwndidx)
     }
 
     clrvec(&vwnd->elements);
-    free(vwnd->application);
     free(vwnd->msg);
     free(vwnd->vwndstyle);
     free(vwnd->msgflags);

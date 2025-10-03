@@ -43,7 +43,6 @@ void rmvec(VEC *v, int idx)
 
 void clrvec(VEC *v)
 {
-    printf("Clearing vector\n");
     free(v->elems);
 }
 

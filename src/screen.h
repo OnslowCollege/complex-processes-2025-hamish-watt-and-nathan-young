@@ -51,3 +51,5 @@ void drawvwnd(VScreen *vscreen, VWNDIDX vwndidx, HDC hdc);
 float getaspctscl(VScreen *vscreen);
 
 void refreshvwndidx(VScreen *vscreen);
+
+void clrvscreen(VScreen *vscreen);

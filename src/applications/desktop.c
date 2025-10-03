@@ -24,7 +24,7 @@ static void draw_desktop_icon(VWnd *desktop, int top, int bottom, char *icon_nam
     pushvec(&desktop->elements, text_element);
 }
 
-static void launcher(VScreen *vscreen, VWNDIDX vwndidx)
+static void launcher(VScreen *vscreen)
 {
     VWnd *desktop = createvwnd(VSCREEN_TOP, VSCREEN_BOTTOM, VSCREEN_LEFT, VSCREEN_RIGHT, DESKTOP);
     bindvwnd(vscreen, desktop);

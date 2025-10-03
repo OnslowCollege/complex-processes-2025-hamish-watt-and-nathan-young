@@ -52,11 +52,12 @@ int __stdcall WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdL
         TranslateMessage(&msg);
         DispatchMessage(&msg);
     }
+
+    clrvscreen(vscreen);
 }
 
 LRESULT __stdcall windowProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 {
-
     if (vscreen != NULL)
     {
         if (handlevwndmessages(vscreen) == REDRAW)
@@ -80,12 +81,11 @@ LRESULT __stdcall windowProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
         vscreen = createvscreen(VSCREEN_RIGHT, VSCREEN_BOTTOM, wnddim);
 
         // Desktop.
-        applications[0]->launcher(vscreen, 0);
+        applications[0]->launcher(vscreen);
         // Taskbar.
-        applications[1]->launcher(vscreen, 0);
+        applications[1]->launcher(vscreen);
         // Topbar.
-        applications[2]->launcher(vscreen, 0);
-
+        applications[2]->launcher(vscreen);
 
         return 0;
     }

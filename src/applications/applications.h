@@ -1,6 +1,6 @@
 #pragma once
-#include "../screen.h"
 #include "../msg.h"
+#include "../screen.h"
 #include <windows.h>
 
 #define VSCREEN_TOP 0
@@ -8,15 +8,22 @@
 #define VSCREEN_BOTTOM 600
 #define VSCREEN_RIGHT 800
 
+#define KFIND_IDX 3
+#define TEST_APP_1_IDX 4
+
 typedef struct
 {
     const char *name;
 
-    void (*launcher)(VScreen *vscreen, VWNDIDX vwndidx);
+    void (*launcher)(VScreen *vscreen);
+    void (*unlauncher)(VScreen *vscreen, VWNDIDX caller);
     void (*messagehandler)(VScreen *vscreen, VWNDIDX vwndidx, VWNDMSG msg, MsgFlags *msgflags);
+
+    void *applicationstate;
 } Application;
 
 extern const Application *applications[5];
 
 void bindapplication(VScreen *vscreen, VWNDIDX vwndidx, Application *application);
-void default_launcher(VScreen *vscreen, int appidx);
+void default_launcher(VScreen *vscreen, int vwndidx);
+void default_unlauncher(VScreen *vscreen, int caller);

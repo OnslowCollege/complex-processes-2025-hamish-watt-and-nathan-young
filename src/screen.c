@@ -73,7 +73,8 @@ void drawvwnd(VScreen *vscreen, VWNDIDX vwndidx, HDC hdc)
 
         if (vwnd->toolbarbmp == 0)
         {
-            vwnd->toolbarbmp = createtoolbarrect(memdc, toolbarright - toolbarleft, toolbarbottom - toolbartop, vwnd->focused);
+            vwnd->toolbarbmp =
+                createtoolbarrect(memdc, toolbarright - toolbarleft, toolbarbottom - toolbartop, vwnd->focused);
         }
 
         drawimage(hdc, memdc, vwnd->bmp, left, top, right - left, bottom - top);
@@ -362,4 +363,15 @@ void refreshvwndidx(VScreen *vscreen)
         VWnd *vwnd = vecget(&vscreen->windows, i);
         vwnd->vwndidx = i;
     }
+}
+
+void clrvscreen(VScreen *vscreen)
+{
+    for (int i = 0; i < veclength(&vscreen->windows); i++)
+    {
+        clrvwnd(vscreen, i);
+    }
+
+    clrvec(&vscreen->windows);
+    free(vscreen);
 }

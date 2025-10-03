@@ -1,8 +1,8 @@
 #pragma once
 
 #include "./msg.h"
-#include <windows.h>
 #include "applications/applications.h"
+#include <windows.h>
 
 #define TOOLBAR_HEIGHT 18
 #define TOPBAR_HEIGHT 18

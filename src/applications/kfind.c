@@ -10,10 +10,10 @@ static void messagehandler(VScreen *vscreen, VWNDIDX vwndidx, VWNDMSG msg, MsgFl
 
 Application kfind;
 
-static void launcher(VScreen *vscreen, VWNDIDX vwndidx)
+static void launcher(VScreen *vscreen)
 {
     VWnd *kfind_vwnd = createvwnd(200, 360, 300, 600, STATIC);
-    bindvwnd(vscreen, kfind_vwnd);
+    VWNDIDX vwndidx = bindvwnd(vscreen, kfind_vwnd);
 
     bindapplication(vscreen, vwndidx, &kfind);
 
@@ -45,10 +45,18 @@ static void launcher(VScreen *vscreen, VWNDIDX vwndidx)
                              &kfind_vwnd->left, &kfind_vwnd->top);
     addattribute(*mainwindow, HASSTYLERECT, 0);
     pushvec(&kfind_vwnd->elements, mainwindow);
+
+    default_launcher(vscreen, vwndidx);
+}
+
+static void unlauncher(VScreen *vscreen, VWNDIDX caller)
+{
+    default_unlauncher(vscreen, caller);
 }
 
 Application kfind = {
     .name = "kfind",
     .launcher = launcher,
+    .unlauncher = unlauncher,
     .messagehandler = messagehandler,
 };
