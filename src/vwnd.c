@@ -1,5 +1,6 @@
 #include "./vwnd.h"
 #include "./elements/elements.h"
+#include "msg.h"
 #include <stdlib.h>
 
 #define BORDER_SIZE 32
@@ -97,6 +98,7 @@ int isfocused(VScreen *vscreen, VWNDIDX vwndidx)
 void focusvwnd(VScreen *vscreen, VWNDIDX vwndidx)
 {
     VWnd *vwnd = vecget(&vscreen->windows, vwndidx);
+    sendglobalevent(vscreen, APPFOCUSED, vwnd->id);
 
     for (int i = 0; i < veclength(&vscreen->windows); i++)
     {

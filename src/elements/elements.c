@@ -96,6 +96,13 @@ void drawelement(HDC hdc, VScreen *vscreen, HELEMENT helem)
         DeleteObject(stylerect_dib);
     }
 
+    if (hasattribute(helem, HASINVERTRECT))
+    {
+        HBITMAP stylerect_dib = createinvertrect(memdc, right - left, bottom - top);
+        drawimage(hdc, memdc, stylerect_dib, left, top, right - left, bottom - top);
+        DeleteObject(stylerect_dib);
+    }
+
     if (hasattribute(helem, HASIMAGE))
     {
         drawimage_stretched(hdc, memdc, element->bmp, left, top, right - left, bottom - top);
@@ -155,6 +162,12 @@ void addhasimage(HELEMENT helem, HBITMAP bmp)
     element->bmp = bmp;
 }
 
+void removeattribute(HELEMENT helem, ELEMATTRIBUTE attribute)
+{
+    Element *element = vecget(&gea, helem);
+    element->attributes = element->attributes & (~attribute);
+}
+
 void addattribute(HELEMENT helem, ELEMATTRIBUTE attribute, int param)
 {
     switch (attribute)
@@ -171,6 +184,11 @@ void addattribute(HELEMENT helem, ELEMATTRIBUTE attribute, int param)
     case HASSTYLERECT: {
         Element *element = vecget(&gea, helem);
         element->attributes = element->attributes | HASSTYLERECT;
+        break;
+    }
+    case HASINVERTRECT: {
+        Element *element = vecget(&gea, helem);
+        element->attributes = element->attributes | HASINVERTRECT;
         break;
     }
     case HASIMAGE:

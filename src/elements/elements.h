@@ -13,7 +13,8 @@ enum ElemAttribute
     HASIMAGE = 0b00000010,
     DOUBLECLICKABLE = 0b00001000,
     HASSTYLERECT = 0b00010000,
-    HASTEXT = 0b00100000
+    HASTEXT = 0b00100000,
+    HASINVERTRECT = 0b01000000,
 };
 
 typedef struct
@@ -41,8 +42,9 @@ typedef struct
 HELEMENT newelement(int top, int bottom, int left, int right, unsigned int *anchorx, unsigned int *anchory);
 
 void drawelement(HDC hdc, VScreen *vscreen, HELEMENT helem);
-Element * getelement(HELEMENT helem);
-void addattribute(HELEMENT elem, ELEMATTRIBUTE, int param);
+Element *getelement(HELEMENT helem);
+void addattribute(HELEMENT elem, ELEMATTRIBUTE attrib, int param);
+void removeattribute(HELEMENT elem, ELEMATTRIBUTE attrib);
 int hasattribute(HELEMENT elem, ELEMATTRIBUTE);
 int ptinelem(HELEMENT elem, short x, short y);
 void executeelem(HELEMENT elem, VScreen *vscreen, VWNDIDX vwndidx);

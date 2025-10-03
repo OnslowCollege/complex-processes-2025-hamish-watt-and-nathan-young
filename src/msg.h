@@ -12,6 +12,7 @@ typedef struct
     long mouseclicked;
     long appopened;
     long appclosed;
+    long appfocused;
 } MsgFlags;
 
 /* These values cannot overlap in binary so that they can be combined with a bitwise OR */
@@ -25,6 +26,7 @@ enum VWndMsg
     DOUBLECLICKED = 0b00100000,
     APPOPENED = 0b01000000,
     APPCLOSED = 0b10000000,
+    APPFOCUSED = 0b100000000,
 };
 
 int handlevwndmessages(VScreen *vscreen);

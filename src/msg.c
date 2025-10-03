@@ -39,6 +39,9 @@ void sendvwndevent(VScreen *vscreen, VWNDIDX vwndidx, VWNDMSG msg, long param)
         case APPCLOSED:
             vwnd->msgflags->appclosed = param;
             break;
+        case APPFOCUSED:
+            vwnd->msgflags->appfocused = param;
+            break;
         default:
             break;
         }
@@ -155,6 +158,12 @@ int processmsg(VScreen *vscreen, VWNDIDX vwndidx, VWNDMSG msg, MsgFlags *msgflag
     if (msg & APPOPENED)
     {
         *vwnd->msg = *vwnd->msg ^ APPOPENED;
+        status = REDRAW;
+    }
+
+    if (msg & APPFOCUSED)
+    {
+        *vwnd->msg = *vwnd->msg ^ APPFOCUSED;
         status = REDRAW;
     }
 

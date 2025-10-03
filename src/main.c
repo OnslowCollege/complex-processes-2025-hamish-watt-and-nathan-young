@@ -2,6 +2,7 @@
 #include "./utils.h"
 #include "./vwnd.h"
 #include "applications/applications.h"
+#include "msg.h"
 #include <stdio.h>
 #include <windows.h>
 #include <windowsx.h>
@@ -103,6 +104,8 @@ LRESULT __stdcall windowProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
             {
                 if (!isfocused(vscreen, i))
                 {
+                    VWnd *vwnd = vecget(&vscreen->windows, i);
+                    sendglobalevent(vscreen, APPFOCUSED, vwnd->id);
                     focusvwnd(vscreen, i);
                     InvalidateRect(hwnd, NULL, FALSE);
                     break;

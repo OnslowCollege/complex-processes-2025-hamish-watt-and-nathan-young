@@ -17,7 +17,7 @@ typedef struct
 
 typedef struct
 {
-    int currentidx;
+    int currentfocusedid;
     VEC vwnds;
     VWNDIDX topbarvwndidx;
 } TopbarState;
@@ -25,9 +25,9 @@ typedef struct
 TopbarState *inittopbarstate(VWNDIDX vwndidx)
 {
     TopbarState *topbarstate = malloc(sizeof(TopbarState));
-    topbarstate->currentidx = 0;
     topbarstate->vwnds = createvec(20);
     topbarstate->topbarvwndidx = vwndidx;
+    topbarstate->currentfocusedid = MAXINT;
 
     return topbarstate;
 }
@@ -42,6 +42,47 @@ void clrtopbarstate(TopbarState *topbarstate)
     clrvec(&topbarstate->vwnds);
 
     free(topbarstate);
+}
+
+void focuselement(TopbarState *state, TopbarElement *topbarelement)
+{
+    state->currentfocusedid = topbarelement->targetid;
+    removeattribute(*topbarelement->helem, HASSTYLERECT);
+    addattribute(*topbarelement->helem, HASINVERTRECT, 0);
+}
+
+void unfocuselement(TopbarState *state, TopbarElement *topbarelement)
+{
+    removeattribute(*topbarelement->helem, HASINVERTRECT);
+    addattribute(*topbarelement->helem, HASSTYLERECT, 0);
+}
+
+void focustargetid(TopbarState *state, int targetid)
+{
+    // unfocus previous
+
+    if (state->currentfocusedid != MAXINT)
+    {
+        for (int i = 0; i < veclength(&state->vwnds); i++)
+        {
+            TopbarElement *topbarelement = vecget(&state->vwnds, i);
+            if (state->currentfocusedid == topbarelement->targetid)
+            {
+                unfocuselement(state, topbarelement);
+            }
+        }
+    }
+
+    // focus new
+    for (int i = 0; i < veclength(&state->vwnds); i++)
+    {
+        TopbarElement *topbarelement = vecget(&state->vwnds, i);
+        if (topbarelement->targetid == targetid)
+        {
+            printf("Focussing new element %d\n", targetid);
+            focuselement(state, topbarelement);
+        }
+    }
 }
 
 static int messagehandler(VScreen *vscreen, VWNDIDX vwndidx, VWNDMSG msg, MsgFlags *msgflags)
@@ -68,8 +109,6 @@ static int messagehandler(VScreen *vscreen, VWNDIDX vwndidx, VWNDMSG msg, MsgFla
 
         topbarelement->helem = elem;
 
-        addattribute(*elem, HASSTYLERECT, 0);
-
         TextInfo *textinfo = malloc(sizeof(TextInfo));
         textinfo->text = topbarelement->application;
         textinfo->color = RGB(0, 0, 0);
@@ -79,8 +118,16 @@ static int messagehandler(VScreen *vscreen, VWNDIDX vwndidx, VWNDMSG msg, MsgFla
         pushvec(&topbarvwnd->elements, elem);
 
         pushvec(&state->vwnds, topbarelement);
+        focustargetid(state, targetid);
 
         return REDRAW;
+    }
+
+    if (msg & APPFOCUSED)
+    {
+        VWNDIDX targetid = msgflags->appfocused;
+
+        focustargetid(state, targetid);
     }
 
     if (msg & APPCLOSED)
