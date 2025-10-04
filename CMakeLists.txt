@@ -12,6 +12,12 @@ add_executable(kdemulate ${C_SOURCES} ${ASM_SOURCES})
 set_target_properties(kdemulate PROPERTIES ASM_NASM_OBJECT_FORMAT win32)
 set(CMAKE_ASM_NASM_FLAGS "-f win32")
 
+option(DEBUG "Show debug information" OFF)
+
+if(DEBUG)
+    target_compile_definitions(kdemulate PRIVATE DEBUG)
+endif()
+
 if(CMAKE_HOST_WIN32)
     # run natively if on windows
     add_custom_target(run

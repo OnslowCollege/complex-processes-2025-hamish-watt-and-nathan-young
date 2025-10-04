@@ -6,8 +6,44 @@
 #include <stdio.h>
 #include <windows.h>
 
-#define SCALEREGIONSIZE 10
-#define MOVEREGIONSIZE 10
+#define SCALEREGIONSIZE 7
+#define MOVEREGIONSIZE 7
+
+#ifdef DEBUG
+void showregions(HDC hdc, VScreen *vscreen, VWnd *vwnd)
+{
+    COORD left = vwnd->left;
+    COORD top = vwnd->top;
+    COORD right = vwnd->right;
+    COORD bottom = vwnd->bottom;
+
+    vcoordcvt(vscreen, &left, &top);
+    vcoordcvt(vscreen, &right, &bottom);
+
+    RECT sclrect = {left - SCALEREGIONSIZE, top - SCALEREGIONSIZE, right + SCALEREGIONSIZE, bottom + SCALEREGIONSIZE};
+
+    HBRUSH scaleregionbrush = CreateSolidBrush(RGB(0, 255, 0));
+    SelectObject(hdc, scaleregionbrush);
+
+    Rectangle(hdc, sclrect.left, sclrect.top, sclrect.right, sclrect.top + 2 * SCALEREGIONSIZE);
+    Rectangle(hdc, sclrect.left, sclrect.top, sclrect.left + 2 * SCALEREGIONSIZE, sclrect.bottom);
+    Rectangle(hdc, sclrect.left, sclrect.bottom - 2 * SCALEREGIONSIZE, sclrect.right, sclrect.bottom);
+    Rectangle(hdc, sclrect.right - 2 * SCALEREGIONSIZE, sclrect.top, sclrect.right, sclrect.bottom);
+
+    DeleteObject(scaleregionbrush);
+
+    HBRUSH moveregionbrush = CreateSolidBrush(RGB(0, 0, 255));
+    SelectObject(hdc, moveregionbrush);
+
+    Rectangle(hdc, left, top + SCALEREGIONSIZE, right, top + SCALEREGIONSIZE + 2 * MOVEREGIONSIZE);
+
+    DeleteObject(moveregionbrush);
+}
+
+#else
+#define showregions(...) (void)0
+
+#endif
 
 VScreen *createvscreen(unsigned int w, unsigned int h, RECT wnddim)
 {
@@ -80,6 +116,8 @@ void drawvwnd(VScreen *vscreen, VWNDIDX vwndidx, HDC hdc)
         drawimage(hdc, memdc, vwnd->bmp, left, top, right - left, bottom - top);
         drawimage(hdc, memdc, vwnd->toolbarbmp, toolbarleft, toolbartop, toolbarright - toolbarleft,
                   toolbarbottom - toolbartop);
+
+        showregions(hdc, vscreen, vwnd);
         break;
     }
     case DESKTOP: {
@@ -145,6 +183,12 @@ WNDRGN inwndrgn(VScreen *vscreen, VWNDIDX vwndidx, int ptx, int pty)
         return 0;
     }
 
+    int rgny = top + SCALEREGIONSIZE + MOVEREGIONSIZE;
+    if (abs(rgny - pty) < MOVEREGIONSIZE)
+    {
+        return MOVEREGION;
+    }
+
     if (abs(right - ptx) < SCALEREGIONSIZE)
     {
         if (abs(bottom - pty) < SCALEREGIONSIZE)
@@ -184,12 +228,6 @@ WNDRGN inwndrgn(VScreen *vscreen, VWNDIDX vwndidx, int ptx, int pty)
     if (abs(bottom - pty) < SCALEREGIONSIZE)
     {
         return BOTTOM;
-    }
-
-    int rgny = top + SCALEREGIONSIZE + MOVEREGIONSIZE;
-    if (abs(rgny - pty) < MOVEREGIONSIZE)
-    {
-        return MOVEREGION;
     }
 
     return INWINDOW;
