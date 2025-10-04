@@ -37,6 +37,8 @@ void clrtopbarstate(TopbarState *topbarstate)
     for (int i = 0; i < veclength(&topbarstate->vwnds); i++)
     {
         TopbarElement *topbarelem = vecget(&topbarstate->vwnds, i);
+        rmelement(*topbarelem->helem);
+        free(topbarelem->helem);
         free(topbarelem);
     }
     clrvec(&topbarstate->vwnds);

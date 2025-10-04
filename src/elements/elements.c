@@ -41,7 +41,15 @@ Element *getelement(HELEMENT helem)
 
 void rmelement(HELEMENT helem)
 {
-    struct Element *element = vecget(&gea, helem);
+    Element *element = vecget(&gea, helem);
+    if (hasattribute(helem, HASIMAGE))
+    {
+        DeleteObject(element->bmp);
+    }
+    if (hasattribute(helem, HASTEXT))
+    {
+        clrtext(element->textinfo);
+    }
     free(element);
 }
 
