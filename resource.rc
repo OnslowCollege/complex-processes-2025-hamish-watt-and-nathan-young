@@ -7,3 +7,10 @@ large-kcontrol BITMAP large-kcontrol.bmp
 large-kfind BITMAP large-kfind.bmp
 utils_package BITMAP large-utilities_package.bmp
 close BITMAP close.bmp
+trash BITMAP trash.bmp
+folder BITMAP folder.bmp
+cdrom BITMAP cdrom_mount.bmp
+floppy BITMAP floppy_unmount.bmp
+kfm_home_blue BITMAP kfm_home_blue.bmp
+rpm_package BITMAP rpm_package.bmp
+xkill BITMAP xkill.bmp
