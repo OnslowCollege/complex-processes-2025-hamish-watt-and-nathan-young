@@ -77,9 +77,7 @@ int processmsg(VScreen *vscreen, VWNDIDX vwndidx, VWNDMSG msg, MsgFlags *msgflag
     if (msg & MOUSECLICKED)
     {
         *vwnd->msg = *vwnd->msg ^ MOUSECLICKED;
-        int done = 0;
-        int i = 0;
-        while (!done)
+        for (int i = 0; i < veclength(&vwnd->elements); i++)
         {
             HELEMENT helem = *(HELEMENT *)vecget(&vwnd->elements, i);
             if (hasattribute(helem, CLICKABLE))
@@ -95,8 +93,6 @@ int processmsg(VScreen *vscreen, VWNDIDX vwndidx, VWNDMSG msg, MsgFlags *msgflag
                     break;
                 }
             }
-
-            i++;
         }
     }
 
