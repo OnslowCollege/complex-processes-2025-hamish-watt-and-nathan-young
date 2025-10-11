@@ -175,7 +175,7 @@ int processmsg(VScreen *vscreen, VWNDIDX vwndidx, VWNDMSG msg, MsgFlags *msgflag
 int handlevwndmessages(VScreen *vscreen)
 {
     int redraw = NO_REDRAW;
-    for (int i = veclength(&vscreen->windows) - 1; i >= 0; i--)
+    for (int i = 0; i < veclength(&vscreen->windows); i++)
     {
         VWnd *vwnd = vecget(&vscreen->windows, i);
 

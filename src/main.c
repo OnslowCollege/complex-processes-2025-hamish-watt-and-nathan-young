@@ -206,6 +206,14 @@ LRESULT __stdcall windowProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
                 }
             }
         }
+        if (vscreen != NULL)
+        {
+            if (handlevwndmessages(vscreen) == REDRAW)
+            {
+                InvalidateRect(hwnd, NULL, FALSE);
+            };
+        }
+        return 0;
     }
     case WM_SIZE: {
         RECT wnddim;
