@@ -20,22 +20,28 @@ void showregions(HDC hdc, VScreen *vscreen, VWnd *vwnd)
     vcoordcvt(vscreen, &left, &top);
     vcoordcvt(vscreen, &right, &bottom);
 
-    RECT sclrect = {left - SCALEREGIONSIZE, top - SCALEREGIONSIZE, right + SCALEREGIONSIZE, bottom + SCALEREGIONSIZE};
+    RECT sclrect = {left - SCALEREGIONSIZE, top - SCALEREGIONSIZE,
+                    right + SCALEREGIONSIZE, bottom + SCALEREGIONSIZE};
 
     HBRUSH scaleregionbrush = CreateSolidBrush(RGB(0, 255, 0));
     SelectObject(hdc, scaleregionbrush);
 
-    Rectangle(hdc, sclrect.left, sclrect.top, sclrect.right, sclrect.top + 2 * SCALEREGIONSIZE);
-    Rectangle(hdc, sclrect.left, sclrect.top, sclrect.left + 2 * SCALEREGIONSIZE, sclrect.bottom);
-    Rectangle(hdc, sclrect.left, sclrect.bottom - 2 * SCALEREGIONSIZE, sclrect.right, sclrect.bottom);
-    Rectangle(hdc, sclrect.right - 2 * SCALEREGIONSIZE, sclrect.top, sclrect.right, sclrect.bottom);
+    Rectangle(hdc, sclrect.left, sclrect.top, sclrect.right,
+              sclrect.top + 2 * SCALEREGIONSIZE);
+    Rectangle(hdc, sclrect.left, sclrect.top,
+              sclrect.left + 2 * SCALEREGIONSIZE, sclrect.bottom);
+    Rectangle(hdc, sclrect.left, sclrect.bottom - 2 * SCALEREGIONSIZE,
+              sclrect.right, sclrect.bottom);
+    Rectangle(hdc, sclrect.right - 2 * SCALEREGIONSIZE, sclrect.top,
+              sclrect.right, sclrect.bottom);
 
     DeleteObject(scaleregionbrush);
 
     HBRUSH moveregionbrush = CreateSolidBrush(RGB(0, 0, 255));
     SelectObject(hdc, moveregionbrush);
 
-    Rectangle(hdc, left, top + SCALEREGIONSIZE, right, top + SCALEREGIONSIZE + 2 * MOVEREGIONSIZE);
+    Rectangle(hdc, left, top + SCALEREGIONSIZE, right,
+              top + SCALEREGIONSIZE + 2 * MOVEREGIONSIZE);
 
     DeleteObject(moveregionbrush);
 }
@@ -82,8 +88,10 @@ void drawvwnd(VScreen *vscreen, VWNDIDX vwndidx, HDC hdc)
 
     RECT toolbarrect = {toolbarleft, toolbartop, toolbarright, toolbarbottom};
 
-    // check if the bitmap dimensions are different to the real window dimensions
-    if (vwnd->bitmap_w != (right - left) - 1 && vwnd->bitmap_w != right - left ||
+    // check if the bitmap dimensions are different to the real window
+    // dimensions
+    if (vwnd->bitmap_w != (right - left) - 1 &&
+            vwnd->bitmap_w != right - left ||
         vwnd->bitmap_h != (bottom - top) - 1 && vwnd->bitmap_h != bottom - top)
     {
         // free the bitmap cache for a new bitmap to be able to be created
@@ -110,19 +118,21 @@ void drawvwnd(VScreen *vscreen, VWNDIDX vwndidx, HDC hdc)
         if (vwnd->toolbarbmp == 0)
         {
             vwnd->toolbarbmp =
-                createtoolbarrect(memdc, toolbarright - toolbarleft, toolbarbottom - toolbartop, vwnd->focused);
+                createtoolbarrect(memdc, toolbarright - toolbarleft,
+                                  toolbarbottom - toolbartop, vwnd->focused);
         }
 
         drawimage(hdc, memdc, vwnd->bmp, left, top, right - left, bottom - top);
-        drawimage(hdc, memdc, vwnd->toolbarbmp, toolbarleft, toolbartop, toolbarright - toolbarleft,
-                  toolbarbottom - toolbartop);
+        drawimage(hdc, memdc, vwnd->toolbarbmp, toolbarleft, toolbartop,
+                  toolbarright - toolbarleft, toolbarbottom - toolbartop);
 
         showregions(hdc, vscreen, vwnd);
         break;
     }
     case DESKTOP: {
         RECT desktoprect = {left, top, right, bottom};
-        FillRect(hdc, &desktoprect, CreateSolidBrush(GetNearestColor(hdc, RGB(81, 167, 224))));
+        FillRect(hdc, &desktoprect,
+                 CreateSolidBrush(GetNearestColor(hdc, RGB(81, 167, 224))));
         break;
     }
     case TASKBAR: {
@@ -175,7 +185,8 @@ WNDRGN inwndrgn(VScreen *vscreen, VWNDIDX vwndidx, int ptx, int pty)
     vcoordcvt(vscreen, &left, &top);
     vcoordcvt(vscreen, &right, &bottom);
 
-    RECT sclrect = {left - SCALEREGIONSIZE, top - SCALEREGIONSIZE, right + SCALEREGIONSIZE, bottom + SCALEREGIONSIZE};
+    RECT sclrect = {left - SCALEREGIONSIZE, top - SCALEREGIONSIZE,
+                    right + SCALEREGIONSIZE, bottom + SCALEREGIONSIZE};
     POINT pt = {ptx, pty};
 
     if (!PtInRect(&sclrect, pt))
@@ -233,7 +244,8 @@ WNDRGN inwndrgn(VScreen *vscreen, VWNDIDX vwndidx, int ptx, int pty)
     return INWINDOW;
 }
 
-void movevwnd(VScreen *vscreen, VWNDIDX vwndidx, short dx, short dy, COORD moveinitx, COORD moveinity)
+void movevwnd(VScreen *vscreen, VWNDIDX vwndidx, short dx, short dy,
+              COORD moveinitx, COORD moveinity)
 {
     VWnd *vwnd = vecget(&vscreen->windows, vwndidx);
 
@@ -266,7 +278,8 @@ void movevwnd(VScreen *vscreen, VWNDIDX vwndidx, short dx, short dy, COORD movei
     vwnd->bottom = y + h;
 }
 
-void scalevwnd(VScreen *vscreen, VWNDIDX vwndidx, WNDRGN wndrgn, short x, short y)
+void scalevwnd(VScreen *vscreen, VWNDIDX vwndidx, WNDRGN wndrgn, short x,
+               short y)
 {
     VWnd *vwnd = vecget(&vscreen->windows, vwndidx);
 
@@ -363,8 +376,10 @@ void vcoordcvt(VScreen *vscreen, COORD *x, COORD *y)
     LPRECT wnddim = &vscreen->wnddim;
     float aspctscl = getaspctscl(vscreen);
     // Calculate offset to virtual window is centered.
-    float xoffset = ((wnddim->right - wnddim->left) - (vscreen->w * aspctscl)) / 2;
-    float yoffset = ((wnddim->bottom - wnddim->top) - (vscreen->h * aspctscl)) / 2;
+    float xoffset =
+        ((wnddim->right - wnddim->left) - (vscreen->w * aspctscl)) / 2;
+    float yoffset =
+        ((wnddim->bottom - wnddim->top) - (vscreen->h * aspctscl)) / 2;
     // Apply aspect scale and offset to values.
     *x = ((float)(*x) * aspctscl) + xoffset;
     *y = ((float)(*y) * aspctscl) + yoffset;
@@ -375,8 +390,10 @@ void rcoordcvt(VScreen *vscreen, COORD *x, COORD *y)
     LPRECT wnddim = &vscreen->wnddim;
     float aspctscl = getaspctscl(vscreen);
     // Calculate offset to virtual window is centered.
-    float xoffset = ((wnddim->right - wnddim->left) - (vscreen->w * aspctscl)) / 2;
-    float yoffset = ((wnddim->bottom - wnddim->top) - (vscreen->h * aspctscl)) / 2;
+    float xoffset =
+        ((wnddim->right - wnddim->left) - (vscreen->w * aspctscl)) / 2;
+    float yoffset =
+        ((wnddim->bottom - wnddim->top) - (vscreen->h * aspctscl)) / 2;
     // Apply aspect scale and offset to values.
     *x = ((float)(*x - xoffset) / aspctscl);
     *y = ((float)(*y - yoffset) / aspctscl);

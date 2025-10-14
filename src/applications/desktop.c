@@ -2,17 +2,20 @@
 #include "../vwnd.h"
 #include "applications.h"
 
-static void draw_desktop_icon(VWnd *desktop, int top, int bottom, char *icon_name, char *name)
+static void draw_desktop_icon(VWnd *desktop, int top, int bottom,
+                              char *icon_name, char *name)
 {
     HELEMENT *icon_element = malloc(sizeof(HELEMENT));
-    *icon_element = newelement(top, bottom, 10, 40, &desktop->left, &desktop->top);
+    *icon_element =
+        newelement(top, bottom, 10, 40, &desktop->left, &desktop->top);
 
     HBITMAP icon_bmp = LoadBitmap(GetModuleHandle(NULL), icon_name);
     addattribute(*icon_element, HASIMAGE, (int)icon_bmp);
     pushvec(&desktop->elements, icon_element);
 
     HELEMENT *text_element = malloc(sizeof(HELEMENT));
-    *text_element = newelement(bottom + 5, bottom + 15, 0, 50, &desktop->left, &desktop->top);
+    *text_element = newelement(bottom + 5, bottom + 15, 0, 50, &desktop->left,
+                               &desktop->top);
 
     char *text_str = malloc(strlen(name) + 1);
     text_str = name;
@@ -26,7 +29,8 @@ static void draw_desktop_icon(VWnd *desktop, int top, int bottom, char *icon_nam
 
 static void launcher(VScreen *vscreen)
 {
-    VWnd *desktop = createvwnd(VSCREEN_TOP, VSCREEN_BOTTOM, VSCREEN_LEFT, VSCREEN_RIGHT, DESKTOP);
+    VWnd *desktop = createvwnd(VSCREEN_TOP, VSCREEN_BOTTOM, VSCREEN_LEFT,
+                               VSCREEN_RIGHT, DESKTOP);
     bindvwnd(vscreen, desktop);
 
     draw_desktop_icon(desktop, 35, 65, "trash", "Trash");

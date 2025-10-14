@@ -87,7 +87,8 @@ void focustargetid(TopbarState *state, int targetid)
     }
 }
 
-static int messagehandler(VScreen *vscreen, VWNDIDX vwndidx, VWNDMSG msg, MsgFlags *msgflags)
+static int messagehandler(VScreen *vscreen, VWNDIDX vwndidx, VWNDMSG msg,
+                          MsgFlags *msgflags)
 {
     TopbarState *state = topbar.applicationstate;
     VWnd *topbarvwnd = vecget(&vscreen->windows, state->topbarvwndidx);
@@ -102,12 +103,14 @@ static int messagehandler(VScreen *vscreen, VWNDIDX vwndidx, VWNDMSG msg, MsgFla
 
         TopbarElement *topbarelement = malloc(sizeof(TopbarElement));
         topbarelement->targetid = targetid;
-        memcpy(topbarelement->application, name, strlen(name) <= 20 ? strlen(name) : 20);
+        memcpy(topbarelement->application, name,
+               strlen(name) <= 20 ? strlen(name) : 20);
 
         int xoffset = veclength(&state->vwnds) * TOPBAR_ELEMENT_WIDTH;
         HELEMENT *elem = malloc(sizeof(HELEMENT));
-        *elem =
-            newelement(0, TOPBAR_HEIGHT, xoffset, xoffset + TOPBAR_ELEMENT_WIDTH, &topbarvwnd->left, &topbarvwnd->top);
+        *elem = newelement(0, TOPBAR_HEIGHT, xoffset,
+                           xoffset + TOPBAR_ELEMENT_WIDTH, &topbarvwnd->left,
+                           &topbarvwnd->top);
 
         topbarelement->helem = elem;
 
@@ -169,7 +172,8 @@ static int messagehandler(VScreen *vscreen, VWNDIDX vwndidx, VWNDMSG msg, MsgFla
 
 static void launcher(VScreen *vscreen)
 {
-    VWnd *topbarwnd = createvwnd(VSCREEN_TOP, VSCREEN_TOP + TOPBAR_HEIGHT, VSCREEN_LEFT, VSCREEN_RIGHT, TOPBAR);
+    VWnd *topbarwnd = createvwnd(VSCREEN_TOP, VSCREEN_TOP + TOPBAR_HEIGHT,
+                                 VSCREEN_LEFT, VSCREEN_RIGHT, TOPBAR);
     VWNDIDX vwndidx = bindvwnd(vscreen, topbarwnd);
 
     topbar.applicationstate = inittopbarstate(vwndidx);

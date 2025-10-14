@@ -11,7 +11,8 @@
 
 #define CLICK_TIMER_ID 1
 
-LRESULT __stdcall windowProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam);
+LRESULT __stdcall windowProc(HWND hwnd, UINT uMsg, WPARAM wParam,
+                             LPARAM lParam);
 
 static VScreen *vscreen = NULL;
 
@@ -22,7 +23,8 @@ static BOOL isDragging = FALSE;
 
 HBITMAP g_hbmtemp;
 
-int __stdcall WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine, int nShowCmd)
+int __stdcall WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance,
+                      LPSTR lpCmdLine, int nShowCmd)
 {
     const char *CLASS_NAME = "Main Window";
     WNDCLASS wndClass = {};
@@ -37,8 +39,9 @@ int __stdcall WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdL
 
     SetDoubleClickTime(200);
 
-    HWND hwnd = CreateWindowEx(0, CLASS_NAME, "kdemulate", WS_OVERLAPPEDWINDOW, CW_USEDEFAULT, CW_USEDEFAULT,
-                               CW_USEDEFAULT, CW_USEDEFAULT, NULL, NULL, hInstance, NULL);
+    HWND hwnd = CreateWindowEx(0, CLASS_NAME, "kdemulate", WS_OVERLAPPEDWINDOW,
+                               CW_USEDEFAULT, CW_USEDEFAULT, CW_USEDEFAULT,
+                               CW_USEDEFAULT, NULL, NULL, hInstance, NULL);
 
     if (hwnd == NULL)
     {

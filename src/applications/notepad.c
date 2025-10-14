@@ -11,7 +11,8 @@ typedef struct
 
 Application notepadapp;
 
-static int messagehandler(VScreen *vscreen, VWNDIDX vwndidx, VWNDMSG msg, MsgFlags *msgflags)
+static int messagehandler(VScreen *vscreen, VWNDIDX vwndidx, VWNDMSG msg,
+                          MsgFlags *msgflags)
 {
     NotepadState *state = notepadapp.applicationstate;
     VWnd *vwnd = vecget(&vscreen->windows, state->vwndidx);
@@ -40,8 +41,9 @@ static void launcher(VScreen *vscreen)
 
     HELEMENT *textinput = malloc(sizeof(HELEMENT));
 
-    *textinput = newelement(TOOLBAR_HEIGHT, notepadvwnd->bottom - notepadvwnd->top - TOOLBAR_HEIGHT, 5, 295,
-                            &notepadvwnd->left, &notepadvwnd->top);
+    *textinput = newelement(
+        TOOLBAR_HEIGHT, notepadvwnd->bottom - notepadvwnd->top - TOOLBAR_HEIGHT,
+        5, 295, &notepadvwnd->left, &notepadvwnd->top);
 
     addattribute(*textinput, HASINPUT, 0);
 
@@ -65,5 +67,7 @@ static void unlauncher(VScreen *vscreen, int caller)
     default_unlauncher(vscreen, caller);
 }
 
-Application notepadapp = {
-    .name = "Text Editor", .launcher = launcher, .messagehandler = messagehandler, .unlauncher = unlauncher};
+Application notepadapp = {.name = "Text Editor",
+                          .launcher = launcher,
+                          .messagehandler = messagehandler,
+                          .unlauncher = unlauncher};

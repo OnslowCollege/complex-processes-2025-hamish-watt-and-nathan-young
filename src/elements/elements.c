@@ -33,15 +33,18 @@ void initelems(HWND hwnd)
                 continue;
 
             HWND hEdit = CreateWindowEx(WS_EX_CLIENTEDGE, "EDIT", "",
-                                        WS_CHILD | WS_VISIBLE | WS_VSCROLL | ES_AUTOVSCROLL | ES_MULTILINE, 0, 0, 100,
-                                        100, hwnd, (HMENU)i, GetModuleHandle(NULL), NULL);
+                                        WS_CHILD | WS_VISIBLE | WS_VSCROLL |
+                                            ES_AUTOVSCROLL | ES_MULTILINE,
+                                        0, 0, 100, 100, hwnd, (HMENU)i,
+                                        GetModuleHandle(NULL), NULL);
 
             element->hTextEdit = hEdit;
         }
     }
 }
 
-HELEMENT newelement(int top, int bottom, int left, int right, unsigned int *anchorx, unsigned int *anchory)
+HELEMENT newelement(int top, int bottom, int left, int right,
+                    unsigned int *anchorx, unsigned int *anchory)
 {
     Element *elem = malloc(sizeof(Element));
 
@@ -135,33 +138,40 @@ void drawelement(HDC hdc, VScreen *vscreen, HELEMENT helem)
 
     if (hasattribute(helem, HASSTYLERECT))
     {
-        HBITMAP stylerect_dib = createstylerect(memdc, right - left, bottom - top);
-        drawimage(hdc, memdc, stylerect_dib, left, top, right - left, bottom - top);
+        HBITMAP stylerect_dib =
+            createstylerect(memdc, right - left, bottom - top);
+        drawimage(hdc, memdc, stylerect_dib, left, top, right - left,
+                  bottom - top);
         DeleteObject(stylerect_dib);
     }
 
     if (hasattribute(helem, HASINVERTRECT))
     {
-        HBITMAP stylerect_dib = createinvertrect(memdc, right - left, bottom - top);
-        drawimage(hdc, memdc, stylerect_dib, left, top, right - left, bottom - top);
+        HBITMAP stylerect_dib =
+            createinvertrect(memdc, right - left, bottom - top);
+        drawimage(hdc, memdc, stylerect_dib, left, top, right - left,
+                  bottom - top);
         DeleteObject(stylerect_dib);
     }
 
     if (hasattribute(helem, HASINPUT))
     {
-        MoveWindow(element->hTextEdit, left, top, right - left, bottom - top, 1);
+        MoveWindow(element->hTextEdit, left, top, right - left, bottom - top,
+                   1);
     }
 
     if (hasattribute(helem, HASIMAGE))
     {
-        drawimage_stretched(hdc, memdc, element->bmp, left, top, right - left, bottom - top);
+        drawimage_stretched(hdc, memdc, element->bmp, left, top, right - left,
+                            bottom - top);
     }
 
     if (hasattribute(helem, HASTEXT))
     {
         // Surely we'll never have red highlight.
-        /* I seriously looked through the code to find out whether we had functionality
-        For no highlight just to find that you had implemented it like this ahahahahahah */
+        /* I seriously looked through the code to find out whether we had
+        functionality For no highlight just to find that you had implemented it
+        like this ahahahahahah */
         if (element->textinfo->highlight != RGB(255, 0, 0))
         {
             SetBkMode(hdc, OPAQUE);
@@ -169,14 +179,16 @@ void drawelement(HDC hdc, VScreen *vscreen, HELEMENT helem)
         }
         SetTextColor(hdc, GetNearestColor(hdc, element->textinfo->color));
 
-        int result = DrawTextA(hdc, element->textinfo->text, -1, &elemrect, DT_CENTER | DT_BOTTOM | DT_SINGLELINE);
+        int result = DrawTextA(hdc, element->textinfo->text, -1, &elemrect,
+                               DT_CENTER | DT_BOTTOM | DT_SINGLELINE);
         SetBkMode(hdc, TRANSPARENT);
     }
 
     DeleteDC(memdc);
 }
 
-void addclickable(HELEMENT helem, void (*behavior)(VScreen *vscreen, VWNDIDX vwndidx))
+void addclickable(HELEMENT helem,
+                  void (*behavior)(VScreen *vscreen, VWNDIDX vwndidx))
 {
     Element *element = vecget(&gea, helem);
     element->attributes = element->attributes | CLICKABLE;
@@ -190,14 +202,16 @@ void addhastext(HELEMENT helem, TextInfo *text)
     element->textinfo = text;
 };
 
-void addhoverable(HELEMENT helem, void (*behavior)(VScreen *vscreen, VWNDIDX vwndidx))
+void addhoverable(HELEMENT helem,
+                  void (*behavior)(VScreen *vscreen, VWNDIDX vwndidx))
 {
     Element *element = vecget(&gea, helem);
     element->attributes = element->attributes | HOVERABLE;
     element->behavior = behavior;
 }
 
-void adddoubleable(HELEMENT helem, void (*behavior)(VScreen *vscreen, VWNDIDX vwndidx))
+void adddoubleable(HELEMENT helem,
+                   void (*behavior)(VScreen *vscreen, VWNDIDX vwndidx))
 {
     Element *element = vecget(&gea, helem);
     element->attributes = element->attributes | DOUBLECLICKABLE;

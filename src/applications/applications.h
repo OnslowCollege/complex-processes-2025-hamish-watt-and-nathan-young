@@ -14,13 +14,15 @@ typedef struct
 
     void (*launcher)(VScreen *vscreen);
     void (*unlauncher)(VScreen *vscreen, int caller);
-    int (*messagehandler)(VScreen *vscreen, VWNDIDX vwndidx, VWNDMSG msg, MsgFlags *msgflags);
+    int (*messagehandler)(VScreen *vscreen, VWNDIDX vwndidx, VWNDMSG msg,
+                          MsgFlags *msgflags);
 
     void *applicationstate;
 } Application;
 
 extern const Application *applications[5];
 
-void bindapplication(VScreen *vscreen, VWNDIDX vwndidx, Application *application);
+void bindapplication(VScreen *vscreen, VWNDIDX vwndidx,
+                     Application *application);
 void default_launcher(VScreen *vscreen, int vwndidx);
 void default_unlauncher(VScreen *vscreen, int caller);

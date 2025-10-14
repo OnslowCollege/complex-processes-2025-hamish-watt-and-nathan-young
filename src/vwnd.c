@@ -7,7 +7,8 @@
 
 static int next_id = 0;
 
-VWnd *createvwnd(unsigned int top, unsigned int bottom, unsigned int left, unsigned int right, VWNDSTYLE vwndstyle)
+VWnd *createvwnd(unsigned int top, unsigned int bottom, unsigned int left,
+                 unsigned int right, VWNDSTYLE vwndstyle)
 {
 
     VWnd *vwnd = malloc(sizeof(VWnd));
@@ -36,7 +37,8 @@ VWnd *createvwnd(unsigned int top, unsigned int bottom, unsigned int left, unsig
     {
     case STATIC: {
         HELEMENT *hclosebutton = malloc(sizeof(HELEMENT));
-        *hclosebutton = newelement(2, TOOLBAR_HEIGHT, -TOOLBAR_HEIGHT, -2, &vwnd->right, &vwnd->top);
+        *hclosebutton = newelement(2, TOOLBAR_HEIGHT, -TOOLBAR_HEIGHT, -2,
+                                   &vwnd->right, &vwnd->top);
         HBITMAP bmpclosebutton = LoadBitmapA(GetModuleHandle(NULL), "close");
         addattribute(*hclosebutton, HASIMAGE, (int)bmpclosebutton);
         addattribute(*hclosebutton, CLICKABLE, (int)clrvwnd);
@@ -46,7 +48,8 @@ VWnd *createvwnd(unsigned int top, unsigned int bottom, unsigned int left, unsig
     }
     case DEFAULT: {
         HELEMENT *hclosebutton = malloc(sizeof(HELEMENT));
-        *hclosebutton = newelement(2, TOOLBAR_HEIGHT, -TOOLBAR_HEIGHT, -2, &vwnd->right, &vwnd->top);
+        *hclosebutton = newelement(2, TOOLBAR_HEIGHT, -TOOLBAR_HEIGHT, -2,
+                                   &vwnd->right, &vwnd->top);
         HBITMAP bmpclosebutton = LoadBitmapA(GetModuleHandle(NULL), "close");
         addattribute(*hclosebutton, HASIMAGE, (int)bmpclosebutton);
         addattribute(*hclosebutton, CLICKABLE, (int)clrvwnd);

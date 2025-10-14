@@ -36,15 +36,20 @@ HBITMAP createstylerect(HDC hdc, int w, int h)
 
     // fill sides
     fillcolorvertical(pixels, TOP_COLOR, COLOR_BYTES * h, COLOR_BYTES * w);
-    fillcolorvertical(pixels + COLOR_BYTES, TOP_COLOR, COLOR_BYTES * h, COLOR_BYTES * w);
-    fillcolorvertical(pixels + COLOR_BYTES * (w - 1), BOTTOM_COLOR, COLOR_BYTES * h, COLOR_BYTES * w);
-    fillcolorvertical(pixels + COLOR_BYTES * (w - 2), BOTTOM_COLOR, COLOR_BYTES * h, COLOR_BYTES * w);
+    fillcolorvertical(pixels + COLOR_BYTES, TOP_COLOR, COLOR_BYTES * h,
+                      COLOR_BYTES * w);
+    fillcolorvertical(pixels + COLOR_BYTES * (w - 1), BOTTOM_COLOR,
+                      COLOR_BYTES * h, COLOR_BYTES * w);
+    fillcolorvertical(pixels + COLOR_BYTES * (w - 2), BOTTOM_COLOR,
+                      COLOR_BYTES * h, COLOR_BYTES * w);
 
     // fill bottom and top
     fillcolor(pixels, BOTTOM_COLOR, COLOR_BYTES * w);
-    fillcolor(pixels + (COLOR_BYTES * w + 4), BOTTOM_COLOR, COLOR_BYTES * w - 4);
+    fillcolor(pixels + (COLOR_BYTES * w + 4), BOTTOM_COLOR,
+              COLOR_BYTES * w - 4);
     fillcolor(pixels + COLOR_BYTES * w * (h - 1), TOP_COLOR, COLOR_BYTES * w);
-    fillcolor(pixels + COLOR_BYTES * w * (h - 2), TOP_COLOR, COLOR_BYTES * w - 4);
+    fillcolor(pixels + COLOR_BYTES * w * (h - 2), TOP_COLOR,
+              COLOR_BYTES * w - 4);
 
     return dib;
 }
@@ -75,15 +80,20 @@ HBITMAP createinvertrect(HDC hdc, int w, int h)
 
     // fill sides
     fillcolorvertical(pixels, BOTTOM_COLOR, COLOR_BYTES * h, COLOR_BYTES * w);
-    fillcolorvertical(pixels + COLOR_BYTES, BOTTOM_COLOR, COLOR_BYTES * h, COLOR_BYTES * w);
-    fillcolorvertical(pixels + COLOR_BYTES * (w - 1), TOP_COLOR, COLOR_BYTES * h, COLOR_BYTES * w);
-    fillcolorvertical(pixels + COLOR_BYTES * (w - 2), TOP_COLOR, COLOR_BYTES * h, COLOR_BYTES * w);
+    fillcolorvertical(pixels + COLOR_BYTES, BOTTOM_COLOR, COLOR_BYTES * h,
+                      COLOR_BYTES * w);
+    fillcolorvertical(pixels + COLOR_BYTES * (w - 1), TOP_COLOR,
+                      COLOR_BYTES * h, COLOR_BYTES * w);
+    fillcolorvertical(pixels + COLOR_BYTES * (w - 2), TOP_COLOR,
+                      COLOR_BYTES * h, COLOR_BYTES * w);
 
     // fill bottom and top
     fillcolor(pixels, TOP_COLOR, COLOR_BYTES * w);
     fillcolor(pixels + (COLOR_BYTES * w + 4), TOP_COLOR, COLOR_BYTES * w - 4);
-    fillcolor(pixels + COLOR_BYTES * w * (h - 1), BOTTOM_COLOR, COLOR_BYTES * w);
-    fillcolor(pixels + COLOR_BYTES * w * (h - 2), BOTTOM_COLOR, COLOR_BYTES * w - 4);
+    fillcolor(pixels + COLOR_BYTES * w * (h - 1), BOTTOM_COLOR,
+              COLOR_BYTES * w);
+    fillcolor(pixels + COLOR_BYTES * w * (h - 2), BOTTOM_COLOR,
+              COLOR_BYTES * w - 4);
 
     return dib;
 }
@@ -115,12 +125,15 @@ HBITMAP createtoolbarrect(HDC hdc, int w, int h, int isfocused)
         fillgradient(pixels, TOOLBARSTARTCOLOR, TOOLBARENDCOLOR, p_bytes, w);
 
         // fill sides
-        fillcolorvertical(pixels, BOTTOM_COLOR, COLOR_BYTES * h, COLOR_BYTES * w);
-        fillcolorvertical(pixels + COLOR_BYTES * (w - 1), TOP_COLOR, COLOR_BYTES * h, COLOR_BYTES * w);
+        fillcolorvertical(pixels, BOTTOM_COLOR, COLOR_BYTES * h,
+                          COLOR_BYTES * w);
+        fillcolorvertical(pixels + COLOR_BYTES * (w - 1), TOP_COLOR,
+                          COLOR_BYTES * h, COLOR_BYTES * w);
 
         // fill bottom and top
         fillcolor(pixels, TOP_COLOR, COLOR_BYTES * w);
-        fillcolor(pixels + COLOR_BYTES * w * (h - 1), BOTTOM_COLOR, COLOR_BYTES * w);
+        fillcolor(pixels + COLOR_BYTES * w * (h - 1), BOTTOM_COLOR,
+                  COLOR_BYTES * w);
     }
     else
     {
@@ -141,7 +154,8 @@ void drawimage(HDC hdc, HDC memdc, HBITMAP dib, int x, int y, int w, int h)
 }
 
 /* Draws a HBITMAP stretching to fit destination size passed in */
-void drawimage_stretched(HDC hdc, HDC memdc, HBITMAP dib, int x, int y, int w, int h)
+void drawimage_stretched(HDC hdc, HDC memdc, HBITMAP dib, int x, int y, int w,
+                         int h)
 {
     BITMAP bm;
     GetObject(dib, sizeof(BITMAP), &bm);

@@ -46,7 +46,8 @@ enum VWndState
     MINIMIZED,
 };
 
-VWnd *createvwnd(unsigned int top, unsigned int bottom, unsigned int left, unsigned int right, VWNDSTYLE vwndstyle);
+VWnd *createvwnd(unsigned int top, unsigned int bottom, unsigned int left,
+                 unsigned int right, VWNDSTYLE vwndstyle);
 VWnd *vwndbyid(VScreen *vscreen, int id);
 
 int isfocused(VScreen *vscreen, VWNDIDX vwndidx);

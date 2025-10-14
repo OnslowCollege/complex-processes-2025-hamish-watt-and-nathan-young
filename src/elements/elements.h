@@ -41,8 +41,10 @@ typedef struct
     HWND hTextEdit;
 } Element;
 
-// context must be either vwnd or vscreen depending on the location of the element
-HELEMENT newelement(int top, int bottom, int left, int right, unsigned int *anchorx, unsigned int *anchory);
+// context must be either vwnd or vscreen depending on the location of the
+// element
+HELEMENT newelement(int top, int bottom, int left, int right,
+                    unsigned int *anchorx, unsigned int *anchory);
 
 void initelems(HWND hwnd);
 

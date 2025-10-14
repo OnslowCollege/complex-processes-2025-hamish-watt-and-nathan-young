@@ -40,9 +40,11 @@ void vcoordcvt(VScreen *vscreen, COORD *x, COORD *y);
 
 void rcoordcvt(VScreen *vscreen, COORD *x, COORD *y);
 
-void scalevwnd(VScreen *vscreen, VWNDIDX vwndidx, WNDRGN wndrgn, short sclx, short scly);
+void scalevwnd(VScreen *vscreen, VWNDIDX vwndidx, WNDRGN wndrgn, short sclx,
+               short scly);
 
-void movevwnd(VScreen *vscreen, VWNDIDX vwndidx, short dx, short dy, COORD moveinitx, COORD moveinity);
+void movevwnd(VScreen *vscreen, VWNDIDX vwndidx, short dx, short dy,
+              COORD moveinitx, COORD moveinity);
 
 WNDRGN inwndrgn(VScreen *vscreen, VWNDIDX vwndidx, int ptx, int pty);
 
