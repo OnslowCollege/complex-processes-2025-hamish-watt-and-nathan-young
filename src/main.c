@@ -2,6 +2,7 @@
 #include "./utils.h"
 #include "./vwnd.h"
 #include "applications/applications.h"
+#include "elements/elements.h"
 #include "msg.h"
 #include <stdio.h>
 #include <windows.h>
@@ -60,6 +61,7 @@ LRESULT __stdcall windowProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 {
     if (vscreen != NULL)
     {
+        initelems(hwnd);
         if (handlevwndmessages(vscreen) == REDRAW)
         {
             InvalidateRect(hwnd, NULL, FALSE);

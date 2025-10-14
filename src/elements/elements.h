@@ -15,6 +15,7 @@ enum ElemAttribute
     HASSTYLERECT = 0b00010000,
     HASTEXT = 0b00100000,
     HASINVERTRECT = 0b01000000,
+    HASINPUT = 0b10000000,
 };
 
 typedef struct
@@ -36,10 +37,14 @@ typedef struct
     unsigned int *anchorx, *anchory;
 
     TextInfo *textinfo;
+
+    HWND hTextEdit;
 } Element;
 
 // context must be either vwnd or vscreen depending on the location of the element
 HELEMENT newelement(int top, int bottom, int left, int right, unsigned int *anchorx, unsigned int *anchory);
+
+void initelems(HWND hwnd);
 
 void drawelement(HDC hdc, VScreen *vscreen, HELEMENT helem);
 Element *getelement(HELEMENT helem);

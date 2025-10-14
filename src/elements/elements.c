@@ -5,10 +5,40 @@
 #include <windows.h>
 
 static VEC gea;
+static int elemsInitialized = 1;
 
 void initgea()
 {
     gea = createvec(50);
+}
+
+void initelems(HWND hwnd)
+{
+    if (elemsInitialized == 1)
+        return;
+
+    elemsInitialized = 1;
+
+    for (int i = 0; i < veclength(&gea); i++)
+    {
+        Element *element = vecget(&gea, i);
+
+        if (element == NULL)
+            continue;
+
+        if (hasattribute(i, HASINPUT))
+        {
+            printf("Running init elems\n");
+            if (element->hTextEdit)
+                continue;
+
+            HWND hEdit = CreateWindowEx(WS_EX_CLIENTEDGE, "EDIT", "",
+                                        WS_CHILD | WS_VISIBLE | WS_VSCROLL | ES_AUTOVSCROLL | ES_MULTILINE, 0, 0, 100,
+                                        100, hwnd, (HMENU)i, GetModuleHandle(NULL), NULL);
+
+            element->hTextEdit = hEdit;
+        }
+    }
 }
 
 HELEMENT newelement(int top, int bottom, int left, int right, unsigned int *anchorx, unsigned int *anchory)
@@ -27,6 +57,7 @@ HELEMENT newelement(int top, int bottom, int left, int right, unsigned int *anch
     elem->anchorx = anchorx;
     elem->anchory = anchory;
     elem->attributes = 0;
+    elem->hTextEdit = NULL;
 
     pushvec(&gea, elem);
 
@@ -46,10 +77,15 @@ void rmelement(HELEMENT helem)
     {
         DeleteObject(element->bmp);
     }
+    if (hasattribute(helem, HASINPUT))
+    {
+        DestroyWindow(element->hTextEdit);
+    }
     if (hasattribute(helem, HASTEXT))
     {
         clrtext(element->textinfo);
     }
+
     free(element);
 }
 
@@ -111,6 +147,11 @@ void drawelement(HDC hdc, VScreen *vscreen, HELEMENT helem)
         DeleteObject(stylerect_dib);
     }
 
+    if (hasattribute(helem, HASINPUT))
+    {
+        MoveWindow(element->hTextEdit, left, top, right - left, bottom - top, 1);
+    }
+
     if (hasattribute(helem, HASIMAGE))
     {
         drawimage_stretched(hdc, memdc, element->bmp, left, top, right - left, bottom - top);
@@ -170,6 +211,14 @@ void addhasimage(HELEMENT helem, HBITMAP bmp)
     element->bmp = bmp;
 }
 
+void addhasinput(HELEMENT helem)
+{
+    Element *element = vecget(&gea, helem);
+    element->attributes = element->attributes | HASINPUT;
+
+    elemsInitialized = 0;
+}
+
 void removeattribute(HELEMENT helem, ELEMATTRIBUTE attribute)
 {
     Element *element = vecget(&gea, helem);
@@ -197,6 +246,10 @@ void addattribute(HELEMENT helem, ELEMATTRIBUTE attribute, int param)
     case HASINVERTRECT: {
         Element *element = vecget(&gea, helem);
         element->attributes = element->attributes | HASINVERTRECT;
+        break;
+    }
+    case HASINPUT: {
+        addhasinput(helem);
         break;
     }
     case HASIMAGE:
