@@ -103,8 +103,7 @@ static int messagehandler(VScreen *vscreen, VWNDIDX vwndidx, VWNDMSG msg,
 
         TopbarElement *topbarelement = malloc(sizeof(TopbarElement));
         topbarelement->targetid = targetid;
-        memcpy(topbarelement->application, name,
-               strlen(name) <= 20 ? strlen(name) : 20);
+        strcpy(topbarelement->application, name);
 
         int xoffset = veclength(&state->vwnds) * TOPBAR_ELEMENT_WIDTH;
         HELEMENT *elem = malloc(sizeof(HELEMENT));

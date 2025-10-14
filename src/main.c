@@ -4,7 +4,6 @@
 #include "applications/applications.h"
 #include "elements/elements.h"
 #include "msg.h"
-#include <stdio.h>
 #include <windows.h>
 #include <windowsx.h>
 #include <wingdi.h>
