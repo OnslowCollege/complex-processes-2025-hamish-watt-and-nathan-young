@@ -25,8 +25,8 @@ static void launcher(VScreen *vscreen)
     pushvec(&kfind_vwnd->elements, optionsbar);
 
     HELEMENT *file_elem = malloc(sizeof(HELEMENT));
-    *file_elem = newelement(0, TOOLBAR_HEIGHT / 2, 5, 50, &kfind_vwnd->left,
-                            &kfind_vwnd->top);
+    *file_elem = newelement(TOOLBAR_HEIGHT * 1.25, TOOLBAR_HEIGHT * 1.75, 5, 50,
+                            &kfind_vwnd->left, &kfind_vwnd->top);
 
     char *file_str = malloc(5);
     file_str = "File\0";
@@ -149,6 +149,14 @@ static void launcher(VScreen *vscreen)
     HBITMAP fileopen_bmp = LoadBitmap(GetModuleHandle(NULL), "kfind_fileopen");
     addattribute(*fileopen_elem, HASIMAGE, (int)fileopen_bmp);
     pushvec(&kfind_vwnd->elements, fileopen_elem);
+
+    HELEMENT *floppy_elem = malloc(sizeof(HELEMENT));
+    *floppy_elem = newelement(TOOLBAR_HEIGHT * 2.15, TOOLBAR_HEIGHT * 2.85, 145,
+                              160, &kfind_vwnd->left, &kfind_vwnd->top);
+
+    HBITMAP floppy_bmp = LoadBitmap(GetModuleHandle(NULL), "kfind_floppy");
+    addattribute(*floppy_elem, HASIMAGE, (int)floppy_bmp);
+    pushvec(&kfind_vwnd->elements, floppy_elem);
 
     HELEMENT *mainwindow = malloc(sizeof(HELEMENT));
     *mainwindow = newelement(TOOLBAR_HEIGHT * 3 + 5,

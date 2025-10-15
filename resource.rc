@@ -22,3 +22,4 @@ kfind_square BITMAP kfind_square.bmp
 kfind_filedel BITMAP kfind_filedel.bmp
 kfind_exit BITMAP kfind_exit.bmp
 kfind_fileopen BITMAP kfind_fileopen.bmp
+kfind_floppy BITMAP kfind_floppy.bmp
