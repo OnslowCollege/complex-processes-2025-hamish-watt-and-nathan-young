@@ -16,8 +16,6 @@ typedef struct
     void (*unlauncher)(VScreen *vscreen, int caller);
     int (*messagehandler)(VScreen *vscreen, VWNDIDX vwndidx, VWNDMSG msg,
                           MsgFlags *msgflags);
-
-    void *applicationstate;
 } Application;
 
 extern const Application *applications[5];

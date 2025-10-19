@@ -90,8 +90,8 @@ void focustargetid(TopbarState *state, int targetid)
 static int messagehandler(VScreen *vscreen, VWNDIDX vwndidx, VWNDMSG msg,
                           MsgFlags *msgflags)
 {
-    TopbarState *state = topbar.applicationstate;
-    VWnd *topbarvwnd = vecget(&vscreen->windows, state->topbarvwndidx);
+    VWnd *topbarvwnd = vecget(&vscreen->windows, vwndidx);
+    TopbarState *state = topbarvwnd->applicationstate;
 
     if (msg & APPOPENED)
     {
@@ -175,15 +175,16 @@ static void launcher(VScreen *vscreen)
                                  VSCREEN_LEFT, VSCREEN_RIGHT, TOPBAR);
     VWNDIDX vwndidx = bindvwnd(vscreen, topbarwnd);
 
-    topbar.applicationstate = inittopbarstate(vwndidx);
+    topbarwnd->applicationstate = inittopbarstate(vwndidx);
 
     bindapplication(vscreen, vwndidx, &topbar);
 }
 
-static void unlauncher(VScreen *vscreen, int vwndidx)
+static void unlauncher(VScreen *vscreen, int caller)
 {
     printf("Clearing topbar state\n");
-    clrtopbarstate(topbar.applicationstate);
+    VWnd *vwnd = vwndbyid(vscreen, caller);
+    clrtopbarstate(vwnd->applicationstate);
 }
 
 Application topbar = {

@@ -16,6 +16,7 @@ typedef struct
     int focused;
 
     Application *application;
+    void *applicationstate;
 
     HBITMAP bmp;
     int bitmap_w, bitmap_h;

@@ -6,7 +6,7 @@
 typedef struct
 {
     HELEMENT *textinput;
-    VWNDIDX vwndidx;
+    int vwndid;
 } NotepadState;
 
 Application notepadapp;
@@ -14,8 +14,9 @@ Application notepadapp;
 static int messagehandler(VScreen *vscreen, VWNDIDX vwndidx, VWNDMSG msg,
                           MsgFlags *msgflags)
 {
-    NotepadState *state = notepadapp.applicationstate;
-    VWnd *vwnd = vecget(&vscreen->windows, state->vwndidx);
+    VWnd *vwnd = vecget(&vscreen->windows, vwndidx);
+
+    NotepadState *state = vwnd->applicationstate;
 
     if (msg & SCALED || msg & MOVED)
     {
@@ -49,18 +50,19 @@ static void launcher(VScreen *vscreen)
 
     NotepadState *state = malloc(sizeof(NotepadState));
     state->textinput = textinput;
-    state->vwndidx = vwndidx;
+    state->vwndid = notepadvwnd->id;
 
     pushvec(&notepadvwnd->elements, textinput);
 
-    notepadapp.applicationstate = state;
+    notepadvwnd->applicationstate = state;
 
     default_launcher(vscreen, notepadvwnd->id);
 }
 
 static void unlauncher(VScreen *vscreen, int caller)
 {
-    NotepadState *state = notepadapp.applicationstate;
+    NotepadState *state = vwndbyid(vscreen, caller)->applicationstate;
+    rmelement(*(state->textinput));
     free(state->textinput);
     free(state);
 
