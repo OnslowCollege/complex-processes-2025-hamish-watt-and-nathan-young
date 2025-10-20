@@ -1,4 +1,5 @@
 #include "../elements/elements.h"
+#include "../graphics.h"
 #include "../vwnd.h"
 #include "applications.h"
 #include <stdio.h>
@@ -34,16 +35,6 @@ static char *get_month(int x)
     default:
         return "Err";
     }
-}
-
-static HELEMENT *drawicon(VWnd *taskbar, char *name, int top, int bottom,
-                          int left, int right)
-{
-    HBITMAP bmp = LoadBitmapA(GetModuleHandle(NULL), name);
-    HELEMENT *icon = malloc(sizeof(HELEMENT));
-    *icon = newelement(top, bottom, left, right, &taskbar->left, &taskbar->top);
-    addattribute(*icon, HASIMAGE, (int)bmp);
-    return icon;
 }
 
 static void launcher(VScreen *vscreen)

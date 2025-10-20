@@ -63,7 +63,6 @@ static void unlauncher(VScreen *vscreen, int caller)
 {
     NotepadState *state = vwndbyid(vscreen, caller)->applicationstate;
     rmelement(*(state->textinput));
-    free(state->textinput);
     free(state);
 
     default_unlauncher(vscreen, caller);

@@ -1,15 +1,22 @@
 #include "../elements/elements.h"
+#include "../graphics.h"
 #include "../msg.h"
 #include "../vwnd.h"
 #include "applications.h"
 
+typedef struct
+{
+    HELEMENT *textinput;
+    int vwndid;
+} KfindState;
+
+Application kfind;
+
 static int messagehandler(VScreen *vscreen, VWNDIDX vwndidx, VWNDMSG msg,
                           MsgFlags *msgflags)
 {
-    return 0;
+    return NO_REDRAW;
 }
-
-Application kfind;
 
 static void launcher(VScreen *vscreen)
 {
@@ -86,77 +93,60 @@ static void launcher(VScreen *vscreen)
     addattribute(*secondbar, HASSTYLERECT, 0);
     pushvec(&kfind_vwnd->elements, secondbar);
 
-    HELEMENT *mag_elem = malloc(sizeof(HELEMENT));
-    *mag_elem = newelement(TOOLBAR_HEIGHT * 2.15, TOOLBAR_HEIGHT * 2.85, 7, 20,
-                           &kfind_vwnd->left, &kfind_vwnd->top);
-
-    HBITMAP mag_bmp = LoadBitmap(GetModuleHandle(NULL), "kfind_mag");
-    addattribute(*mag_elem, HASIMAGE, (int)mag_bmp);
+    HELEMENT *mag_elem =
+        drawicon(kfind_vwnd, "kfind_mag", TOOLBAR_HEIGHT * 2.15,
+                 TOOLBAR_HEIGHT * 2.85, 7, 20);
     pushvec(&kfind_vwnd->elements, mag_elem);
 
-    HELEMENT *wheel_elem = malloc(sizeof(HELEMENT));
-    *wheel_elem = newelement(TOOLBAR_HEIGHT * 2.25, TOOLBAR_HEIGHT * 2.75, 22,
-                             32, &kfind_vwnd->left, &kfind_vwnd->top);
-
-    HBITMAP wheel_bmp = LoadBitmap(GetModuleHandle(NULL), "kfind_wheel");
-    addattribute(*wheel_elem, HASIMAGE, (int)wheel_bmp);
+    HELEMENT *wheel_elem =
+        drawicon(kfind_vwnd, "kfind_wheel", TOOLBAR_HEIGHT * 2.25,
+                 TOOLBAR_HEIGHT * 2.75, 22, 32);
     pushvec(&kfind_vwnd->elements, wheel_elem);
 
-    HELEMENT *stop_elem = malloc(sizeof(HELEMENT));
-    *stop_elem = newelement(TOOLBAR_HEIGHT * 2.15, TOOLBAR_HEIGHT * 2.85, 35,
-                            50, &kfind_vwnd->left, &kfind_vwnd->top);
-
-    HBITMAP stop_bmp = LoadBitmap(GetModuleHandle(NULL), "kfind_stop");
-    addattribute(*stop_elem, HASIMAGE, (int)stop_bmp);
+    HELEMENT *stop_elem =
+        drawicon(kfind_vwnd, "kfind_stop", TOOLBAR_HEIGHT * 2.15,
+                 TOOLBAR_HEIGHT * 2.85, 35, 50);
     pushvec(&kfind_vwnd->elements, stop_elem);
 
-    HELEMENT *idea_elem = malloc(sizeof(HELEMENT));
-    *idea_elem = newelement(TOOLBAR_HEIGHT * 2.15, TOOLBAR_HEIGHT * 2.85, 60,
-                            73, &kfind_vwnd->left, &kfind_vwnd->top);
-
-    HBITMAP idea_bmp = LoadBitmap(GetModuleHandle(NULL), "kfind_idea");
-    addattribute(*idea_elem, HASIMAGE, (int)idea_bmp);
+    HELEMENT *idea_elem =
+        drawicon(kfind_vwnd, "kfind_idea", TOOLBAR_HEIGHT * 2.15,
+                 TOOLBAR_HEIGHT * 2.85, 60, 73);
     pushvec(&kfind_vwnd->elements, idea_elem);
 
-    HELEMENT *square_elem = malloc(sizeof(HELEMENT));
-    *square_elem = newelement(TOOLBAR_HEIGHT * 2.25, TOOLBAR_HEIGHT * 2.75, 77,
-                              87, &kfind_vwnd->left, &kfind_vwnd->top);
-
-    HBITMAP square_bmp = LoadBitmap(GetModuleHandle(NULL), "kfind_square");
-    addattribute(*square_elem, HASIMAGE, (int)square_bmp);
+    HELEMENT *square_elem =
+        drawicon(kfind_vwnd, "kfind_square", TOOLBAR_HEIGHT * 2.25,
+                 TOOLBAR_HEIGHT * 2.75, 77, 87);
     pushvec(&kfind_vwnd->elements, square_elem);
 
-    HELEMENT *filedel_elem = malloc(sizeof(HELEMENT));
-    *filedel_elem = newelement(TOOLBAR_HEIGHT * 2.15, TOOLBAR_HEIGHT * 2.85, 95,
-                               110, &kfind_vwnd->left, &kfind_vwnd->top);
-
-    HBITMAP filedel_bmp = LoadBitmap(GetModuleHandle(NULL), "kfind_filedel");
-    addattribute(*filedel_elem, HASIMAGE, (int)filedel_bmp);
+    HELEMENT *filedel_elem =
+        drawicon(kfind_vwnd, "kfind_filedel", TOOLBAR_HEIGHT * 2.15,
+                 TOOLBAR_HEIGHT * 2.85, 95, 110);
     pushvec(&kfind_vwnd->elements, filedel_elem);
 
-    HELEMENT *exit_elem = malloc(sizeof(HELEMENT));
-    *exit_elem = newelement(TOOLBAR_HEIGHT * 2.15, TOOLBAR_HEIGHT * 2.85, 113,
-                            125, &kfind_vwnd->left, &kfind_vwnd->top);
-
-    HBITMAP exit_bmp = LoadBitmap(GetModuleHandle(NULL), "kfind_exit");
-    addattribute(*exit_elem, HASIMAGE, (int)exit_bmp);
+    HELEMENT *exit_elem =
+        drawicon(kfind_vwnd, "kfind_exit", TOOLBAR_HEIGHT * 2.15,
+                 TOOLBAR_HEIGHT * 2.85, 113, 125);
     pushvec(&kfind_vwnd->elements, exit_elem);
 
-    HELEMENT *fileopen_elem = malloc(sizeof(HELEMENT));
-    *fileopen_elem = newelement(TOOLBAR_HEIGHT * 2.15, TOOLBAR_HEIGHT * 2.85,
-                                125, 140, &kfind_vwnd->left, &kfind_vwnd->top);
-
-    HBITMAP fileopen_bmp = LoadBitmap(GetModuleHandle(NULL), "kfind_fileopen");
-    addattribute(*fileopen_elem, HASIMAGE, (int)fileopen_bmp);
+    HELEMENT *fileopen_elem =
+        drawicon(kfind_vwnd, "kfind_fileopen", TOOLBAR_HEIGHT * 2.15,
+                 TOOLBAR_HEIGHT * 2.85, 125, 140);
     pushvec(&kfind_vwnd->elements, fileopen_elem);
 
-    HELEMENT *floppy_elem = malloc(sizeof(HELEMENT));
-    *floppy_elem = newelement(TOOLBAR_HEIGHT * 2.15, TOOLBAR_HEIGHT * 2.85, 145,
-                              160, &kfind_vwnd->left, &kfind_vwnd->top);
-
-    HBITMAP floppy_bmp = LoadBitmap(GetModuleHandle(NULL), "kfind_floppy");
-    addattribute(*floppy_elem, HASIMAGE, (int)floppy_bmp);
+    HELEMENT *floppy_elem =
+        drawicon(kfind_vwnd, "kfind_floppy", TOOLBAR_HEIGHT * 2.15,
+                 TOOLBAR_HEIGHT * 2.85, 145, 160);
     pushvec(&kfind_vwnd->elements, floppy_elem);
+
+    HELEMENT *book_elem =
+        drawicon(kfind_vwnd, "kfind_book", TOOLBAR_HEIGHT * 2.15,
+                 TOOLBAR_HEIGHT * 2.85, 165, 180);
+    pushvec(&kfind_vwnd->elements, book_elem);
+
+    HELEMENT *exit2_elem =
+        drawicon(kfind_vwnd, "kfind_exit2", TOOLBAR_HEIGHT * 2.15,
+                 TOOLBAR_HEIGHT * 2.85, 185, 200);
+    pushvec(&kfind_vwnd->elements, exit2_elem);
 
     HELEMENT *mainwindow = malloc(sizeof(HELEMENT));
     *mainwindow = newelement(TOOLBAR_HEIGHT * 3 + 5,
@@ -165,11 +155,128 @@ static void launcher(VScreen *vscreen)
     addattribute(*mainwindow, HASSTYLERECT, 0);
     pushvec(&kfind_vwnd->elements, mainwindow);
 
+    HELEMENT *maintitle_elem = malloc(sizeof(HELEMENT));
+    *maintitle_elem = newelement(TOOLBAR_HEIGHT * 3.5, TOOLBAR_HEIGHT * 4, 10,
+                                 200, &kfind_vwnd->left, &kfind_vwnd->top);
+
+    char *maintitle_str = malloc(42);
+    maintitle_str = "Name&Location   Date Modified   Advanced\0";
+    TextInfo *maintitle_text = malloc(sizeof(TextInfo));
+    maintitle_text->text = maintitle_str;
+    maintitle_text->color = RGB(0, 0, 0);
+    maintitle_text->highlight = RGB(255, 0, 0);
+
+    addattribute(*maintitle_elem, HASTEXT, (int)maintitle_text);
+    pushvec(&kfind_vwnd->elements, maintitle_elem);
+
+    HELEMENT *mainwindow_label_elem = malloc(sizeof(HELEMENT));
+    *mainwindow_label_elem =
+        newelement(TOOLBAR_HEIGHT * 5, TOOLBAR_HEIGHT * 5.75, 10, 50,
+                   &kfind_vwnd->left, &kfind_vwnd->top);
+
+    char *mainwindow_label_str = malloc(7);
+    mainwindow_label_str = "Named:\0";
+    TextInfo *mainwindow_label_text = malloc(sizeof(TextInfo));
+    mainwindow_label_text->text = mainwindow_label_str;
+    mainwindow_label_text->color = RGB(0, 0, 0);
+    mainwindow_label_text->highlight = RGB(255, 0, 0);
+
+    addattribute(*mainwindow_label_elem, HASTEXT, (int)mainwindow_label_text);
+    pushvec(&kfind_vwnd->elements, mainwindow_label_elem);
+
+    HELEMENT *mainwindow_text_field = malloc(sizeof(HELEMENT));
+    *mainwindow_text_field =
+        newelement(TOOLBAR_HEIGHT * 5, TOOLBAR_HEIGHT * 5.75, 50, 280,
+                   &kfind_vwnd->left, &kfind_vwnd->top);
+
+    addattribute(*mainwindow_text_field, HASINPUT, 0);
+
+    KfindState *state = malloc(sizeof(KfindState));
+    state->textinput = mainwindow_text_field;
+    state->vwndid = kfind_vwnd->id;
+
+    pushvec(&kfind_vwnd->elements, mainwindow_text_field);
+
+    kfind_vwnd->applicationstate = state;
+
+    HELEMENT *look_in_elem = malloc(sizeof(HELEMENT));
+    *look_in_elem = newelement(TOOLBAR_HEIGHT * 6, TOOLBAR_HEIGHT * 6.75, 10,
+                               50, &kfind_vwnd->left, &kfind_vwnd->top);
+
+    char *look_in_str = malloc(9);
+    look_in_str = "Look in:\0";
+    TextInfo *look_in_text = malloc(sizeof(TextInfo));
+    look_in_text->text = look_in_str;
+    look_in_text->color = RGB(0, 0, 0);
+    look_in_text->highlight = RGB(255, 0, 0);
+
+    addattribute(*look_in_elem, HASTEXT, (int)look_in_text);
+    pushvec(&kfind_vwnd->elements, look_in_elem);
+
+    HELEMENT *path_elem = malloc(sizeof(HELEMENT));
+    *path_elem = newelement(TOOLBAR_HEIGHT * 6, TOOLBAR_HEIGHT * 6.75, 50, 200,
+                            &kfind_vwnd->left, &kfind_vwnd->top);
+    addattribute(*path_elem, HASSTYLERECT, 0);
+    pushvec(&kfind_vwnd->elements, path_elem);
+
+    HELEMENT *path_text_elem = malloc(sizeof(HELEMENT));
+    *path_text_elem = newelement(TOOLBAR_HEIGHT * 6, TOOLBAR_HEIGHT * 6.75, 50,
+                                 200, &kfind_vwnd->left, &kfind_vwnd->top);
+
+    char *path_str = malloc(16);
+    path_str = "/home/kdemulate\0";
+    TextInfo *path_text = malloc(sizeof(TextInfo));
+    path_text->text = path_str;
+    path_text->color = RGB(0, 0, 0);
+    path_text->highlight = RGB(255, 0, 0);
+
+    addattribute(*path_text_elem, HASTEXT, (int)path_text);
+    pushvec(&kfind_vwnd->elements, path_text_elem);
+
+    HELEMENT *browse_elem = malloc(sizeof(HELEMENT));
+    *browse_elem = newelement(TOOLBAR_HEIGHT * 6, TOOLBAR_HEIGHT * 6.75, 220,
+                              280, &kfind_vwnd->left, &kfind_vwnd->top);
+    addattribute(*browse_elem, HASSTYLERECT, 0);
+    pushvec(&kfind_vwnd->elements, browse_elem);
+
+    HELEMENT *browse_text_elem = malloc(sizeof(HELEMENT));
+    *browse_text_elem =
+        newelement(TOOLBAR_HEIGHT * 6, TOOLBAR_HEIGHT * 6.75, 220, 280,
+                   &kfind_vwnd->left, &kfind_vwnd->top);
+
+    char *browse_str = malloc(7);
+    browse_str = "Browse\0";
+    TextInfo *browse_text = malloc(sizeof(TextInfo));
+    browse_text->text = browse_str;
+    browse_text->color = RGB(0, 0, 0);
+    browse_text->highlight = RGB(255, 0, 0);
+
+    addattribute(*browse_text_elem, HASTEXT, (int)browse_text);
+    pushvec(&kfind_vwnd->elements, browse_text_elem);
+
+    HELEMENT *include_elem = malloc(sizeof(HELEMENT));
+    *include_elem = newelement(TOOLBAR_HEIGHT * 7, TOOLBAR_HEIGHT * 7.75, 50,
+                               150, &kfind_vwnd->left, &kfind_vwnd->top);
+
+    char *include_str = malloc(19);
+    include_str = "Include subfolders\0";
+    TextInfo *include_text = malloc(sizeof(TextInfo));
+    include_text->text = include_str;
+    include_text->color = RGB(0, 0, 0);
+    include_text->highlight = RGB(255, 0, 0);
+
+    addattribute(*include_elem, HASTEXT, (int)include_text);
+    pushvec(&kfind_vwnd->elements, include_elem);
+
     default_launcher(vscreen, kfind_vwnd->id);
 }
 
 static void unlauncher(VScreen *vscreen, int caller)
 {
+    KfindState *state = vwndbyid(vscreen, caller)->applicationstate;
+    rmelement(*(state->textinput));
+    free(state);
+
     default_unlauncher(vscreen, caller);
 }
 

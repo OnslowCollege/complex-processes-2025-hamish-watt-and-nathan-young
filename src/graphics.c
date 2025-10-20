@@ -165,3 +165,13 @@ void drawimage_stretched(HDC hdc, HDC memdc, HBITMAP dib, int x, int y, int w,
 
     SelectObject(memdc, olddib);
 }
+
+HELEMENT *drawicon(VWnd *taskbar, char *name, int top, int bottom, int left,
+                   int right)
+{
+    HBITMAP bmp = LoadBitmapA(GetModuleHandle(NULL), name);
+    HELEMENT *icon = malloc(sizeof(HELEMENT));
+    *icon = newelement(top, bottom, left, right, &taskbar->left, &taskbar->top);
+    addattribute(*icon, HASIMAGE, (int)bmp);
+    return icon;
+}
