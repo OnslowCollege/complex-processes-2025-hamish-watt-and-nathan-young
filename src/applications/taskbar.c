@@ -61,7 +61,6 @@ static void launcher(VScreen *vscreen)
     HELEMENT *kcontrol =
         drawicon(taskbar, "large-kcontrol", 2, TASKBAR_HEIGHT - 2,
                  3 * (TASKBAR_HEIGHT - 2), 4 * (TASKBAR_HEIGHT - 2));
-    addattribute(*kcontrol, CLICKABLE, (int)applications[4]->launcher);
     pushvec(&taskbar->elements, kcontrol);
     // Find files application.
     HBITMAP kfindbmp = LoadBitmapA(GetModuleHandle(NULL), "large-kfind");
@@ -77,6 +76,15 @@ static void launcher(VScreen *vscreen)
         drawicon(taskbar, "utils_package", 2, TASKBAR_HEIGHT - 2,
                  5 * (TASKBAR_HEIGHT - 2), 6 * (TASKBAR_HEIGHT - 2));
     pushvec(&taskbar->elements, utils_package);
+    // Notepad application
+    HBITMAP knotes_bmp = LoadBitmapA(GetModuleHandle(NULL), "knotes");
+    HELEMENT *knotes = malloc(sizeof(HELEMENT));
+    *knotes =
+        newelement(2, TASKBAR_HEIGHT - 2, 6 * (TASKBAR_HEIGHT - 2),
+                   7 * (TASKBAR_HEIGHT - 2), &taskbar->left, &taskbar->top);
+    addattribute(*knotes, HASIMAGE, (int)knotes_bmp);
+    addattribute(*knotes, CLICKABLE, (int)applications[4]->launcher);
+    pushvec(&taskbar->elements, knotes);
 
     SYSTEMTIME st;
     GetLocalTime(&st);
