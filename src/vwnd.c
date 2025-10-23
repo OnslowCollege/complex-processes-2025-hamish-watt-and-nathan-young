@@ -35,17 +35,7 @@ VWnd *createvwnd(unsigned int top, unsigned int bottom, unsigned int left,
 
     switch (*vwnd->vwndstyle)
     {
-    case STATIC: {
-        HELEMENT *hclosebutton = malloc(sizeof(HELEMENT));
-        *hclosebutton = newelement(2, TOOLBAR_HEIGHT, -TOOLBAR_HEIGHT, -2,
-                                   &vwnd->right, &vwnd->top);
-        HBITMAP bmpclosebutton = LoadBitmapA(GetModuleHandle(NULL), "close");
-        addattribute(*hclosebutton, HASIMAGE, (int)bmpclosebutton);
-        addattribute(*hclosebutton, CLICKABLE, (int)clrvwnd);
-
-        pushvec(&vwnd->elements, hclosebutton);
-        break;
-    }
+    case STATIC:
     case DEFAULT: {
         HELEMENT *hclosebutton = malloc(sizeof(HELEMENT));
         *hclosebutton = newelement(2, TOOLBAR_HEIGHT, -TOOLBAR_HEIGHT, -2,
@@ -55,6 +45,28 @@ VWnd *createvwnd(unsigned int top, unsigned int bottom, unsigned int left,
         addattribute(*hclosebutton, CLICKABLE, (int)clrvwnd);
 
         pushvec(&vwnd->elements, hclosebutton);
+
+        HELEMENT *maximize_elem = malloc(sizeof(HELEMENT));
+        *maximize_elem = newelement(2, TOOLBAR_HEIGHT, -2 * TOOLBAR_HEIGHT,
+                                    -TOOLBAR_HEIGHT, &vwnd->right, &vwnd->top);
+        HBITMAP maximize_bmp = LoadBitmapA(GetModuleHandle(NULL), "maximize");
+        addattribute(*maximize_elem, HASIMAGE, (int)maximize_bmp);
+        pushvec(&vwnd->elements, maximize_elem);
+
+        HELEMENT *minimize_elem = malloc(sizeof(HELEMENT));
+        *minimize_elem =
+            newelement(2, TOOLBAR_HEIGHT, -3 * TOOLBAR_HEIGHT,
+                       -2 * TOOLBAR_HEIGHT, &vwnd->right, &vwnd->top);
+        HBITMAP minimize_bmp = LoadBitmapA(GetModuleHandle(NULL), "minimize");
+        addattribute(*minimize_elem, HASIMAGE, (int)minimize_bmp);
+        pushvec(&vwnd->elements, minimize_elem);
+
+        HELEMENT *pinup_elem = malloc(sizeof(HELEMENT));
+        *pinup_elem = newelement(2, TOOLBAR_HEIGHT, TOOLBAR_HEIGHT,
+                                 TOOLBAR_HEIGHT * 2, &vwnd->left, &vwnd->top);
+        HBITMAP pinup_bmp = LoadBitmapA(GetModuleHandle(NULL), "pinup");
+        addattribute(*pinup_elem, HASIMAGE, (int)pinup_bmp);
+        pushvec(&vwnd->elements, pinup_elem);
         break;
     }
     default:
