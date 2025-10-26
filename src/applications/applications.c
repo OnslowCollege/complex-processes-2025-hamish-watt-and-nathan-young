@@ -6,9 +6,10 @@ extern Application taskbar;
 extern Application topbar;
 extern Application kfind;
 extern Application notepadapp;
+extern Application welcome;
 
 const Application *applications[] = {
-    &topbar, &desktop, &taskbar, &kfind, &notepadapp,
+    &topbar, &desktop, &taskbar, &kfind, &notepadapp, &welcome,
 };
 
 void bindapplication(VScreen *vscreen, VWNDIDX vwndidx, Application *application)

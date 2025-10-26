@@ -18,7 +18,7 @@ typedef struct
                           MsgFlags *msgflags);
 } Application;
 
-extern const Application *applications[5];
+extern const Application *applications[6];
 
 void bindapplication(VScreen *vscreen, VWNDIDX vwndidx,
                      Application *application);
