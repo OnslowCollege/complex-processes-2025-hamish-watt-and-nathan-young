@@ -46,6 +46,7 @@ static void launcher(VScreen *vscreen)
     // Kde start logo.
     HELEMENT *kde_logo = drawicon(taskbar, "kde_logo", 2, TASKBAR_HEIGHT - 2, 2,
                                   TASKBAR_HEIGHT - 2);
+    addattribute(*kde_logo, CLICKABLE, (int)applications[5]->launcher);
     pushvec(&taskbar->elements, kde_logo);
     // Window list icon.
     HELEMENT *wnd_list =
@@ -76,15 +77,6 @@ static void launcher(VScreen *vscreen)
         drawicon(taskbar, "utils_package", 2, TASKBAR_HEIGHT - 2,
                  5 * (TASKBAR_HEIGHT - 2), 6 * (TASKBAR_HEIGHT - 2));
     pushvec(&taskbar->elements, utils_package);
-    // Notepad application
-    HBITMAP knotes_bmp = LoadBitmapA(GetModuleHandle(NULL), "knotes");
-    HELEMENT *knotes = malloc(sizeof(HELEMENT));
-    *knotes =
-        newelement(2, TASKBAR_HEIGHT - 2, 6 * (TASKBAR_HEIGHT - 2),
-                   7 * (TASKBAR_HEIGHT - 2), &taskbar->left, &taskbar->top);
-    addattribute(*knotes, HASIMAGE, (int)knotes_bmp);
-    addattribute(*knotes, CLICKABLE, (int)applications[4]->launcher);
-    pushvec(&taskbar->elements, knotes);
 
     SYSTEMTIME st;
     GetLocalTime(&st);

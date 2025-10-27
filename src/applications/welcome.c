@@ -5,23 +5,24 @@
 
 typedef struct
 {
-    HELEMENT *element;
+    HELEMENT *text_element;
     int vwndid;
 } WelcomeState;
 
-static void draw_text_icon(VWnd *vwnd, int top, int bottom, char *icon_name,
-                           char *name)
+static void draw_text_icon(VWnd *vwnd, int top, int bottom, int left, int right,
+                           char *icon_name, char *name)
 {
     HELEMENT *icon_element = malloc(sizeof(HELEMENT));
-    *icon_element = newelement(top, bottom, 10, 40, &vwnd->left, &vwnd->top);
+    *icon_element =
+        newelement(top, bottom, left, right, &vwnd->left, &vwnd->top);
 
     HBITMAP icon_bmp = LoadBitmap(GetModuleHandle(NULL), icon_name);
     addattribute(*icon_element, HASIMAGE, (int)icon_bmp);
     pushvec(&vwnd->elements, icon_element);
 
     HELEMENT *text_element = malloc(sizeof(HELEMENT));
-    *text_element =
-        newelement(bottom + 5, bottom + 15, 0, 50, &vwnd->left, &vwnd->top);
+    *text_element = newelement(bottom + 5, bottom + 15, left - 10, right + 10,
+                               &vwnd->left, &vwnd->top);
 
     char *text_str = malloc(strlen(name) + 1);
     text_str = name;
@@ -44,10 +45,9 @@ static int messagehandler(VScreen *vscreen, VWNDIDX vwndidx, VWNDMSG msg,
 
     if (msg & SCALED)
     {
-        Element *element = getelement(*state->element);
-        element->bottom = vwnd->bottom - vwnd->top - 5;
-        element->right = vwnd->right - vwnd->left - 5;
-
+        Element *text_element = getelement(*state->text_element);
+        text_element->bottom = vwnd->bottom - vwnd->top - 5;
+        text_element->right = vwnd->right - vwnd->left - 5;
         return REDRAW;
     }
     return NO_REDRAW;
@@ -75,10 +75,11 @@ static void launcher(VScreen *vscreen)
         "identity of KDE 1.0 while also including some of the functionality of "
         "the original desktop. This includes the ability to move and resize "
         "windows, as well as some iconic applications from the original "
-        "environment such as kfind and knotes.\n\n\nBoth applications are "
-        "accessed through the relevent taskbar icons shown here.\n\n(Note that "
-        "the kfind application cannot be resized due to how the application "
-        "works)";
+        "environment such as kfind and knotes.\n\n\nThe Kfind application is "
+        "accessed from the taskbar icon with the magnifying glass.\n\nThe "
+        "Knotes application is accessed by doubleclicking the labeled desktop "
+        "icon.\n\nThis application can be reopened with the K logo on the "
+        "taskbar.";
     char *text_str = strdup(text);
     TextInfo *text_info = malloc(sizeof(TextInfo));
     text_info->text = text_str;
@@ -88,7 +89,7 @@ static void launcher(VScreen *vscreen)
     addattribute(*text_elem, HASMULTILINETEXT, (int)text_info);
 
     WelcomeState *state = malloc(sizeof(WelcomeState));
-    state->element = text_elem;
+    state->text_element = text_elem;
     state->vwndid = vwnd->id;
 
     pushvec(&vwnd->elements, text_elem);
@@ -101,14 +102,13 @@ static void launcher(VScreen *vscreen)
 static void unlauncher(VScreen *vscreen, int caller)
 {
     WelcomeState *state = vwndbyid(vscreen, caller)->applicationstate;
-    rmelement(*(state->element));
     free(state);
 
     default_unlauncher(vscreen, caller);
 }
 
 Application welcome = {
-    .name = "welcome",
+    .name = "Welcome",
     .launcher = launcher,
     .unlauncher = unlauncher,
     .messagehandler = messagehandler,
