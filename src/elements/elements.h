@@ -16,6 +16,8 @@ enum ElemAttribute
     HASTEXT = 0b00100000,
     HASINVERTRECT = 0b01000000,
     HASINPUT = 0b10000000,
+    HASMULTILINETEXT = 0b100000000,
+    HASCOLORRECT = 0b1000000000,
 };
 
 typedef struct
@@ -37,6 +39,8 @@ typedef struct
     unsigned int *anchorx, *anchory;
 
     TextInfo *textinfo;
+
+    COLORREF color;
 
     HWND hTextEdit;
 } Element;

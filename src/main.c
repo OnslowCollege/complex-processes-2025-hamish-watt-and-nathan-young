@@ -90,6 +90,8 @@ LRESULT __stdcall windowProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
         applications[0]->launcher(vscreen);
         // Taskbar.
         applications[2]->launcher(vscreen);
+        // Welcome
+        applications[5]->launcher(vscreen);
 
         return 0;
     }

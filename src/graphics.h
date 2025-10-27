@@ -1,4 +1,6 @@
 #pragma once
+#include "./vwnd.h"
+#include "./elements/elements.h"
 #include <windows.h>
 
 extern void fillcolor(void *p_colors, unsigned int color, int size);
@@ -16,3 +18,5 @@ HBITMAP createtoolbarrect(HDC hdc, int w, int h, int isfocused);
 void drawimage(HDC hdc, HDC memdc, HBITMAP dib, int x, int y, int w, int h);
 void drawimage_stretched(HDC hdc, HDC memdc, HBITMAP dib, int x, int y, int w,
                          int h);
+HELEMENT *drawicon(VWnd *taskbar, char *name, int top, int bottom, int left,
+                   int right);

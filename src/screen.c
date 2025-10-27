@@ -78,7 +78,7 @@ void drawvwnd(VScreen *vscreen, VWNDIDX vwndidx, HDC hdc)
 
     COORD toolbartop = vwnd->top + 3;
     COORD toolbarleft = vwnd->left + 40;
-    COORD toolbarright = vwnd->right - 40;
+    COORD toolbarright = vwnd->right - 50;
     COORD toolbarbottom = vwnd->top + TOOLBAR_HEIGHT - 3;
 
     vcoordcvt(vscreen, &left, &top);

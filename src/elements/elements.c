@@ -88,6 +88,10 @@ void rmelement(HELEMENT helem)
     {
         clrtext(element->textinfo);
     }
+    if (hasattribute(helem, HASMULTILINETEXT))
+    {
+        clrtext(element->textinfo);
+    }
 
     free(element);
 }
@@ -145,6 +149,12 @@ void drawelement(HDC hdc, VScreen *vscreen, HELEMENT helem)
         DeleteObject(stylerect_dib);
     }
 
+    if (hasattribute(helem, HASCOLORRECT))
+    {
+        FillRect(hdc, &elemrect,
+                 CreateSolidBrush(GetNearestColor(hdc, element->color)));
+    }
+
     if (hasattribute(helem, HASINVERTRECT))
     {
         HBITMAP stylerect_dib =
@@ -183,6 +193,19 @@ void drawelement(HDC hdc, VScreen *vscreen, HELEMENT helem)
                                DT_CENTER | DT_BOTTOM | DT_SINGLELINE);
         SetBkMode(hdc, TRANSPARENT);
     }
+    if (hasattribute(helem, HASMULTILINETEXT))
+    {
+        if (element->textinfo->highlight != RGB(255, 0, 0))
+        {
+            SetBkMode(hdc, OPAQUE);
+            SetBkColor(hdc, GetNearestColor(hdc, element->textinfo->highlight));
+        }
+        SetTextColor(hdc, GetNearestColor(hdc, element->textinfo->color));
+
+        int result = DrawTextA(hdc, element->textinfo->text, -1, &elemrect,
+                               DT_LEFT | DT_TOP | DT_WORDBREAK);
+        SetBkMode(hdc, TRANSPARENT);
+    }
 
     DeleteDC(memdc);
 }
@@ -199,6 +222,13 @@ void addhastext(HELEMENT helem, TextInfo *text)
 {
     Element *element = vecget(&gea, helem);
     element->attributes = element->attributes | HASTEXT;
+    element->textinfo = text;
+};
+
+void addhasmultilinetext(HELEMENT helem, TextInfo *text)
+{
+    Element *element = vecget(&gea, helem);
+    element->attributes = element->attributes | HASMULTILINETEXT;
     element->textinfo = text;
 };
 
@@ -223,6 +253,12 @@ void addhasimage(HELEMENT helem, HBITMAP bmp)
     Element *element = vecget(&gea, helem);
     element->attributes = element->attributes | HASIMAGE;
     element->bmp = bmp;
+}
+
+void addcolorrect(HELEMENT helem, COLORREF *color) {
+    Element *element = vecget(&gea, helem);
+    element->attributes = element->attributes | HASCOLORRECT;
+    element->color = *color;
 }
 
 void addhasinput(HELEMENT helem)
@@ -252,6 +288,9 @@ void addattribute(HELEMENT helem, ELEMATTRIBUTE attribute, int param)
     case HOVERABLE:
         addhoverable(helem, (void *)param);
         break;
+    case HASCOLORRECT:
+        addcolorrect(helem, (COLORREF *)param);
+        break;
     case HASSTYLERECT: {
         Element *element = vecget(&gea, helem);
         element->attributes = element->attributes | HASSTYLERECT;
@@ -271,6 +310,9 @@ void addattribute(HELEMENT helem, ELEMATTRIBUTE attribute, int param)
         break;
     case HASTEXT:
         addhastext(helem, (TextInfo *)param);
+        break;
+    case HASMULTILINETEXT:
+        addhasmultilinetext(helem, (TextInfo *)param);
         break;
     }
 }
