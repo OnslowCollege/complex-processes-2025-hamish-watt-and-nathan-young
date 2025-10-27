@@ -38,7 +38,6 @@ void clrtopbarstate(TopbarState *topbarstate)
     {
         TopbarElement *topbarelem = vecget(&topbarstate->vwnds, i);
         rmelement(*topbarelem->helem);
-        free(topbarelem->helem);
         free(topbarelem);
     }
     clrvec(&topbarstate->vwnds);
@@ -147,7 +146,6 @@ static int messagehandler(VScreen *vscreen, VWNDIDX vwndidx, VWNDMSG msg,
                 printf("target: %d deleted\n", targetid);
                 found_at = i;
                 rmelement(*topbarelement->helem);
-                free(topbarelement->helem);
                 rmvec(&state->vwnds, i);
                 rmvec(&topbarvwnd->elements, i);
                 free(topbarelement);

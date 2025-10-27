@@ -18,7 +18,7 @@ static int messagehandler(VScreen *vscreen, VWNDIDX vwndidx, VWNDMSG msg,
 
     NotepadState *state = vwnd->applicationstate;
 
-    if (msg & SCALED || msg & MOVED)
+    if (msg & SCALED)
     {
         Element *element = getelement(*state->textinput);
         element->bottom = vwnd->bottom - vwnd->top - TOOLBAR_HEIGHT;
@@ -63,7 +63,6 @@ static void unlauncher(VScreen *vscreen, int caller)
 {
     NotepadState *state = vwndbyid(vscreen, caller)->applicationstate;
     rmelement(*(state->textinput));
-    free(state->textinput);
     free(state);
 
     default_unlauncher(vscreen, caller);
