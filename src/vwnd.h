@@ -51,6 +51,7 @@ VWnd *createvwnd(unsigned int top, unsigned int bottom, unsigned int left,
                  unsigned int right, VWNDSTYLE vwndstyle);
 VWnd *vwndbyid(VScreen *vscreen, int id);
 
+HRGN getvwndrgn(VScreen *vscreen, VWNDIDX vwndidx);
 int isfocused(VScreen *vscreen, VWNDIDX vwndidx);
 void focusvwnd(VScreen *vscreen, VWNDIDX vwndidx);
 VWNDIDX bindvwnd(VScreen *vscreen, VWnd *vwnd);

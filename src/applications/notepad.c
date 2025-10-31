@@ -18,14 +18,11 @@ static int messagehandler(VScreen *vscreen, VWNDIDX vwndidx, VWNDMSG msg,
 
     NotepadState *state = vwnd->applicationstate;
 
-    if (msg & SCALED || msg & MOVED)
+    if (msg & SCALED)
     {
         Element *element = getelement(*state->textinput);
         element->bottom = vwnd->bottom - vwnd->top - TOOLBAR_HEIGHT;
         element->right = vwnd->right - vwnd->left - 5;
-
-        // HRGN hrgn = CreateRectRgn(0, 0, 0, 0);
-        // GetWindowRgn(element->hTextEdit, hrgn);
 
         return REDRAW;
     }
@@ -44,7 +41,7 @@ static void launcher(VScreen *vscreen)
 
     *textinput = newelement(
         TOOLBAR_HEIGHT, notepadvwnd->bottom - notepadvwnd->top - TOOLBAR_HEIGHT,
-        5, 295, &notepadvwnd->left, &notepadvwnd->top);
+        5, 295, &notepadvwnd->left, &notepadvwnd->top, vwndidx);
 
     addattribute(*textinput, HASINPUT, 0);
 

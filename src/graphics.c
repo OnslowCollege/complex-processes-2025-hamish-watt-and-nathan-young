@@ -171,7 +171,8 @@ HELEMENT *drawicon(VWnd *taskbar, char *name, int top, int bottom, int left,
 {
     HBITMAP bmp = LoadBitmapA(GetModuleHandle(NULL), name);
     HELEMENT *icon = malloc(sizeof(HELEMENT));
-    *icon = newelement(top, bottom, left, right, &taskbar->left, &taskbar->top);
+    *icon = newelement(top, bottom, left, right, &taskbar->left, &taskbar->top,
+                       taskbar->vwndidx);
     addattribute(*icon, HASIMAGE, (int)bmp);
     return icon;
 }

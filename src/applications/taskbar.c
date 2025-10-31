@@ -68,7 +68,7 @@ static void launcher(VScreen *vscreen)
     HELEMENT *kfind = malloc(sizeof(HELEMENT));
     *kfind =
         newelement(2, TASKBAR_HEIGHT - 2, 4 * (TASKBAR_HEIGHT - 2),
-                   5 * (TASKBAR_HEIGHT - 2), &taskbar->left, &taskbar->top);
+                   5 * (TASKBAR_HEIGHT - 2), &taskbar->left, &taskbar->top, 0);
     addattribute(*kfind, HASIMAGE, (int)kfindbmp);
     addattribute(*kfind, CLICKABLE, (int)applications[3]->launcher);
     pushvec(&taskbar->elements, kfind);
@@ -77,15 +77,28 @@ static void launcher(VScreen *vscreen)
         drawicon(taskbar, "utils_package", 2, TASKBAR_HEIGHT - 2,
                  5 * (TASKBAR_HEIGHT - 2), 6 * (TASKBAR_HEIGHT - 2));
     pushvec(&taskbar->elements, utils_package);
+<<<<<<< HEAD
+    // Notepad application
+    HBITMAP knotes_bmp = LoadBitmapA(GetModuleHandle(NULL), "knotes");
+    HELEMENT *knotes = malloc(sizeof(HELEMENT));
+    *knotes =
+        newelement(2, TASKBAR_HEIGHT - 2, 6 * (TASKBAR_HEIGHT - 2),
+                   7 * (TASKBAR_HEIGHT - 2), &taskbar->left, &taskbar->top, 0);
+    addattribute(*knotes, HASIMAGE, (int)knotes_bmp);
+    addattribute(*knotes, CLICKABLE, (int)applications[4]->launcher);
+    pushvec(&taskbar->elements, knotes);
+=======
+>>>>>>> 21ded74544a584b57285a3e2d406b4cf939ecbf3
 
     SYSTEMTIME st;
     GetLocalTime(&st);
     HELEMENT *time = malloc(sizeof(HELEMENT));
     *time = newelement(2, (TASKBAR_HEIGHT / 2) - 2, -TASKBAR_HEIGHT + 2, -2,
-                       &taskbar->right, &taskbar->top);
+                       &taskbar->right, &taskbar->top, 0);
     HELEMENT *date = malloc(sizeof(HELEMENT));
-    *date = newelement((TASKBAR_HEIGHT / 2) - 2, TASKBAR_HEIGHT - 2,
-                       -TASKBAR_HEIGHT + 2, -2, &taskbar->right, &taskbar->top);
+    *date =
+        newelement((TASKBAR_HEIGHT / 2) - 2, TASKBAR_HEIGHT - 2,
+                   -TASKBAR_HEIGHT + 2, -2, &taskbar->right, &taskbar->top, 0);
 
     char *time_str = malloc(8);
     sprintf(time_str, "%02d:%02d\0", st.wHour, st.wMinute);

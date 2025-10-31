@@ -1,6 +1,7 @@
 #include "./vwnd.h"
 #include "./elements/elements.h"
 #include "msg.h"
+#include "screen.h"
 #include <stdlib.h>
 
 #define BORDER_SIZE 32
@@ -39,7 +40,7 @@ VWnd *createvwnd(unsigned int top, unsigned int bottom, unsigned int left,
     case DEFAULT: {
         HELEMENT *hclosebutton = malloc(sizeof(HELEMENT));
         *hclosebutton = newelement(2, TOOLBAR_HEIGHT, -TOOLBAR_HEIGHT, -2,
-                                   &vwnd->right, &vwnd->top);
+                                   &vwnd->right, &vwnd->top, 0);
         HBITMAP bmpclosebutton = LoadBitmapA(GetModuleHandle(NULL), "close");
         addattribute(*hclosebutton, HASIMAGE, (int)bmpclosebutton);
         addattribute(*hclosebutton, CLICKABLE, (int)clrvwnd);
@@ -47,8 +48,9 @@ VWnd *createvwnd(unsigned int top, unsigned int bottom, unsigned int left,
         pushvec(&vwnd->elements, hclosebutton);
 
         HELEMENT *maximize_elem = malloc(sizeof(HELEMENT));
-        *maximize_elem = newelement(2, TOOLBAR_HEIGHT, -2 * TOOLBAR_HEIGHT,
-                                    -TOOLBAR_HEIGHT, &vwnd->right, &vwnd->top);
+        *maximize_elem =
+            newelement(2, TOOLBAR_HEIGHT, -2 * TOOLBAR_HEIGHT, -TOOLBAR_HEIGHT,
+                       &vwnd->right, &vwnd->top, 0);
         HBITMAP maximize_bmp = LoadBitmapA(GetModuleHandle(NULL), "maximize");
         addattribute(*maximize_elem, HASIMAGE, (int)maximize_bmp);
         pushvec(&vwnd->elements, maximize_elem);
@@ -56,14 +58,15 @@ VWnd *createvwnd(unsigned int top, unsigned int bottom, unsigned int left,
         HELEMENT *minimize_elem = malloc(sizeof(HELEMENT));
         *minimize_elem =
             newelement(2, TOOLBAR_HEIGHT, -3 * TOOLBAR_HEIGHT,
-                       -2 * TOOLBAR_HEIGHT, &vwnd->right, &vwnd->top);
+                       -2 * TOOLBAR_HEIGHT, &vwnd->right, &vwnd->top, 0);
         HBITMAP minimize_bmp = LoadBitmapA(GetModuleHandle(NULL), "minimize");
         addattribute(*minimize_elem, HASIMAGE, (int)minimize_bmp);
         pushvec(&vwnd->elements, minimize_elem);
 
         HELEMENT *pinup_elem = malloc(sizeof(HELEMENT));
-        *pinup_elem = newelement(2, TOOLBAR_HEIGHT, TOOLBAR_HEIGHT,
-                                 TOOLBAR_HEIGHT * 2, &vwnd->left, &vwnd->top);
+        *pinup_elem =
+            newelement(2, TOOLBAR_HEIGHT, TOOLBAR_HEIGHT, TOOLBAR_HEIGHT * 2,
+                       &vwnd->left, &vwnd->top, 0);
         HBITMAP pinup_bmp = LoadBitmapA(GetModuleHandle(NULL), "pinup");
         addattribute(*pinup_elem, HASIMAGE, (int)pinup_bmp);
         pushvec(&vwnd->elements, pinup_elem);
@@ -74,6 +77,25 @@ VWnd *createvwnd(unsigned int top, unsigned int bottom, unsigned int left,
     }
 
     return vwnd;
+}
+
+HRGN getvwndrgn(VScreen *vscreen, VWNDIDX vwndidx)
+{
+    VWnd *vwnd = vecget(&vscreen->windows, vwndidx);
+
+    if (*vwnd->vwndstyle == DEFAULT || *vwnd->vwndstyle == STATIC)
+    {
+        short top = vwnd->top;
+        short left = vwnd->left;
+        short bottom = vwnd->bottom;
+        short right = vwnd->right;
+        vcoordcvt(vscreen, &left, &top);
+        vcoordcvt(vscreen, &right, &bottom);
+
+        return CreateRectRgn(left, top, right, bottom);
+    }
+
+    return 0;
 }
 
 VWNDIDX bindvwnd(VScreen *vscreen, VWnd *vwnd)

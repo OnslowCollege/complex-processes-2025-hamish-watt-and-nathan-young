@@ -14,7 +14,7 @@ static void draw_text_icon(VWnd *vwnd, int top, int bottom, int left, int right,
 {
     HELEMENT *icon_element = malloc(sizeof(HELEMENT));
     *icon_element =
-        newelement(top, bottom, left, right, &vwnd->left, &vwnd->top);
+        newelement(top, bottom, left, right, &vwnd->left, &vwnd->top, 0);
 
     HBITMAP icon_bmp = LoadBitmap(GetModuleHandle(NULL), icon_name);
     addattribute(*icon_element, HASIMAGE, (int)icon_bmp);
@@ -22,7 +22,7 @@ static void draw_text_icon(VWnd *vwnd, int top, int bottom, int left, int right,
 
     HELEMENT *text_element = malloc(sizeof(HELEMENT));
     *text_element = newelement(bottom + 5, bottom + 15, left - 10, right + 10,
-                               &vwnd->left, &vwnd->top);
+                               &vwnd->left, &vwnd->top, 0);
 
     char *text_str = malloc(strlen(name) + 1);
     text_str = name;
@@ -61,9 +61,9 @@ static void launcher(VScreen *vscreen)
     bindapplication(vscreen, vwndidx, &welcome);
 
     HELEMENT *text_elem = malloc(sizeof(HELEMENT));
-    *text_elem =
-        newelement(TOOLBAR_HEIGHT, vwnd->bottom - vwnd->top - 5, 5,
-                   vwnd->right - vwnd->left - 5, &vwnd->left, &vwnd->top);
+    *text_elem = newelement(TOOLBAR_HEIGHT, vwnd->bottom - vwnd->top - 5, 5,
+                            vwnd->right - vwnd->left - 5, &vwnd->left,
+                            &vwnd->top, vwndidx);
 
     COLORREF color = RGB(255, 255, 255);
     addattribute(*text_elem, HASCOLORRECT, (int)&color);

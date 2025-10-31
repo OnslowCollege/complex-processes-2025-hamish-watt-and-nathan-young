@@ -43,12 +43,15 @@ typedef struct
     COLORREF color;
 
     HWND hTextEdit;
+
+    VWNDIDX vwndidx;
 } Element;
 
 // context must be either vwnd or vscreen depending on the location of the
 // element
 HELEMENT newelement(int top, int bottom, int left, int right,
-                    unsigned int *anchorx, unsigned int *anchory);
+                    unsigned int *anchorx, unsigned int *anchory,
+                    VWNDIDX vwndidx);
 
 void initelems(HWND hwnd);
 

@@ -168,6 +168,34 @@ void drawvwnd(VScreen *vscreen, VWNDIDX vwndidx, HDC hdc)
     }
 }
 
+HRGN excluderegions(VScreen *vscreen, HRGN inputrgn, VWNDIDX excludevwnd)
+{
+    HRGN accumulator = CreateRectRgn(0, 0, 0, 0);
+    CombineRgn(accumulator, inputrgn, NULL, RGN_COPY);
+
+    printf("excludevwnd: %d\n", excludevwnd);
+    for (int i = excludevwnd + 1; i < veclength(&vscreen->windows); i++)
+    {
+        HRGN src2 = getvwndrgn(vscreen, i);
+        if (src2 == 0)
+            continue;
+
+        HRGN temp = CreateRectRgn(0, 0, 0, 0);
+        int result = CombineRgn(temp, accumulator, src2, RGN_DIFF);
+
+        VWnd *vwnd = vecget(&vscreen->windows, i);
+        printf("i = %d region: %d\n application = %s\n\n", i, result,
+               vwnd->application->name);
+
+        DeleteObject(accumulator);
+        accumulator = temp;
+
+        DeleteObject(src2);
+    }
+
+    return accumulator;
+}
+
 WNDRGN inwndrgn(VScreen *vscreen, VWNDIDX vwndidx, int ptx, int pty)
 {
     VWnd *vwnd = vecget(&vscreen->windows, vwndidx);
@@ -359,11 +387,13 @@ void scalevwnd(VScreen *vscreen, VWNDIDX vwndidx, WNDRGN wndrgn, short x,
         break;
     }
 
-    if (vwnd->right > vscreen->w) {
+    if (vwnd->right > vscreen->w)
+    {
         vwnd->left = prev_left;
         vwnd->right = prev_right;
     }
-    if (vwnd->bottom > vscreen->h) {
+    if (vwnd->bottom > vscreen->h)
+    {
         vwnd->top = prev_top;
         vwnd->bottom = prev_bottom;
     }
@@ -425,6 +455,13 @@ void refreshvwndidx(VScreen *vscreen)
     {
         VWnd *vwnd = vecget(&vscreen->windows, i);
         vwnd->vwndidx = i;
+
+        for (int j = 0; j < veclength(&vwnd->elements); j++)
+        {
+            HELEMENT *helem = vecget(&vwnd->elements, j);
+            Element *element = getelement(*helem);
+            element->vwndidx = i;
+        }
     }
 }
 
