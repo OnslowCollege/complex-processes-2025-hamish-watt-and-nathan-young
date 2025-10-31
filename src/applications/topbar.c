@@ -108,7 +108,7 @@ static int messagehandler(VScreen *vscreen, VWNDIDX vwndidx, VWNDMSG msg,
         HELEMENT *elem = malloc(sizeof(HELEMENT));
         *elem = newelement(0, TOPBAR_HEIGHT, xoffset,
                            xoffset + TOPBAR_ELEMENT_WIDTH, &topbarvwnd->left,
-                           &topbarvwnd->top);
+                           &topbarvwnd->top, vwndidx);
 
         topbarelement->helem = elem;
 

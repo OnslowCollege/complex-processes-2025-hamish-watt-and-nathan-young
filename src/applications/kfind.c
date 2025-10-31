@@ -27,13 +27,13 @@ static void launcher(VScreen *vscreen)
 
     HELEMENT *optionsbar = malloc(sizeof(HELEMENT));
     *optionsbar = newelement(TOOLBAR_HEIGHT, TOOLBAR_HEIGHT * 2, 5, 295,
-                             &kfind_vwnd->left, &kfind_vwnd->top);
+                             &kfind_vwnd->left, &kfind_vwnd->top, vwndidx);
     addattribute(*optionsbar, HASSTYLERECT, 0);
     pushvec(&kfind_vwnd->elements, optionsbar);
 
     HELEMENT *file_elem = malloc(sizeof(HELEMENT));
     *file_elem = newelement(TOOLBAR_HEIGHT * 1.25, TOOLBAR_HEIGHT * 1.75, 5, 50,
-                            &kfind_vwnd->left, &kfind_vwnd->top);
+                            &kfind_vwnd->left, &kfind_vwnd->top, vwndidx);
 
     char *file_str = malloc(5);
     file_str = "File\0";
@@ -47,7 +47,7 @@ static void launcher(VScreen *vscreen)
 
     HELEMENT *edit_elem = malloc(sizeof(HELEMENT));
     *edit_elem = newelement(TOOLBAR_HEIGHT * 1.25, TOOLBAR_HEIGHT * 1.75, 35,
-                            80, &kfind_vwnd->left, &kfind_vwnd->top);
+                            80, &kfind_vwnd->left, &kfind_vwnd->top, vwndidx);
 
     char *edit_str = malloc(5);
     edit_str = "Edit\0";
@@ -60,8 +60,9 @@ static void launcher(VScreen *vscreen)
     pushvec(&kfind_vwnd->elements, edit_elem);
 
     HELEMENT *options_elem = malloc(sizeof(HELEMENT));
-    *options_elem = newelement(TOOLBAR_HEIGHT * 1.25, TOOLBAR_HEIGHT * 1.75, 65,
-                               125, &kfind_vwnd->left, &kfind_vwnd->top);
+    *options_elem =
+        newelement(TOOLBAR_HEIGHT * 1.25, TOOLBAR_HEIGHT * 1.75, 65, 125,
+                   &kfind_vwnd->left, &kfind_vwnd->top, vwndidx);
 
     char *options_str = malloc(8);
     options_str = "Options\0";
@@ -75,7 +76,7 @@ static void launcher(VScreen *vscreen)
 
     HELEMENT *help_elem = malloc(sizeof(HELEMENT));
     *help_elem = newelement(TOOLBAR_HEIGHT * 1.25, TOOLBAR_HEIGHT * 1.75, 255,
-                            295, &kfind_vwnd->left, &kfind_vwnd->top);
+                            295, &kfind_vwnd->left, &kfind_vwnd->top, vwndidx);
 
     char *help_str = malloc(5);
     help_str = "Help\0";
@@ -89,7 +90,7 @@ static void launcher(VScreen *vscreen)
 
     HELEMENT *secondbar = malloc(sizeof(HELEMENT));
     *secondbar = newelement(TOOLBAR_HEIGHT * 2, TOOLBAR_HEIGHT * 3, 5, 295,
-                            &kfind_vwnd->left, &kfind_vwnd->top);
+                            &kfind_vwnd->left, &kfind_vwnd->top, vwndidx);
     addattribute(*secondbar, HASSTYLERECT, 0);
     pushvec(&kfind_vwnd->elements, secondbar);
 
@@ -151,13 +152,14 @@ static void launcher(VScreen *vscreen)
     HELEMENT *mainwindow = malloc(sizeof(HELEMENT));
     *mainwindow = newelement(TOOLBAR_HEIGHT * 3 + 5,
                              (kfind_vwnd->bottom - kfind_vwnd->top) - 10, 10,
-                             290, &kfind_vwnd->left, &kfind_vwnd->top);
+                             290, &kfind_vwnd->left, &kfind_vwnd->top, vwndidx);
     addattribute(*mainwindow, HASSTYLERECT, 0);
     pushvec(&kfind_vwnd->elements, mainwindow);
 
     HELEMENT *maintitle_elem = malloc(sizeof(HELEMENT));
-    *maintitle_elem = newelement(TOOLBAR_HEIGHT * 3.5, TOOLBAR_HEIGHT * 4, 10,
-                                 200, &kfind_vwnd->left, &kfind_vwnd->top);
+    *maintitle_elem =
+        newelement(TOOLBAR_HEIGHT * 3.5, TOOLBAR_HEIGHT * 4, 10, 200,
+                   &kfind_vwnd->left, &kfind_vwnd->top, vwndidx);
 
     char *maintitle_str = malloc(42);
     maintitle_str = "Name&Location   Date Modified   Advanced\0";
@@ -172,7 +174,7 @@ static void launcher(VScreen *vscreen)
     HELEMENT *mainwindow_label_elem = malloc(sizeof(HELEMENT));
     *mainwindow_label_elem =
         newelement(TOOLBAR_HEIGHT * 5, TOOLBAR_HEIGHT * 5.75, 10, 50,
-                   &kfind_vwnd->left, &kfind_vwnd->top);
+                   &kfind_vwnd->left, &kfind_vwnd->top, vwndidx);
 
     char *mainwindow_label_str = malloc(7);
     mainwindow_label_str = "Named:\0";
@@ -187,7 +189,7 @@ static void launcher(VScreen *vscreen)
     HELEMENT *mainwindow_text_field = malloc(sizeof(HELEMENT));
     *mainwindow_text_field =
         newelement(TOOLBAR_HEIGHT * 5, TOOLBAR_HEIGHT * 5.75, 50, 280,
-                   &kfind_vwnd->left, &kfind_vwnd->top);
+                   &kfind_vwnd->left, &kfind_vwnd->top, vwndidx);
 
     addattribute(*mainwindow_text_field, HASINPUT, 0);
 
@@ -200,8 +202,9 @@ static void launcher(VScreen *vscreen)
     kfind_vwnd->applicationstate = state;
 
     HELEMENT *look_in_elem = malloc(sizeof(HELEMENT));
-    *look_in_elem = newelement(TOOLBAR_HEIGHT * 6, TOOLBAR_HEIGHT * 6.75, 10,
-                               50, &kfind_vwnd->left, &kfind_vwnd->top);
+    *look_in_elem =
+        newelement(TOOLBAR_HEIGHT * 6, TOOLBAR_HEIGHT * 6.75, 10, 50,
+                   &kfind_vwnd->left, &kfind_vwnd->top, vwndidx);
 
     char *look_in_str = malloc(9);
     look_in_str = "Look in:\0";
@@ -215,13 +218,14 @@ static void launcher(VScreen *vscreen)
 
     HELEMENT *path_elem = malloc(sizeof(HELEMENT));
     *path_elem = newelement(TOOLBAR_HEIGHT * 6, TOOLBAR_HEIGHT * 6.75, 50, 200,
-                            &kfind_vwnd->left, &kfind_vwnd->top);
+                            &kfind_vwnd->left, &kfind_vwnd->top, vwndidx);
     addattribute(*path_elem, HASSTYLERECT, 0);
     pushvec(&kfind_vwnd->elements, path_elem);
 
     HELEMENT *path_text_elem = malloc(sizeof(HELEMENT));
-    *path_text_elem = newelement(TOOLBAR_HEIGHT * 6, TOOLBAR_HEIGHT * 6.75, 50,
-                                 200, &kfind_vwnd->left, &kfind_vwnd->top);
+    *path_text_elem =
+        newelement(TOOLBAR_HEIGHT * 6, TOOLBAR_HEIGHT * 6.75, 50, 200,
+                   &kfind_vwnd->left, &kfind_vwnd->top, vwndidx);
 
     char *path_str = malloc(16);
     path_str = "/home/kdemulate\0";
@@ -234,15 +238,16 @@ static void launcher(VScreen *vscreen)
     pushvec(&kfind_vwnd->elements, path_text_elem);
 
     HELEMENT *browse_elem = malloc(sizeof(HELEMENT));
-    *browse_elem = newelement(TOOLBAR_HEIGHT * 6, TOOLBAR_HEIGHT * 6.75, 220,
-                              280, &kfind_vwnd->left, &kfind_vwnd->top);
+    *browse_elem =
+        newelement(TOOLBAR_HEIGHT * 6, TOOLBAR_HEIGHT * 6.75, 220, 280,
+                   &kfind_vwnd->left, &kfind_vwnd->top, vwndidx);
     addattribute(*browse_elem, HASSTYLERECT, 0);
     pushvec(&kfind_vwnd->elements, browse_elem);
 
     HELEMENT *browse_text_elem = malloc(sizeof(HELEMENT));
     *browse_text_elem =
         newelement(TOOLBAR_HEIGHT * 6, TOOLBAR_HEIGHT * 6.75, 220, 280,
-                   &kfind_vwnd->left, &kfind_vwnd->top);
+                   &kfind_vwnd->left, &kfind_vwnd->top, vwndidx);
 
     char *browse_str = malloc(7);
     browse_str = "Browse\0";
@@ -255,8 +260,9 @@ static void launcher(VScreen *vscreen)
     pushvec(&kfind_vwnd->elements, browse_text_elem);
 
     HELEMENT *include_elem = malloc(sizeof(HELEMENT));
-    *include_elem = newelement(TOOLBAR_HEIGHT * 7, TOOLBAR_HEIGHT * 7.75, 50,
-                               150, &kfind_vwnd->left, &kfind_vwnd->top);
+    *include_elem =
+        newelement(TOOLBAR_HEIGHT * 7, TOOLBAR_HEIGHT * 7.75, 50, 150,
+                   &kfind_vwnd->left, &kfind_vwnd->top, vwndidx);
 
     char *include_str = malloc(19);
     include_str = "Include subfolders\0";

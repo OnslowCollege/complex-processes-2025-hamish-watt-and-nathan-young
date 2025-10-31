@@ -7,7 +7,7 @@ static void draw_desktop_icon(VWnd *desktop, int top, int bottom,
 {
     HELEMENT *icon_element = malloc(sizeof(HELEMENT));
     *icon_element =
-        newelement(top, bottom, 10, 40, &desktop->left, &desktop->top);
+        newelement(top, bottom, 10, 40, &desktop->left, &desktop->top, 0);
 
     HBITMAP icon_bmp = LoadBitmap(GetModuleHandle(NULL), icon_name);
     addattribute(*icon_element, HASIMAGE, (int)icon_bmp);
@@ -15,7 +15,7 @@ static void draw_desktop_icon(VWnd *desktop, int top, int bottom,
 
     HELEMENT *text_element = malloc(sizeof(HELEMENT));
     *text_element = newelement(bottom + 5, bottom + 15, 0, 50, &desktop->left,
-                               &desktop->top);
+                               &desktop->top, 0);
 
     char *text_str = malloc(strlen(name) + 1);
     text_str = name;

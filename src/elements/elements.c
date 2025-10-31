@@ -44,7 +44,8 @@ void initelems(HWND hwnd)
 }
 
 HELEMENT newelement(int top, int bottom, int left, int right,
-                    unsigned int *anchorx, unsigned int *anchory)
+                    unsigned int *anchorx, unsigned int *anchory,
+                    VWNDIDX vwndidx)
 {
     Element *elem = malloc(sizeof(Element));
 
@@ -166,8 +167,39 @@ void drawelement(HDC hdc, VScreen *vscreen, HELEMENT helem)
 
     if (hasattribute(helem, HASINPUT))
     {
+        short x1 = element->left;
+        short y1 = element->top;
+        short x2 = element->right;
+        short y2 = element->bottom;
+
+        vcoordcvt(vscreen, &x1, &y1);
+        vcoordcvt(vscreen, &x2, &y2);
+
+        HRGN inputrgn = CreateRectRgn(x1, y1, x2, y2);
+        HRGN displayrgn = excluderegions(vscreen, inputrgn, element->vwndidx);
+
+        RECT textboxRect;
+        GetWindowRect(element->hTextEdit, &textboxRect);
+
+        SetWindowRgn(element->hTextEdit, NULL, 0);
+        RedrawWindow(element->hTextEdit, NULL, NULL,
+                     RDW_INVALIDATE | RDW_UPDATENOW);
+
+        OffsetRgn(displayrgn, -textboxRect.left, -textboxRect.top);
+        SetWindowRgn(element->hTextEdit, displayrgn, 1);
         MoveWindow(element->hTextEdit, left, top, right - left, bottom - top,
                    1);
+        RedrawWindow(element->hTextEdit, NULL, NULL,
+                     RDW_INVALIDATE | RDW_UPDATENOW);
+        SetWindowRgn(element->hTextEdit, NULL, 0);
+
+#ifdef DEBUG
+        HBRUSH hbr = CreateSolidBrush(RGB(0, 100, 150));
+        FillRgn(hdc, displayrgn, hbr);
+#endif
+
+        DeleteObject(inputrgn);
+        DeleteObject(displayrgn);
     }
 
     if (hasattribute(helem, HASIMAGE))
@@ -255,7 +287,8 @@ void addhasimage(HELEMENT helem, HBITMAP bmp)
     element->bmp = bmp;
 }
 
-void addcolorrect(HELEMENT helem, COLORREF *color) {
+void addcolorrect(HELEMENT helem, COLORREF *color)
+{
     Element *element = vecget(&gea, helem);
     element->attributes = element->attributes | HASCOLORRECT;
     element->color = *color;

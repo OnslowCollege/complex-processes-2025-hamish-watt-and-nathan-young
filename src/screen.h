@@ -55,3 +55,5 @@ float getaspctscl(VScreen *vscreen);
 void refreshvwndidx(VScreen *vscreen);
 
 void clrvscreen(VScreen *vscreen);
+
+HRGN excluderegions(VScreen *vscreen, HRGN inputrgn, VWNDIDX excludevwndidx);
