@@ -55,7 +55,7 @@ static int messagehandler(VScreen *vscreen, VWNDIDX vwndidx, VWNDMSG msg,
 
 static void launcher(VScreen *vscreen)
 {
-    VWnd *vwnd = createvwnd(100, 350, 100, 600, DEFAULT);
+    VWnd *vwnd = createvwnd(100, 400, 100, 700, DEFAULT);
     VWNDIDX vwndidx = bindvwnd(vscreen, vwnd);
 
     bindapplication(vscreen, vwndidx, &welcome);
