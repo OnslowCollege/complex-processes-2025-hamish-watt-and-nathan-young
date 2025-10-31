@@ -25,7 +25,7 @@ kfind_fileopen BITMAP kfind_fileopen.bmp
 kfind_floppy BITMAP kfind_floppy.bmp
 kfind_book BITMAP kfind_book.bmp
 kfind_exit2 BITMAP kfind_exit2.bmp
-knotes BITMAP knotes.bmp
+knotes BITMAP large-knotes.bmp
 maximize BITMAP maximize.bmp
 minimize BITMAP iconify.bmp
 pinup BITMAP pinup.bmp

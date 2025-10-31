@@ -2,7 +2,7 @@
 #include "../vwnd.h"
 #include "applications.h"
 
-static void draw_desktop_icon(VWnd *desktop, int top, int bottom,
+static HELEMENT* draw_desktop_icon(VWnd *desktop, int top, int bottom,
                               char *icon_name, char *name)
 {
     HELEMENT *icon_element = malloc(sizeof(HELEMENT));
@@ -11,7 +11,6 @@ static void draw_desktop_icon(VWnd *desktop, int top, int bottom,
 
     HBITMAP icon_bmp = LoadBitmap(GetModuleHandle(NULL), icon_name);
     addattribute(*icon_element, HASIMAGE, (int)icon_bmp);
-    pushvec(&desktop->elements, icon_element);
 
     HELEMENT *text_element = malloc(sizeof(HELEMENT));
     *text_element = newelement(bottom + 5, bottom + 15, 0, 50, &desktop->left,
@@ -25,6 +24,7 @@ static void draw_desktop_icon(VWnd *desktop, int top, int bottom,
     text_info->highlight = RGB(0, 0, 0);
     addattribute(*text_element, HASTEXT, (int)text_info);
     pushvec(&desktop->elements, text_element);
+    return icon_element;
 }
 
 static void launcher(VScreen *vscreen)
@@ -33,21 +33,33 @@ static void launcher(VScreen *vscreen)
                                VSCREEN_RIGHT, DESKTOP);
     bindvwnd(vscreen, desktop);
 
-    draw_desktop_icon(desktop, 35, 65, "trash", "Trash");
+    HELEMENT *trash_icon = draw_desktop_icon(desktop, 35, 65, "trash", "Trash");
+    pushvec(&desktop->elements, trash_icon);
 
-    draw_desktop_icon(desktop, 95, 125, "folder", "Templates");
+    HELEMENT *Templates_icon = draw_desktop_icon(desktop, 95, 125, "folder", "Templates");
+    pushvec(&desktop->elements, Templates_icon); 
 
-    draw_desktop_icon(desktop, 155, 185, "folder", "Autostart");
+    HELEMENT *Autostart_icon = draw_desktop_icon(desktop, 155, 185, "folder", "Autostart");
+    pushvec(&desktop->elements, Autostart_icon); 
 
-    draw_desktop_icon(desktop, 215, 245, "cdrom", "CDROM");
+    HELEMENT *CDROM_icon = draw_desktop_icon(desktop, 215, 245, "cdrom", "CDROM");
+    pushvec(&desktop->elements, CDROM_icon); 
 
-    draw_desktop_icon(desktop, 275, 305, "floppy", "FLOPPY");
+    HELEMENT *FLOPPY_icon = draw_desktop_icon(desktop, 275, 305, "floppy", "FLOPPY");
+    pushvec(&desktop->elements, FLOPPY_icon); 
 
-    draw_desktop_icon(desktop, 335, 365, "kfm_home_blue", "HOME");
+    HELEMENT *HOME_icon = draw_desktop_icon(desktop, 335, 365, "kfm_home_blue", "HOME");
+    pushvec(&desktop->elements, HOME_icon); 
 
-    draw_desktop_icon(desktop, 395, 425, "rpm_package", "RPMmanager");
+    HELEMENT *RPMmanager_icon = draw_desktop_icon(desktop, 395, 425, "rpm_package", "RPMmanager");
+    pushvec(&desktop->elements, RPMmanager_icon); 
 
-    draw_desktop_icon(desktop, 455, 485, "xkill", "XKill");
+    HELEMENT *XKill_icon = draw_desktop_icon(desktop, 455, 485, "xkill", "XKill");
+    pushvec(&desktop->elements, XKill_icon); 
+
+    HELEMENT *Knotes_icon = draw_desktop_icon(desktop, 515, 545, "knotes", "Knotes");
+    addattribute(*Knotes_icon, DOUBLECLICKABLE, (int)applications[4]->launcher);
+    pushvec(&desktop->elements, Knotes_icon);
 }
 
 Application desktop = {

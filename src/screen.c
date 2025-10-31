@@ -387,12 +387,22 @@ void scalevwnd(VScreen *vscreen, VWNDIDX vwndidx, WNDRGN wndrgn, short x,
         break;
     }
 
+    if (vwnd->right > vscreen->w)
+    {
+        vwnd->left = prev_left;
+        vwnd->right = prev_right;
+    }
+    if (vwnd->bottom > vscreen->h)
+    {
+        vwnd->top = prev_top;
+        vwnd->bottom = prev_bottom;
+    }
     if (vwnd->right - vwnd->left < 200)
     {
         vwnd->left = prev_left;
         vwnd->right = prev_right;
     }
-    if (vwnd->bottom - vwnd->top < 150)
+    if (vwnd->bottom - vwnd->top < 230)
     {
         vwnd->top = prev_top;
         vwnd->bottom = prev_bottom;

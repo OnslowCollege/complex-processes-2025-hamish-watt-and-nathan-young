@@ -287,7 +287,7 @@ static void unlauncher(VScreen *vscreen, int caller)
 }
 
 Application kfind = {
-    .name = "kfind",
+    .name = "Kfind",
     .launcher = launcher,
     .unlauncher = unlauncher,
     .messagehandler = messagehandler,
